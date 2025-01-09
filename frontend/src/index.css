@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+body{
+  font-family: 'Karla', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;  /* Improves text rendering */
+  font-smooth: always; /* For certain webkit browsers */
+  overflow-x: hidden;
+}
+
+
+/* Keyframe for continuous rotation */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Apply the animation to the React SVG */
+.rotate-animation {
+  animation: rotate 5s linear infinite; /* 5s for full rotation, adjust as needed */
+}
