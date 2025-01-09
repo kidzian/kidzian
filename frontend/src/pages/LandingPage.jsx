@@ -2,7 +2,7 @@ import React from 'react'
 import Heading from '../components/Heading'
 import Hero from '../components/Hero'
 import Service from '../components/Service'
-import Mission from '../components/Mission'
+
 import GlobalTech from '../components/GlobalTech'
 
 const LandingPage = () => {
@@ -11,7 +11,7 @@ const LandingPage = () => {
       <Heading/>
       <Hero/>
       <Service/>
-      <GlobalTech/>
+      {/* <GlobalTech/> */}
     </div>
   )
 }
