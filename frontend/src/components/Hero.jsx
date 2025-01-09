@@ -42,7 +42,7 @@ const Hero = () => {
             animate={{ opacity: 1, x: 0 }}     // Final state: fully visible and in place
             transition={{ duration: 1, delay: 0.5 }} // Transition with delay for smoother sequencing
           >
-            For students in the USA, UK, Canada, and UAE, Megaminds offers professional online tutoring services. Our team of knowledgeable online tutors is dedicated to providing you with specialized assistance. As a result, you will be able to succeed academically.
+            For students of age 7 to 17 , Kidzian offers professional online coding courses. Our team of knowledgeable and professional tutors is dedicated to providing you with specialized assistance in learning coding in a gamified and interactive manner. As a result, you will be able to succeed academically.
           </motion.p>
         </div>
 
