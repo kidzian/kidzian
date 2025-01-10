@@ -39,9 +39,21 @@ const Hero = () => {
             >
               learn, play & grow
             </motion.h1>
-            <span className='bg-[#62bdff] top-[45vh] left-[70vh] w-[2.5vw] h-[2.5vw] absolute rounded-full'
-            ></span>
-            
+           
+            <span 
+  className='absolute bg-[#62bdff] top-[45vh] left-[70vh] w-[2.5vw] h-[2.5vw] rounded-full'
+  animate={{
+    x: [0, 5, -5, 0],   // Horizontal movement (can tweak the numbers for desired motion)
+    y: [0, -5, 5, 0],   // Vertical movement
+  }}
+  transition={{ 
+    repeat: Infinity,   // Continuous motion
+    repeatType: "loop", // Looping indefinitely
+    duration: 2,        // Time for each complete motion cycle
+    ease: "easeInOut"   // Smooth motion effect
+  }}
+></span>
+
 
             <motion.span
           className='absolute top-[25vh] left-[105vh] bg-[#fe6584] w-[2.5vw] h-[2.5vw] rounded-full'
@@ -68,20 +80,20 @@ const Hero = () => {
           </button>
           
         </div>
-        {/* <span className='absolute top-[75vh] rounded-full left-[60vh] bg-[#71dc7e] w-[10vw] h-[10vw]'></span> */}
-     
-        <span 
+      
+
+<motion.span 
   className='absolute top-[75vh] rounded-full left-[60vh] bg-[#71dc7e] w-[10vw] h-[10vw]'
   animate={{
-    scale: [1, 0, 1]   // Grow from normal size to shrink to 0 and then back to normal
+    scale: [1, 0.95, 1]   // Grow from normal size to slightly larger and then shrink back to normal
   }}
   transition={{ 
     repeat: Infinity,     // Continuous animation
     repeatType: "loop",   // Looping indefinitely
-    duration: 1.5,         // Adjusted duration for better balance between grow and shrink
+    duration: 1.5,         // Duration for each grow-shrink cycle
     ease: "easeInOut"      // Smooth scaling effect
   }}
-></span>
+></motion.span>
 
 
       </div>

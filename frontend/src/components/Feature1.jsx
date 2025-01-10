@@ -1,3 +1,4 @@
+
 // import React, { useRef } from 'react';
 // import experts from '../assets/experts.jpeg';
 // import { motion, useAnimation } from 'framer-motion';
@@ -12,7 +13,7 @@
 //     if (inView) {
 //       controls.start({ opacity: 1, x: 0, y: 0, scale: 1 });
 //     } else {
-//       controls.start({ opacity: 0, x: -100, y: 50, scale: 0.8 });
+//       controls.start({ opacity: 0, x: 100, y: -50, scale: 0.8 });
 //     }
 //   }, [controls, inView]);
 
@@ -22,7 +23,7 @@
         
 //         <motion.h1 
 //           className="bg-gradient-to-r from-[#6c6bf9] via-[#f56be0] to-[#926bf1] bg-clip-text capitalize text-transparent text-5xl font-semibold"
-//           initial={{ opacity: 0, x: -100 }}
+//           initial={{ opacity: 0, x: 100 }}
 //           animate={controls}
 //           transition={{ duration: 1, ease: 'easeInOut' }}
 //         >
@@ -34,7 +35,8 @@
 //           initial={{ opacity: 0, y: 50 }}
 //           animate={controls}
 //           transition={{ duration: 1, ease: 'easeInOut', delay: 0.2 }}
-//         >At <strong>Kidzian</strong>, we are dedicated to helping you secure your future by providing industry-expert-led <strong>coding courses</strong> designed to <strong>shape your skills</strong> and open doors to <strong>exciting career opportunities</strong>. Our experienced instructors come from the tech industry and bring <strong>real-world knowledge</strong>, ensuring that you gain practical coding expertise that is in high demand.
+//         >
+//           At <strong>Kidzian</strong>, we are dedicated to helping you secure your future by providing industry-expert-led <strong>coding courses</strong> designed to <strong>shape your skills</strong> and open doors to <strong>exciting career opportunities</strong>. Our experienced instructors come from the tech industry and bring <strong>real-world knowledge</strong>, ensuring that you gain practical coding expertise that is in high demand.
 //         </motion.p>
 
 //         <motion.p 
@@ -51,7 +53,8 @@
 //           initial={{ opacity: 0, y: 50 }}
 //           animate={controls}
 //           transition={{ duration: 1, ease: 'easeInOut', delay: 0.6 }}
-//         >Our industry experts will mentor you through each step, helping you develop <strong>problem-solving </strong>abilities, coding best practices, and proficiency in <strong>modern frameworks and technologies</strong>. With Kidzian, you’ll not only learn to code, but also gain the confidence to apply your skills in real-world projects, preparing you to excel in the ever-evolving tech landscape.
+//         >
+//           Our industry experts will mentor you through each step, helping you develop <strong>problem-solving </strong>abilities, coding best practices, and proficiency in <strong>modern frameworks and technologies</strong>. With Kidzian, you’ll not only learn to code, but also gain the confidence to apply your skills in real-world projects, preparing you to excel in the ever-evolving tech landscape.
 //         </motion.p>
 
 //       </div>
@@ -61,7 +64,7 @@
 //           src={experts} 
 //           alt="" 
 //           className='rounded-3xl h-[70vh]' 
-//           initial={{ opacity: 0, scale: 0.8 }}
+//           initial={{ opacity: 0, scale: 0.8, x: 100 }}
 //           animate={controls}
 //           transition={{ duration: 1, ease: 'easeInOut' }}
 //         />
@@ -71,6 +74,11 @@
 // }
 
 // export default Feature1;
+
+
+
+
+
 
 
 
@@ -98,7 +106,7 @@ const Feature1 = () => {
         
         <motion.h1 
           className="bg-gradient-to-r from-[#6c6bf9] via-[#f56be0] to-[#926bf1] bg-clip-text capitalize text-transparent text-5xl font-semibold"
-          initial={{ opacity: 0, x: 100 }}
+          initial={{ opacity: 0, x: -100 }}
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut' }}
         >
@@ -107,7 +115,7 @@ const Feature1 = () => {
 
         <motion.p 
           className='mt-10'
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, x: -100 }}
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut', delay: 0.2 }}
         >
@@ -116,7 +124,7 @@ const Feature1 = () => {
 
         <motion.p 
           className='mt-10'
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, x: -100 }}
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut', delay: 0.4 }}
         >
@@ -125,7 +133,7 @@ const Feature1 = () => {
 
         <motion.p 
           className='mt-10'
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, x: -100 }}
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut', delay: 0.6 }}
         >
