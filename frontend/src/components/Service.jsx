@@ -103,7 +103,7 @@ const Service = () => {
       redirectLink: '/experts',
     },
     {
-      title: 'Learn at Your Own Pace',
+      title: 'Learn at Your Own Spped And Pace',
       paragraph: 'Learn at your own pace with our flexible self-paced programs.',
       image: <Laptop className="h-16 w-16 text-blue-500" />,
       buttonText: 'View Courses',
@@ -158,31 +158,32 @@ const Service = () => {
 
       {/* Cards Section */}
       <motion.div
-        className="flex flex-wrap justify-center gap-8 w-full px-10"
-        initial={{ opacity: 0, y: 50 }} // Start off-screen
-        animate={hasScrolled ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} // Animate when scrolled
-        transition={{ duration: 0.5, type: 'spring' }} // Smooth spring transition
+  className="flex flex-wrap justify-center gap-8 w-full px-10"
+  initial={{ opacity: 0, y: 50 }} // Start off-screen
+  animate={hasScrolled ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }} // Animate when scrolled
+  transition={{ duration: 0.5, type: 'spring' }} // Smooth spring transition
+>
+  {cardData.map((card, index) => (
+    <motion.div
+      key={index}
+      className="bg-white h-[45vh] w-[18vw] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer"
+      whileHover={{ scale: 1.1, boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)' }} // Interaction on hover
+    >
+      <div className="flex flex-col items-center gap-4 w-full"> {/* Ensures uniform internal spacing */}
+        {card.image}
+        <h1 className="text-black text-lg font-semibold">{card.title}</h1>
+        <p className="leading-tight text-sm text-left text-gray-500 h-10 truncate w-full">{card.paragraph}</p>
+      </div>
+      <button
+        className="mt-auto bg-gradient-to-r from-[#b21adf] to-[#f34e3e] text-white px-4 py-2 rounded-lg hover:opacity-90"
+        onClick={() => navigate(card.redirectLink)}
       >
-        {cardData.map((card, index) => (
-          <motion.div
-            key={index}
-            className="bg-white h-[45vh] w-[18vw] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer"
-            whileHover={{ scale: 1.1, boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)' }} // Interaction on hover
-          >
-            <div className="flex flex-col items-center gap-4"> {/* Ensures uniform internal spacing */}
-              {card.image}
-              <h1 className="text-black text-lg font-semibold">{card.title}</h1>
-              <p className="leading-tight text-sm text-left text-gray-500 h-10">{card.paragraph}</p>
-            </div>
-            <button
-              className="mt-auto bg-gradient-to-r from-[#b21adf] to-[#f34e3e] text-white px-4 py-2 rounded-lg hover:opacity-90"
-              onClick={() => navigate(card.redirectLink)}
-            >
-              {card.buttonText}
-            </button>
-          </motion.div>
-        ))}
-      </motion.div>
+        {card.buttonText}
+      </button>
+    </motion.div>
+  ))}
+</motion.div>
+
     </div>
   );
 };
