@@ -1,46 +1,3 @@
-// import React from 'react';
-// import { ChevronDown } from 'lucide-react';
-// import {useNavigate} from 'react-router-dom'
-// const Heading = () => {
-
-//   const navigate=useNavigate();
-
-//   return (
-//     <div className='h-[12.5vh] w-full flex items-center justify-between p-10 overflow-hidden sticky top-0 z-40 bg-[#ffffff]'>
-//       <div className='flex gap-2 items-center justify-center bg-[#ffffff]'>
-//         {/* Uncomment if you want to display the image */}
-//         {/* <img className='w-[12vw] h-[9vh] object-contain' src={girlImage} alt="" /> */}
-//         <h1 className='text-[23px] text-[#AA14F0] text-3xl tracking-tighter leading-[32px] font-bold'>
-//           Kidzian
-//         </h1>
-//       </div>
-
-//       <div className='flex gap-10 text-[#303030] tracking-tighter'>
-//         <ul className='flex gap-8 items-center justify-center font-semibold text-[17px]'>
-//           <li className='cursor-pointer hover:text-[#AA14F0]'  onClick={()=>navigate('/')}>Home</li>
-//           <li className='cursor-pointer hover:text-[#AA14F0]'>About</li>
-//           <li className='hover:text-[#AA14F0] flex gap-1 items-center justify-center cursor-pointer'
-//           onClick={()=>navigate('/courses')}
-//           >
-//             Courses
-//             <ChevronDown size={20} />
-//           </li>
-//           <li className='cursor-pointer hover:text-[#AA14F0]'>Careers</li>
-//           <li className='cursor-pointer hover:text-[#AA14F0]'>Blog</li>
-//         </ul>
-
-//         <button className='bg-[#AA14F0] text-white w-[10vw] h-[8vh] rounded-xl flex items-center justify-center hover:scale-105 transform transition-transform duration-300'>
-//           Contact us
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Heading;
-
-
-
 
 
 import React from 'react';
@@ -51,33 +8,36 @@ const Heading = () => {
     <div className='h-[12.5vh] w-full flex items-center justify-between p-10 overflow-hidden sticky top-0 z-40 bg-[#ffffff]'>
       <div className='flex gap-2 items-center justify-center bg-[#ffffff]'>
         <h1 className='text-[23px] text-[#AA14F0] text-3xl tracking-tighter leading-[32px] font-bold'>
-          Kidzian
+          Logo
         </h1>
       </div>
 
       <div className='flex gap-10 text-[#303030] tracking-tighter'>
         <ul className='flex gap-8 items-center justify-center font-semibold text-[17px]'>
-          <li className='cursor-pointer hover:text-[#AA14F0]'>
+          <li className='cursor-pointer hover:text-[#443ee3]'>
             <a href="/">Home</a>
           </li>
-          <li className='cursor-pointer hover:text-[#AA14F0]'>
-            <a href="/">About</a>
-          </li>
-          <li className='hover:text-[#AA14F0] flex gap-1 items-center justify-center cursor-pointer'>
+          <li className='hover:text-[#443ee3] flex gap-1 items-center justify-center cursor-pointer'>
             <a href="/courses">
               Courses
               {/* <ChevronDown size={20} /> */}
             </a>
           </li>
-          <li className='cursor-pointer hover:text-[#AA14F0]'>
-            <a href="/">Careers</a>
+          
+         
+          <li className='cursor-pointer hover:text-[#443ee3]'>
+            <a href="/">LMS</a>
           </li>
-          <li className='cursor-pointer hover:text-[#AA14F0]'>
+          {/* <li className='cursor-pointer hover:text-[#AA14F0]'>
             <a href="/">Blog</a>
+          </li> */}
+          <li className='cursor-pointer hover:text-[#443ee3]'>
+            <a href="/">About</a>
           </li>
         </ul>
+        
 
-        <button className='bg-[#AA14F0] text-white w-[10vw] h-[8vh] rounded-xl flex items-center justify-center hover:scale-105 transform transition-transform duration-300'>
+        <button className='bg-gradient-to-r from-cyan-400 to-blue-500 text-white w-[10vw] h-[8vh] rounded-xl flex items-center justify-center transform transition-transform duration-300'>
           Contact us
         </button>
       </div>

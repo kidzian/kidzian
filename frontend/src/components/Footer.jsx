@@ -8,9 +8,7 @@ const Footer = () => {
         {/* Section 1 */}
         <div className="flex items-start justify-center flex-col">
           <div className="h-[40vh]">
-            <h1 className="text-[23px] text-[#AA14F0] text-3xl tracking-tighter leading-[32px] font-bold mb-2">
-              Kidzian
-            </h1>
+           
             <p className="text-sm text-[#636363]">
             Kidzian unlocks the exciting world of coding and technology for children, empowering them to explore, create, and approach learning with confidence in today's digital age
             </p>
