@@ -55,26 +55,10 @@ const Gamified = () => {
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut', delay: 0.2 }}
         >
-          Kidzian adopts a gamified approach to learning that makes education not only engaging but also highly <strong>interactive</strong>. They design projects that resemble games, integrating elements such as challenges, rewards, and levels to encourage <strong>active participation</strong> and foster a <strong>deeper understanding of coding concepts</strong>.
+         Experience the joy of learning with <strong>Kidzian</strong>, where our gamified approach transforms education into an exciting adventure. Engage, play, and master skills like never before!"
         </motion.p>
 
-        <motion.p 
-          className='mt-10 text-[#606161]'
-          initial={{ opacity: 0, x: 100 }} // Starting from the right
-          animate={controls}
-          transition={{ duration: 1, ease: 'easeInOut', delay: 0.4 }}
-        >
-          By using gamification, Kidzian transforms traditional learning into a fun, competitive, and <strong>rewarding experience</strong>, where learners can earn points, badges, and progress through different stages. This approach not only keeps students motivated but also enhances <strong>critical thinking, problem-solving skills, and collaboration</strong> as they tackle real-world-like scenarios in a game-like environment.
-        </motion.p>
-
-        <motion.p 
-          className='mt-10 text-[#606161]'
-          initial={{ opacity: 0, x: 100 }} // Starting from the right
-          animate={controls}
-          transition={{ duration: 1, ease: 'easeInOut', delay: 0.6 }}
-        >
-          Through game-based projects, Kidzian <strong>empowers learners to experiment</strong>, fail, iterate, and succeed in a supportive, playful space, ensuring they gain practical coding expertise while having fun. This gamified methodology helps create a dynamic and engaging learning atmosphere, making education more accessible, memorable, and aligned with modern digital learning preferences.
-        </motion.p>
+        
       </div>
     </div>
   );

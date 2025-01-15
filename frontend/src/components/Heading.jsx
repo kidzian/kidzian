@@ -28,9 +28,12 @@ const Heading = () => {
           <li className='cursor-pointer hover:text-[#443ee3]'>
             <a href="/">LMS</a>
           </li>
-          {/* <li className='cursor-pointer hover:text-[#AA14F0]'>
+          <li className='cursor-pointer hover:text-[#443ee3]'>
             <a href="/">Blog</a>
-          </li> */}
+          </li>
+          <li className='cursor-pointer hover:text-[#443ee3]'>
+            <a href="/">Events</a>
+          </li>
           <li className='cursor-pointer hover:text-[#443ee3]'>
             <a href="/">About</a>
           </li>
@@ -38,7 +41,7 @@ const Heading = () => {
         
 
         <button className='bg-gradient-to-r from-cyan-400 to-blue-500 text-white w-[10vw] h-[8vh] rounded-xl flex items-center justify-center transform transition-transform duration-300'>
-          Contact us
+        <a href="/contact-us">Contact Us</a>
         </button>
       </div>
     </div>

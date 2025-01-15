@@ -4,6 +4,7 @@ import Courses from './pages/Courses'
 import LandingPage from './pages/LandingPage'
 import Landing from './pages/Landing'
 import { Routes,Route } from 'react-router-dom'
+import Contact from './pages/Contact'
 function App() {
   
 
@@ -12,6 +13,7 @@ function App() {
      <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/courses" element={<Courses/>}/>
+      <Route path="/contact-us" element={<Contact/>}/>
      </Routes>
     </>
   )
