@@ -26,7 +26,7 @@ const Heading = () => {
           
          
           <li className='cursor-pointer hover:text-[#443ee3]'>
-            <a href="/">LMS</a>
+            <a href="/lms">LMS</a>
           </li>
           <li className='cursor-pointer hover:text-[#443ee3]'>
             <a href="/">Blog</a>
