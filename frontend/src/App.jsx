@@ -5,9 +5,8 @@ import LandingPage from './pages/LandingPage'
 import Landing from './pages/Landing'
 import { Routes,Route } from 'react-router-dom'
 import Contact from './pages/Contact'
-
-import LMSCOURSE from './pages/LMSCOURSE.JSX'
-import LMS from './pages/LMS.JSX'
+import LMS from './pages/LMS'
+import LMSCOURSE from './pages/LMSCOURSE'
 function App() {
   
 
@@ -17,7 +16,7 @@ function App() {
       <Route path="/" element={<Landing />} />
       <Route path="/courses" element={<Courses/>}/>
       <Route path="/contact-us" element={<Contact/>}/>
-      {/* <Route path="/lms" element={<LMS/>}/> */}
+      <Route path="/lms" element={<LMS/>}/>
       <Route path="/:id1/:id2" element={<LMSCOURSE/>}/>
      </Routes>
     </>
