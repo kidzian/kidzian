@@ -28,10 +28,12 @@ const Footer = () => {
           <h1 className="text-[18px] tracking-tighter leading-[32px] font-bold mb-2">Company</h1>
           <ul className="flex flex-col gap-3 text-sm text-[#636363]">
             <li className="hover:text-black cursor-pointer">Home</li>
-            <li className="hover:text-black cursor-pointer">About</li>
             <li className="hover:text-black cursor-pointer">Courses</li>
-            <li className="hover:text-black cursor-pointer">Careers</li>
+            <li className="hover:text-black cursor-pointer">LMS</li>
             <li className="hover:text-black cursor-pointer">Blog</li>
+            <li className="hover:text-black cursor-pointer">Events</li>
+            <li className="hover:text-black cursor-pointer">About</li>
+            <li className="hover:text-black cursor-pointer">Contact Us</li>
           </ul>
         </div>
 
