@@ -73,8 +73,8 @@ const LMS = () => {
           {/* Header Section */}
           <div className="h-[15vh] flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold">Hello, Adit 👋</h1>
-              <p className="text-black">Welcome to Kidzian, check your learning stats</p>
+              <h1 className="text-2xl font-bold">Hello, Adit 👋</h1>
+              <p className="text-black text-sm">Welcome to Kidzian, check your learning stats</p>
             </div>
             <div className="flex gap-4">
 
@@ -82,7 +82,7 @@ const LMS = () => {
                 <img className="w-6" src={certificate} alt="" />
                 <div className="flex flex-col items-center leading-tight justify-center">
                   <h1 className="text-lg font-bold">2</h1>
-                  <h1 className="text-gray-700 text-sm">Certificates</h1>
+                  <h1 className="text-gray-700 text-xs">Certificates</h1>
                 </div>
               </div>
             </div>
@@ -94,7 +94,7 @@ const LMS = () => {
 
               <div className='flex justify-between w-full'>
               <h1 className="font-bold">In progress learning content</h1>
-              <a href="" className="underline text-[#5a4ff8] font-semibold text-base">
+              <a href="" className="underline text-[#5a4ff8] font-semibold text-sm">
                 View All
               </a>
               </div>
@@ -102,13 +102,13 @@ const LMS = () => {
    <div className='flex flex-col gap-1 mt-5'>
 
    <div
-      className="flex cursor-pointer w-full h-[16vh] rounded-md  p-2 shadow-md justify-around hover:bg-gray-100"
+      className="flex cursor-pointer w-full h-[16vh] rounded-md  p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
       onClick={handleCardClick}
     >
       <img src="https://kidzian.com/wp-content/uploads/2024/03/children-win-success-593313-1024x682.jpg" alt="" className="w-[10vw] rounded-md" />
       <div className="justify-center flex flex-col">
         <h1 className="text-gray-600">Course</h1>
-        <h1 className="font-bold">Mastering UI/UX Design</h1>
+        <h1 className="font-bold text-sm">Mastering UI/UX Design</h1>
       </div>
 
       <div className="justify-center flex flex-col">
@@ -132,7 +132,7 @@ const LMS = () => {
     </div>
 
     <div
-      className="flex cursor-pointer w-full h-[16vh] rounded-md  p-2 shadow-md justify-around hover:bg-gray-100"
+      className="flex cursor-pointer w-full h-[16vh] rounded-md  p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
       onClick={handleCardClick}
     >
       <img src="https://kidzian.com/wp-content/uploads/2023/11/child-student-video-conference-5976952-300x225.jpg" alt="" className="w-[10vw] rounded-md" />
@@ -180,7 +180,7 @@ const LMS = () => {
       value={taskInput}
       onChange={(e) => setTaskInput(e.target.value)}
       placeholder="Add a new task to do..."
-      className="rounded-md px-2 py-1 w-full focus:outline-none"
+      className="rounded-md px-2 py-1 w-full focus:outline-none text-sm"
     />
   </div>
 
@@ -189,7 +189,7 @@ const LMS = () => {
     {tasks.map((task, index) => (
       <div
         key={index}
-        className={`flex items-center gap-4 p-2 rounded-md border-b ${
+        className={`flex text-sm items-center gap-4 p-2 rounded-md border-b ${
           index === tasks.length - 1 ? "" : "border-gray-300"
         }`}
       >
@@ -231,10 +231,10 @@ const LMS = () => {
           </div>
      
 <div className="w-full mt-5 rounded-md">
-  <h1 className="text-xl font-bold">Browse other courses</h1>
+  <h1 className="font-bold">Browse other courses</h1>
   <div className="flex items-center justify-between mt-4">
     <div>
-      <ul className="flex gap-2">
+      <ul className="flex gap-2 text-sm">
         <li className="bg-[#dddfe1] p-2 flex items-center justify-center rounded-lg cursor-pointer">Web Development</li>
         <li className="bg-[#f7f6f7] text-[#767878] p-2 flex items-center justify-center rounded-lg cursor-pointer">App Development</li>
         <li className="bg-[#f7f6f7] text-[#767878] p-2 flex items-center justify-center rounded-lg cursor-pointer">Artificial Intelligence</li>
@@ -246,7 +246,7 @@ const LMS = () => {
       <input
         type="text"
         placeholder="Search courses"
-        className="w-72 p-2 pl-10 rounded-lg border border-gray-300 focus:outline-none"
+        className="w-72 p-2 pl-10 rounded-lg border border-gray-300 focus:outline-none text-sm"
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -304,7 +304,7 @@ const LMS = () => {
                     alt={course.title}
                     className="h-[200px] w-full rounded-lg object-cover mb-2"
                   />
-                  <p className="text-lg font-semibold text-[#303030]">
+                  <p className=" font-semibold text-[#303030]">
                     {course.title}
                   </p>
                 </motion.div>

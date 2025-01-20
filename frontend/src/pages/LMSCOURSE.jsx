@@ -12,7 +12,7 @@ const LMSCOURSE = () => {
          <div className='w-full h-[40vh] flex gap-1 items-center justify-between pl-2 pr-6'>
 
           <div>
-            <h1 className='text-3xl font-bold'>WebD Fundamentals & Best Practice</h1>
+            <h1 className='text-2xl font-bold'>WebD Fundamentals & Best Practice</h1>
               <div className='flex gap-3 mt-3'>
                 <button className='bg-[#f5f4f6] text-[#b5b6b7] text-sm rounded-lg w-[8.5vw] h-[4vh]'>Fundamental</button>
                 <button className='bg-[#f5f4f6] text-[#b5b6b7] text-sm rounded-lg w-[6vw] h-[4vh]'>Design</button>
@@ -33,7 +33,7 @@ const LMSCOURSE = () => {
                   </div>
                 </div>
 
-                <div className='p-4 h-[12vh] flex flex-col items-center justify-center'>
+                <div className='p-4 h-[12vh] flex flex-col items-center justify-center mt-[0.3vh]'>
                   <h3 className='text-[#b5b6b7]'> Avg Lecture Duration</h3>
                   <div>
            
@@ -58,7 +58,7 @@ const LMSCOURSE = () => {
               <div className='w-full h-[10vh] bg-gray-200 rounded-md p-4 flex items-center justify-between'>
               
                <div>
-               <h1 className='text-lg font-semibold text-gray-800'>Class 1</h1>
+               <h1 className='text-md font-semibold text-gray-800'>Class 1</h1>
                <p className='text-sm text-gray-600'>Understanding the fundamentals</p>
                </div>
 
@@ -71,7 +71,7 @@ const LMSCOURSE = () => {
               <div className='w-full h-[12vh] bg-gray-200 rounded-md p-4 flex items-center justify-between'>
               
               <div>
-              <h1 className='text-lg font-semibold text-gray-800'>Class 2</h1>
+              <h1 className='font-semibold text-gray-800'>Class 2</h1>
               <p className='text-sm text-gray-600'>Understanding the fundamentals</p>
               </div>
 
@@ -83,7 +83,7 @@ const LMSCOURSE = () => {
              <div className='w-full h-[12vh] bg-gray-200 rounded-md p-4 flex items-center justify-between'>
               
               <div>
-              <h1 className='text-lg font-semibold text-gray-800'>Class 3</h1>
+              <h1 className=' font-semibold text-gray-800'>Class 3</h1>
               <p className='text-sm text-gray-600'>Understanding the fundamentals</p>
               </div>
               <Check className='text-green-400 font-semibold'/>
@@ -92,19 +92,19 @@ const LMSCOURSE = () => {
              <div className='w-full h-[12vh] bg-gray-200 rounded-md p-4 flex items-center justify-between'>
               
               <div>
-              <h1 className='text-lg font-semibold text-gray-800'>Class 4</h1>
+              <h1 className='font-semibold text-gray-800'>Class 4</h1>
               <p className='text-sm text-gray-600'>Understanding the fundamentals</p>
               </div>
-              <CalendarClock className='text-red-400 font-semibold'/>
+              <CalendarClock size={20} className='text-red-400 font-semibold'/>
              </div>
 
              <div className='w-full h-[12vh] bg-gray-200 rounded-md p-4 flex items-center justify-between'>
               
               <div>
-              <h1 className='text-lg font-semibold text-gray-800'>Class 5</h1>
+              <h1 className='font-semibold text-gray-800'>Class 5</h1>
               <p className='text-sm text-gray-600'>Understanding the fundamentals</p>
               </div>
-              <CalendarClock className='text-red-400 font-semibold'/>
+              <CalendarClock size={20} className='text-red-400 font-semibold'/>
              </div>
 
              
@@ -117,7 +117,7 @@ const LMSCOURSE = () => {
               <div className='w-[25%]'>
               <div className='flex flex-col gap-2 w-full'>
          <div className='w-[18vw] h-[25vh] flex flex-col items-start rounded-3xl border border-gray-200 p-4 gap-4 justify-center'>
-            <h1 className='text-xl font-semibold'>Attendance</h1>
+            <h1 className='text-lg font-semibold'>Attendance</h1>
             <div className='flex gap-2 text-3xl items-center justify-center'>
               <Clock className='text-blue-500' size={40}/>
               19/20
@@ -126,8 +126,8 @@ const LMSCOURSE = () => {
           </div>
 
           <div className='w-[18vw] h-[40vh] rounded-3xl flex flex-col gap-2 border-gray-200 border p-4'>
-            <h1 className='text-lg font-bold'>Progress Statistics</h1>
-            <h1 className='text-5xl'>80%</h1>
+            <h1 className='text-lg font-semibold'>Progress Statistics</h1>
+            <h1 className='text-4xl'>80%</h1>
 
             <div className='flex gap-1'>
               <div className=' w-[7vw] h-[17vh] bg-[#f7f8fa] flex flex-col items-center justify-center rounded-md'>

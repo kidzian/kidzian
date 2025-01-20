@@ -56,7 +56,7 @@ const Courses = () => {
             />
             <div className="flex flex-col items-start w-[45vw]">
               <motion.h1
-                className="text-4xl font-extrabold text-[#303030] mb-4 capitalize"
+                className="text-3xl font-extrabold text-[#303030] mb-4 capitalize"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.2 }}
@@ -64,7 +64,7 @@ const Courses = () => {
                 Coding Courses For Kids and Teens
               </motion.h1>
               <motion.p
-                className="text-lg text-[#606060] font-semibold"
+                className=" text-[#606060] font-semibold"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.3 }}
@@ -72,7 +72,7 @@ const Courses = () => {
                 Learn to code, build projects, and have fun!
               </motion.p>
               <motion.p
-                className="text-lg text-[#606060] font-semibold mb-4"
+                className=" text-[#606060] font-semibold mb-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.4 }}
@@ -82,7 +82,7 @@ const Courses = () => {
               <motion.input
                 type="text"
                 placeholder="Search courses..."
-                className="w-[35vw] p-3 rounded-lg border border-gray-300 shadow-sm bg-[#F0F2F5] focus:outline-none focus:ring-2 focus:ring-[#AA14F0] transition"
+                className="w-[35vw] p-3 rounded-lg border border-gray-300 shadow-sm bg-[#F0F2F5] focus:outline-none focus:ring-2 focus:ring-[#AA14F0] transition text-sm"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.5 }}
@@ -129,7 +129,7 @@ const Courses = () => {
                     alt={course.title}
                     className="h-[200px] w-full rounded-lg object-cover mb-2"
                   />
-                  <p className="text-lg font-semibold text-[#303030]">
+                  <p className="font-semibold text-[#303030]">
                     {course.title}
                   </p>
                 </motion.div>
