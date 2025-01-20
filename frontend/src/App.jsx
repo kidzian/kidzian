@@ -6,6 +6,7 @@ import Landing from './pages/Landing'
 import { Routes,Route } from 'react-router-dom'
 import Contact from './pages/Contact'
 import LMS from './pages/LMS'
+import About from './pages/About'
 import LMSCOURSE from './pages/LMSCOURSE'
 function App() {
   
@@ -18,6 +19,7 @@ function App() {
       <Route path="/contact-us" element={<Contact/>}/>
       <Route path="/lms" element={<LMS/>}/>
       <Route path="/:id1/:id2" element={<LMSCOURSE/>}/>
+      <Route path="/about-us" element={<About/>}/>
      </Routes>
     </>
   )

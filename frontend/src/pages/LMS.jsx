@@ -78,18 +78,11 @@ const LMS = () => {
             </div>
             <div className="flex gap-4">
 
-              <div className="flex items-center justify-center gap-2 border border-gray-300 rounded-md h-[8.5vh] w-[12vw]">
-                <Coins className="text-[#feb105]" size={30} />
-                <div className="flex flex-col items-center leading-tight justify-center">
-                  <h1 className="text-lg font-bold">50</h1>
-                  <h1 className="text-gray-700">Points</h1>
-                </div>
-              </div>
-              <div className="flex items-center justify-center gap-2 border border-gray-300 rounded-md h-[8.5vh] w-[12vw]">
+              <div className="flex items-center justify-center gap-2 border border-gray-300 rounded-md h-[7vh] w-[12vw] cursor-pointer hover:bg-gray-100">
                 <img className="w-6" src={certificate} alt="" />
                 <div className="flex flex-col items-center leading-tight justify-center">
                   <h1 className="text-lg font-bold">2</h1>
-                  <h1 className="text-gray-700">Certificates</h1>
+                  <h1 className="text-gray-700 text-sm">Certificates</h1>
                 </div>
               </div>
             </div>
@@ -109,10 +102,10 @@ const LMS = () => {
    <div className='flex flex-col gap-1 mt-5'>
 
    <div
-      className="flex cursor-pointer w-full h-[16vh] rounded-md border p-2 border-gray-300 justify-around hover:bg-gray-100"
+      className="flex cursor-pointer w-full h-[16vh] rounded-md  p-2 shadow-md justify-around hover:bg-gray-100"
       onClick={handleCardClick}
     >
-      <img src="" alt="" className="bg-red-400 w-[10vw] rounded-md" />
+      <img src="https://kidzian.com/wp-content/uploads/2024/03/children-win-success-593313-1024x682.jpg" alt="" className="w-[10vw] rounded-md" />
       <div className="justify-center flex flex-col">
         <h1 className="text-gray-600">Course</h1>
         <h1 className="font-bold">Mastering UI/UX Design</h1>
@@ -132,17 +125,17 @@ const LMS = () => {
       </div>
 
       <div className="justify-center flex flex-col">
-        <button className="border-2 h-10 w-16 rounded-lg font-bold">
-          Start
+        <button className="border-2 h-10 w-16 rounded-lg font-bold ">
+          View
         </button>
       </div>
     </div>
 
     <div
-      className="flex cursor-pointer w-full h-[16vh] rounded-md border p-2 border-gray-300 justify-around hover:bg-gray-100"
+      className="flex cursor-pointer w-full h-[16vh] rounded-md  p-2 shadow-md justify-around hover:bg-gray-100"
       onClick={handleCardClick}
     >
-      <img src="" alt="" className="bg-red-400 w-[10vw] rounded-md" />
+      <img src="https://kidzian.com/wp-content/uploads/2023/11/child-student-video-conference-5976952-300x225.jpg" alt="" className="w-[10vw] rounded-md" />
       <div className="justify-center flex flex-col">
         <h1 className="text-gray-600">Course</h1>
         <h1 className="font-bold">Mastering UI/UX Design</h1>
@@ -163,7 +156,7 @@ const LMS = () => {
 
       <div className="justify-center flex flex-col">
         <button className="border-2 h-10 w-16 rounded-lg font-bold">
-          Start
+          View
         </button>
       </div>
     </div>
@@ -176,7 +169,7 @@ const LMS = () => {
    
             </div>
 
-            <div className="w-[27%] h-[39.8vh] border border-gray-300 p-4 rounded-lg flex flex-col justify-between hide-scrollbar">
+            <div className="w-[27%] h-[39.8vh] shadow-md border p-4 rounded-lg flex flex-col justify-between hide-scrollbar">
 
 
   {/* Input and Add Button */}

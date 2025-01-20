@@ -10,6 +10,7 @@ import GlobalTech from '../components/GlobalTech'
 import Feature1 from '../components/Feature1'
 import Gamified from '../components/Gamified'
 import Faq from '../components/Faq'
+import Testimonials from '../components/Testimonials'
 const Landing = () => {
   return (
     <div className="w-[100vw] h-auto">
@@ -20,6 +21,7 @@ const Landing = () => {
       <GlobalTech/>
       <Feature1/>
       <Gamified/>
+      <Testimonials/>
       <Faq/>
       <Footer/>
     </div>
