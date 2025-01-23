@@ -32,20 +32,19 @@ const Heading = () => {
             <a href="/lms">LMS</a>
           </li>
           <li className='cursor-pointer hover:text-[#443ee3]'>
-            <a href="/">Blog</a>
+            <a href="/blogs">Blog</a>
           </li>
           <li className='cursor-pointer hover:text-[#443ee3]'>
-            <a href="/">Events</a>
+            <a href="/events">Events</a>
           </li>
           <li className='cursor-pointer hover:text-[#443ee3]'>
             <a href="/about-us">About</a>
           </li>
         </ul>
         
-
-        <button className='bg-gradient-to-r from-cyan-400 to-blue-500 text-white w-[10vw] h-[8vh] rounded-xl flex items-center justify-center transform transition-transform duration-300'>
-        <a href="/contact-us">Contact Us</a>
-        </button>
+        <a href="/contact-us">
+        <button className='bg-gradient-to-r from-cyan-400 to-blue-500 text-white w-[10vw] h-[8vh] rounded-xl flex items-center justify-center transform transition-transform duration-300'>Contact Us</button>
+        </a>
       </div>
     </div>
   );

@@ -8,6 +8,9 @@ import Contact from './pages/Contact'
 import LMS from './pages/LMS'
 import About from './pages/About'
 import LMSCOURSE from './pages/LMSCOURSE'
+import Events from './pages/Events'
+import Blog from './pages/Blog'
+import BlogDetail from './components/BlogDetail'
 function App() {
   
 
@@ -20,6 +23,9 @@ function App() {
       <Route path="/lms" element={<LMS/>}/>
       <Route path="/:id1/:id2" element={<LMSCOURSE/>}/>
       <Route path="/about-us" element={<About/>}/>
+      <Route path="/events" element={<Events/>}/>
+      <Route path="/blogs" element={<Blog/>}/>
+      <Route path="/blog/:id" element={<BlogDetail/>}/>
      </Routes>
     </>
   )

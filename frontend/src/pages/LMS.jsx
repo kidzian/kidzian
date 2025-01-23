@@ -102,37 +102,42 @@ const LMS = () => {
    <div className='flex flex-col gap-1 mt-5'>
 
    <div
-      className="flex cursor-pointer w-full h-[16vh] rounded-md  p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
-      onClick={handleCardClick}
-    >
-      <img src="https://kidzian.com/wp-content/uploads/2024/03/children-win-success-593313-1024x682.jpg" alt="" className="w-[10vw] rounded-md" />
-      <div className="justify-center flex flex-col">
-        <h1 className="text-gray-600">Course</h1>
-        <h1 className="font-bold text-sm">Mastering UI/UX Design</h1>
-      </div>
+  className="group flex cursor-pointer w-full h-[16vh] rounded-md p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
+  onClick={handleCardClick}
+>
+  <img
+    src="https://kidzian.com/wp-content/uploads/2024/03/children-win-success-593313-1024x682.jpg"
+    alt=""
+    className="w-[10vw] rounded-md"
+  />
+  <div className="justify-center flex flex-col">
+    <h1 className="text-gray-600">Course</h1>
+    <h1 className="font-bold text-sm">Mastering UI/UX Design</h1>
+  </div>
 
-      <div className="justify-center flex flex-col">
-        <h1 className="text-gray-600">Starting Date</h1>
-        <h1 className="font-bold">16 Dec</h1>
-      </div>
+  <div className="justify-center flex flex-col">
+    <h1 className="text-gray-600">Starting Date</h1>
+    <h1 className="font-bold">16 Dec</h1>
+  </div>
 
-      <div className="justify-center flex flex-col">
-        <h1 className="text-gray-600">Completion</h1>
-        <div className="flex gap-2 items-center">
-          <span className="w-[1.5vw] h-[1.5vw] border-2 rounded-full border-green-500"></span>
-          <h1 className="font-bold">100%</h1>
-        </div>
-      </div>
-
-      <div className="justify-center flex flex-col">
-        <button className="border-2 h-10 w-16 rounded-lg font-bold ">
-          View
-        </button>
-      </div>
+  <div className="justify-center flex flex-col">
+    <h1 className="text-gray-600">Completion</h1>
+    <div className="flex gap-2 items-center">
+      <span className="w-[1.5vw] h-[1.5vw] border-2 rounded-full border-green-500"></span>
+      <h1 className="font-bold">100%</h1>
     </div>
+  </div>
+
+  <div className="justify-center flex flex-col">
+    <button className="border-2 h-10 w-16 rounded-lg font-bold group-hover:bg-gray-200 transition-colors">
+      View
+    </button>
+  </div>
+</div>
+
 
     <div
-      className="flex cursor-pointer w-full h-[16vh] rounded-md  p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
+      className="flex group cursor-pointer w-full h-[16vh] rounded-md  p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
       onClick={handleCardClick}
     >
       <img src="https://kidzian.com/wp-content/uploads/2023/11/child-student-video-conference-5976952-300x225.jpg" alt="" className="w-[10vw] rounded-md" />
@@ -155,7 +160,7 @@ const LMS = () => {
       </div>
 
       <div className="justify-center flex flex-col">
-        <button className="border-2 h-10 w-16 rounded-lg font-bold">
+        <button className="border-2 h-10 w-16 rounded-lg font-bold group-hover:bg-gray-200">
           View
         </button>
       </div>

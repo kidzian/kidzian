@@ -6,6 +6,7 @@ import { FaLightbulb } from "react-icons/fa6";
 import { FaStar } from "react-icons/fa6";
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
+import about from '../assets/about-us.jpg';
 const About = () => {
   return (
     <div>
@@ -13,7 +14,7 @@ const About = () => {
       <div className='flex w-[100vw] h-[87.5vh] justify-center'>
           
             <div className=' w-[40%] h-full flex flex-col items-start justify-center '>
-               
+               <img src={about} alt="" className='h-[80vh] w-[90%] rounded-xl'/>
             </div>
 
             <div className="w-[40%] h-full flex flex-col items-start justify-center gap-2">

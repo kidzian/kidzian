@@ -16,7 +16,7 @@ const Landing = () => {
     <div className="w-[100vw] h-auto">
       <Heading/>
       <Hero3/>
-      <ChooseGrade/>
+     
       <Service/>
       <GlobalTech/>
       <Feature1/>
