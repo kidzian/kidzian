@@ -22,7 +22,7 @@ const Service = () => {
       paragraph: 'Learn at your own pace with our flexible self-paced programs.',
       image: <Laptop className="h-16 w-16 text-blue-500" />,
       buttonText: 'View Courses',
-      redirectLink: '/self-paced',
+      redirectLink: '/courses',
     },
     {
       title: 'Learn the Latest Technology',
@@ -79,7 +79,8 @@ const Service = () => {
   transition={{ duration: 0.5, type: 'spring' }} // Smooth spring transition
 >
   {cardData.map((card, index) => (
-    <motion.div
+   <a key={index} href={`${card.redirectLink}`}>
+     <motion.div
       key={index}
       className="bg-white h-[45vh] w-[18vw] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer"
       whileHover={{ scale: 1.1, boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)' }} // Interaction on hover
@@ -91,11 +92,12 @@ const Service = () => {
       </div>
       <button
         className="mt-auto bg-gradient-to-r from-[#b21adf] to-[#f34e3e] text-white px-4 py-2 rounded-lg hover:opacity-90"
-        onClick={() => navigate(card.redirectLink)}
+        
       >
         {card.buttonText}
       </button>
     </motion.div>
+   </a>
   ))}
 </motion.div>
 

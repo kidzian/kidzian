@@ -27,13 +27,27 @@ const Footer = () => {
         <div className="flex items-start justify-center flex-col">
           <h1 className="text-[18px] tracking-tighter leading-[32px] font-bold mb-2">Company</h1>
           <ul className="flex flex-col gap-3 text-sm text-[#636363]">
-            <li className="hover:text-black cursor-pointer">Home</li>
-            <li className="hover:text-black cursor-pointer">Courses</li>
-            <li className="hover:text-black cursor-pointer">LMS</li>
-            <li className="hover:text-black cursor-pointer">Blog</li>
-            <li className="hover:text-black cursor-pointer">Events</li>
-            <li className="hover:text-black cursor-pointer">About</li>
-            <li className="hover:text-black cursor-pointer">Contact Us</li>
+           <a href="/">
+  <li className="hover:text-black cursor-pointer">Home</li>
+</a>
+<a href="/courses">
+  <li className="hover:text-black cursor-pointer">Courses</li>
+</a>
+<a href="/lms">
+  <li className="hover:text-black cursor-pointer">LMS</li>
+</a>
+<a href="/blogs">
+  <li className="hover:text-black cursor-pointer">Blog</li>
+</a>
+<a href="/events">
+  <li className="hover:text-black cursor-pointer">Events</li>
+</a>
+<a href="/about-us">
+  <li className="hover:text-black cursor-pointer">About</li>
+</a>
+<a href="/contact-us">
+  <li className="hover:text-black cursor-pointer">Contact Us</li>
+</a>
           </ul>
         </div>
 
@@ -41,26 +55,36 @@ const Footer = () => {
         <div className="flex items-start justify-center flex-col">
           <h1 className="text-[18px] tracking-tighter leading-[32px] font-bold mb-2">Follow Us</h1>
           <ul className="flex flex-col gap-3 text-sm text-[#636363]">
-            <li className="flex items-center justify-start gap-4 hover:text-black cursor-pointer">
-              <Instagram size={15} />
-              Instagram
-            </li>
-            <li className="flex items-center justify-start gap-4 hover:text-black cursor-pointer">
-              <Facebook size={15} />
-              Facebook
-            </li>
-            <li className="flex items-center justify-start gap-4 hover:text-black cursor-pointer">
-              <Linkedin size={15} />
-              Linkedin
-            </li>
-            <li className="flex items-center justify-start gap-4 hover:text-black cursor-pointer">
-              <Youtube size={15} />
-              Youtube
-            </li>
-            <li className="flex items-center justify-start gap-4 hover:text-black cursor-pointer">
-              <Star size={15} />
-              Google
-            </li>
+          <a href="https://www.instagram.com/kidzians/" target="_blank" rel="noopener noreferrer">
+  <li className="flex items-center justify-start gap-4 hover:text-black cursor-pointer">
+    <Instagram size={15} />
+    Instagram
+  </li>
+</a>
+<a href="https://www.facebook.com/people/Kidzian/100090913967070/" target="_blank" rel="noopener noreferrer">
+  <li className="flex items-center justify-start gap-4 hover:text-black cursor-pointer">
+    <Facebook size={15} />
+    Facebook
+  </li>
+</a>
+<a href="https://in.linkedin.com/company/kidzian?trk=public_post_feed-actor-name" target="_blank" rel="noopener noreferrer">
+  <li className="flex items-center justify-start gap-4 hover:text-black cursor-pointer">
+    <Linkedin size={15} />
+    Linkedin
+  </li>
+</a>
+<a href="https://www.youtube.com/@kidzian-n4y" target="_blank" rel="noopener noreferrer">
+  <li className="flex items-center justify-start gap-4 hover:text-black cursor-pointer">
+    <Youtube size={15} />
+    Youtube
+  </li>
+</a>
+<a href="https://maps.app.goo.gl/PEhEBVdNzC44nVY47" target="_blank" rel="noopener noreferrer">
+  <li className="flex items-center justify-start gap-4 hover:text-black cursor-pointer">
+    <Star size={15} />
+    Google
+  </li>
+</a>
           </ul>
         </div>
 

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import Heading from '../components/Heading';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react'; // Import SVG
-
+import Footer from '../components/Footer';
+import events from '../assets/events.jpg'
 // Mock hackathon data
 const hackathons = [
   {
@@ -104,14 +105,14 @@ const Events = () => {
     <div>
       <Heading />
       <div className='flex flex-col items-center justify-center'>
-        <div className='w-[80vw] h-[82vh] flex gap-2'>
+        <div className='w-[80vw] h-[82vh] flex gap-2 '>
           <motion.div
             className='h-[80vh] w-[50%] flex items-center justify-center'
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: 'easeInOut' }}
           >
-            <img className='rounded-2xl' src="https://cdn.dribbble.com/users/1731254/screenshots/15807927/media/ff4c032ae5fb7d05835cda28e390b287.png?resize=768x576&vertical=center" alt="Hackathon Illustration" />
+            <img className='rounded-xl w-[92%] h-[95%] mt-10' src={events} alt="Hackathon Illustration" />
           </motion.div>
 
           <motion.div
@@ -208,6 +209,7 @@ const Events = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import Heading from './Heading';
+import Footer from './Footer';
 
 const blogs = [
   {
@@ -131,7 +132,9 @@ const BlogDetail = () => {
             </div>
           </div>
         </div>
+       
       </div>
+    
     </div>
   );
 };

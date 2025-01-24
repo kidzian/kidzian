@@ -2,6 +2,7 @@ import React from 'react'
 import BlogTile from '../components/BlogTile';
 import Heading from '../components/Heading';
 import { Link } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const blogs = [
     {
@@ -233,7 +234,9 @@ const Blog = () => {
           <BlogTile key={blog.id} blog={blog} />
         ))}
       </div>
+      <Footer/>
     </div>
+    
     </div>
   )
 }
