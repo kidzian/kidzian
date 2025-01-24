@@ -2,7 +2,8 @@ const express=require('express')
 const mongoose =require('mongoose')
 const cookieParser=require('cookie-parser')
 const cors=require('cors')
-const Course=require('./models/course')
+
+const Course=require('./models/Course.js')
 
 require('dotenv').config()
 
