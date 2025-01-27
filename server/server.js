@@ -1,90 +1,45 @@
-const express=require('express')
-const mongoose =require('mongoose')
-const cookieParser=require('cookie-parser')
-const cors=require('cors')
+const express = require('express');
+const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+const Course = require('./models/Course.js'); // Import the Course model
 
-const Course=require('./models/Course.js')
+require('dotenv').config();
 
-require('dotenv').config()
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => {
+    console.log('MongoDB connected');
+  })
+  .catch((error) => console.log(error));
 
-mongoose.connect(process.env.MONGO_URL)
-.then(()=>{
-    console.log("mongodb connected");
-}) 
-.catch((error)=>console.log(error));
-
-const newCourse = new Course({
-    title: 'Java Course',
-    image: 'https://kidzian.com/wp-content/uploads/2024/06/coding4-300x174.jpg',
-    pdf: 'https://example.com/course.pdf',
-    ageGroup: '13-17',
-    about: [
-        'Introduction to Java',
-        'Learn the basic syntax and data types in Java.',
-        'Understand and use conditional statements in Java.',
-        'Introduction to for, while, and do-while loops.',
-        'Introduction to arrays: declaration, initialization, and accessing elements.',
-        'Introduction to String class and its methods.',
-        'Introduction to methods: declaration, calling, and parameters.',
-        'Introduction to recursion and its applications.',
-        'Understand the basics of OOP and create classes and objects.',
-        'Learn about constructors and method overloading.',
-        'Introduction to inheritance: extends keyword and superclass-subclass relationship.',
-        'Introduction to polymorphism and method overriding.',
-        'Develop Games and projects using learned concepts',
-        'Platform - Replit and more',
-      ]
-      
-      
-      ,
-    learningOutcomes: [
-       'Java Development Certificate',
-      'Scholarship and Trophy for top 3 performers'
-    ]
-  });
-
-//   newCourse.save()
-//   .then(course => console.log('Course created:', course))
-//   .catch(error => console.error('Error creating course:', error));
-
-const app=express()
-const PORT=process.env.PORT || 5000
+const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(
-    cors({
-        origin:process.env.CLIENT_BASE_URL,
-        methods: ['GET', 'POST','DELETE','PUT'],
-        allowedHeaders:[
-            "Content-Type",
-            "Authorization",
-            'Cache-Control',
-            'Expires',
-            'Pragma'
-        ],
-        credentials: true
-    })
+  cors({
+    origin: process.env.CLIENT_BASE_URL,
+    methods: ['GET', 'POST', 'DELETE', 'PUT'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cache-Control', 'Expires', 'Pragma'],
+    credentials: true,
+  })
 );
 
 app.use(cookieParser());
 app.use(express.json());
 
-app.post('/api/submit-form', (req, res) => {
-    console.log("request reached here")
-    const { name, phone, course, grade } = req.body;
-  
-    // Validate and process the data
-    if (!name || !phone || !course || !grade) {
-      return res.status(400).json({ message: 'All fields are required.' });
-    }
-  
-    console.log('Received form data:', { name, phone, course, grade });
-  
-    // Example response
-    return res.status(200).json({ message: 'Form submitted successfully!' });
-  });
+// GET endpoint to fetch all courses
+app.get('/api/courses', async (req, res) => {
+  try {
+    const courses = await Course.find(); // Fetch all courses from the database
+    res.status(200).json(courses); // Return the courses as JSON
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Error fetching courses' });
+  }
+});
 
-app.listen(PORT,()=>console.log(`Server is now listening on ${PORT}`))
-
+app.listen(PORT, () => console.log(`Server is now listening on ${PORT}`));
 
 // const express = require('express');
 // const mongoose = require('mongoose');

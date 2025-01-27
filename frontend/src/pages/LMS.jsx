@@ -1,40 +1,31 @@
 import React, { useState } from 'react';
 import Heading from '../components/Heading';
 import certificate from '../assets/certificate.svg';
-import { Circle, Coins } from 'lucide-react';
 import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Minecraft from '../assets/Minecraft.jpg';
-import Roblox from '../assets/Roblox.jpg';
-import Webd from '../assets/Webd.jpg';
 import { motion } from 'framer-motion';
 import Footer from '../components/Footer';
-
-const courseData = [
-  { title: 'Minecraft Coding', image: Minecraft },
-  { title: 'Roblox Development', image: Roblox },
-  { title: 'Web Development', image: Webd },
-  { title: 'Python For Beginners', image: Minecraft },
-  { title: 'Minecraft Coding', image: Minecraft },
-  { title: 'Roblox Development', image: Roblox },
-  { title: 'Web Development', image: Webd },
-  { title: 'Python For Beginners', image: Minecraft },
-  { title: 'Minecraft Coding', image: Minecraft },
-  { title: 'Roblox Development', image: Roblox },
-  { title: 'Web Development', image: Webd },
-  { title: 'Python For Beginners', image: Minecraft },
-  { title: 'Minecraft Coding', image: Minecraft },
-  { title: 'Roblox Development', image: Roblox },
-  { title: 'Web Development', image: Webd },
-  { title: 'Python For Beginners', image: Minecraft } // Replace with another image if needed
-  // Add more courses here
-];
-
+import { useEffect } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 const LMS = () => {
   const [tasks, setTasks] = useState([
     { text: "Attend WebD class", completed: false },
     { text: "Attend AI/ML class", completed: false },
   ]);
+
+  const [isTokenPresent, setIsTokenPresent] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState({
+      name: '',
+      address: '',
+      email: '',
+      password: '',
+      age: '',
+      phoneNumber: '',
+      grade: ''
+    });
+
   const [taskInput, setTaskInput] = useState("");
 
   const addTask = () => {
@@ -58,16 +49,94 @@ const LMS = () => {
 
   const navigate = useNavigate();
 
-  const handleCardClick = () => {
+  const handleCardClicks = () => {
     const firstId = "course123"; // Replace with dynamic ID logic
     const secondId = "uiux456";  // Replace with dynamic ID logic
     navigate(`/${firstId}/${secondId}`);
   };
 
+  const handleCardClick = (course) => {
+    setSelectedCourse(course);
+  };
+
+  const handleDownload = (pdfUrl) => {
+    window.open(pdfUrl, '_blank');
+  };
+
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [courseData, setCourseData] = useState([]); // State to hold courses data
+  const [searchQuery, setSearchQuery] = useState(''); 
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    console.log(searchQuery)
+  };
+
+  // Filter courses based on the search query
+  const filteredCourses = courseData.filter(course =>
+    course.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
+  // useEffect(() => {
+  //   // Fetch courses data from the backend API
+  //   const fetchCourses = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:5000/api/courses'); // Assuming your backend is running on localhost:5000
+  //       console.log(response.data)
+  //       setCourseData(response.data); // Set the courses data
+  //     } catch (error) {
+  //       console.log('Error fetching courses:', error);
+  //     }
+  //   };
+
+  //   fetchCourses(); // Call the fetch function when the component mounts
+  // }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Check if the JWT token is present in the cookies
+      const token = Cookies.get('jwt');
+      if (token) {
+        setIsTokenPresent(true);
+      } else {
+        setIsModalOpen(true); // Show modal if token is not present
+      }
+
+      // Fetch courses data from the backend API
+      try {
+        const response = await axios.get('http://localhost:5000/api/courses');
+        console.log(response.data);
+        setCourseData(response.data); // Set the courses data
+      } catch (error) {
+        console.log('Error fetching courses:', error);
+      }
+    };
+
+    fetchData(); // Call the fetch function when the component mounts
+  }, []);
+
+   const handleInputChang = (e) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value
+      }));
+    };
+  
+    const handleSubmi = (e) => {
+      e.preventDefault();
+      // Assuming the login/signup is successful for now
+      Cookies.set('jwt', 'sample-jwt-token'); // Set JWT token in cookies
+      setIsModalOpen(false);
+      setIsTokenPresent(true);
+    };
+
   return (
     <div>
-      <Heading />
 
+<div className={`${isTokenPresent ? '' : 'filter blur-sm pointer-events-none'} p-4`}>
+<Heading />
       <div className="flex flex-col items-center">
         <div className="w-[80vw] p-1">
           {/* Header Section */}
@@ -103,7 +172,7 @@ const LMS = () => {
 
    <div
   className="group flex cursor-pointer w-full h-[16vh] rounded-md p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
-  onClick={handleCardClick}
+  onClick={handleCardClicks}
 >
   <img
     src="https://kidzian.com/wp-content/uploads/2024/03/children-win-success-593313-1024x682.jpg"
@@ -138,7 +207,7 @@ const LMS = () => {
 
     <div
       className="flex group cursor-pointer w-full h-[16vh] rounded-md  p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
-      onClick={handleCardClick}
+      onClick={handleCardClicks}
     >
       <img src="https://kidzian.com/wp-content/uploads/2023/11/child-student-video-conference-5976952-300x225.jpg" alt="" className="w-[10vw] rounded-md" />
       <div className="justify-center flex flex-col">
@@ -240,10 +309,11 @@ const LMS = () => {
   <div className="flex items-center justify-between mt-4">
     <div>
       <ul className="flex gap-2 text-sm">
-        <li className="bg-[#dddfe1] p-2 flex items-center justify-center rounded-lg cursor-pointer">Web Development</li>
-        <li className="bg-[#f7f6f7] text-[#767878] p-2 flex items-center justify-center rounded-lg cursor-pointer">App Development</li>
-        <li className="bg-[#f7f6f7] text-[#767878] p-2 flex items-center justify-center rounded-lg cursor-pointer">Artificial Intelligence</li>
-        <li className="bg-[#f7f6f7] text-[#767878] p-2 flex items-center justify-center rounded-lg cursor-pointer">Java</li>
+      <li className="bg-[#dddfe1] p-2 flex items-center justify-center rounded-lg cursor-pointer" onClick={()=>setSearchQuery('')}>All</li>
+        <li className="bg-[#f7f6f7] text-[#767878] p-2 flex items-center justify-center rounded-lg cursor-pointer"  onClick={()=>setSearchQuery('Web')}>Web Development</li>
+        <li onClick={()=>setSearchQuery('App')} className="bg-[#f7f6f7] text-[#767878] p-2 flex items-center justify-center rounded-lg cursor-pointer">App Development</li>
+        <li onClick={()=>setSearchQuery('Artificial')} className="bg-[#f7f6f7] text-[#767878] p-2 flex items-center justify-center rounded-lg cursor-pointer">Artificial Intelligence</li>
+        <li onClick={()=>setSearchQuery('Java')} className="bg-[#f7f6f7] text-[#767878] p-2 flex items-center justify-center rounded-lg cursor-pointer">Java</li>
       </ul>
     </div>
 
@@ -251,6 +321,8 @@ const LMS = () => {
       <input
         type="text"
         placeholder="Search courses"
+        value={searchQuery}
+        onChange={handleSearchChange}
         className="w-72 p-2 pl-10 rounded-lg border border-gray-300 focus:outline-none text-sm"
       />
       <svg
@@ -271,51 +343,114 @@ const LMS = () => {
   </div>
 
   <div className='w-full p-1'>
-  <motion.div
-            className="w-full"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.6 }}
-          >
-          
-            <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                hidden: { opacity: 0, y: 50 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: {
-                    staggerChildren: 0.1,
-                  },
-                },
-              }}
-            >
-              {courseData.map((course, index) => (
+      {/* Courses Section */}
+              <motion.div
+                className="w-full"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.6 }}
+              >
+              
                 <motion.div
-                  key={index}
-                  className="bg-white w-[14.5vw] flex flex-col items-center rounded-xl  cursor-pointer"
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-2"
+                  initial="hidden"
+                  animate="visible"
                   variants={{
-                    hidden: { opacity: 0, scale: 0.9 },
-                    visible: { opacity: 1, scale: 1 },
+                    hidden: { opacity: 0, y: 50 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: {
+                        staggerChildren: 0.1,
+                      },
+                    },
                   }}
-                  whileHover={{ scale: 1.1 }}
-              transition={{ type: 'spring', stiffness: 170}}
                 >
-                  <img
-                    src={course.image}
-                    alt={course.title}
-                    className="h-[200px] w-full rounded-lg object-cover mb-2"
-                  />
-                  <p className=" font-semibold text-[#303030]">
-                    {course.title}
-                  </p>
+                  {filteredCourses.map((course, index) => (
+                    <motion.div
+                      key={index}
+                      className="bg-white w-[15vw] h-[300px] flex flex-col items-center rounded-xl cursor-pointer"
+                      onClick={() => handleCardClick(course)}
+                      variants={{
+                        hidden: { opacity: 0, scale: 0.9 },
+                        visible: { opacity: 1, scale: 1 },
+                      }}
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ type: 'spring', stiffness: 170 }}
+                    >
+                      <img
+                        src={course.image}
+                        alt={course.title}
+                        className="h-[200px] w-full rounded-lg object-cover mb-2"
+                      />
+                      <p className="font-semibold text-[#303030] text-center">{course.title}</p>
+                      <p className="text-sm text-[#606060]">Age Group: {course.ageGroup}</p>
+    
+                      {/* Flexbox to ensure button stays at the bottom */}
+                      <div className="flex-grow"></div> {/* This takes up remaining space */}
+                      <button
+                        className="mt-2 bg-gradient-to-r from-[#b21adf] to-[#f34e3e] text-white px-4 py-2 rounded-lg hover:opacity-90 self-end" 
+                        onClick={() => handleDownload(course.pdf)}
+                      >
+                        Download Curriculum
+                      </button>
+                    </motion.div>
+                  ))}
                 </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
+              </motion.div>
+    
+              {/* Course Details Modal */}
+              {selectedCourse && (
+                <div className="fixed z-40 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                  <div className="bg-white h-[95vh] rounded-lg w-[70vw] sm:w-[60vw] lg:w-[50vw] p-8 flex flex-col lg:flex-row gap-6 relative overflow-scroll hide-scrollbar pb-8">
+                    <div className="w-full lg:w-[300px] flex flex-col items-center justify-center gap-5">
+                      <img
+                        src={selectedCourse.image}
+                        alt={selectedCourse.title}
+                        className="w-full h-auto rounded-lg shadow-lg"
+                      />
+                      <button
+                        className="bg-gradient-to-r from-[#b21adf] to-[#f34e3e] text-white px-6 py-3 rounded-lg shadow-lg"
+                        onClick={() => handleDownload(selectedCourse.pdf)}
+                      >
+                        Download Curriculum
+                      </button>
+                    </div>
+    
+                    <div className="flex-1">
+                      <h2 className="text-2xl font-bold text-[#303030] mb-4">{selectedCourse.title}</h2>
+                      <p className="mb-2">
+                        <strong className="text-[#f34e3e]">Age Group:</strong> {selectedCourse.ageGroup}
+                      </p>
+                      <div className="mb-4">
+                        <strong>About:</strong>
+                        <ul className="list-disc ml-5 text-sm text-[#606060]">
+                          {selectedCourse.about.map((item, idx) => (
+                            <li key={idx}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="mb-4 pb-4">
+                        <strong>Learning Outcomes:</strong>
+                        <ul className="list-disc ml-5 text-sm text-[#606060]">
+                          {selectedCourse.learningOutcomes.map((item, idx) => (
+                            <li key={idx}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+    
+                    <div className="absolute top-2 right-4 cursor-pointer">
+                      <button
+                        className="text-red-500 text-2xl"
+                        onClick={() => setSelectedCourse(null)}
+                      >
+                        ✖
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
   </div>
 
 </div>
@@ -323,8 +458,85 @@ const LMS = () => {
 
         </div>
       </div>
-
       <Footer/>
+      </div>
+
+      {/* Modal for login/signup */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg w-[40vw] text-center">
+            <h2 className="text-xl font-semibold mb-4">Sign Up</h2>
+            <form onSubmit={handleSubmi}>
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                value={formData.name}
+                onChange={handleInputChang}
+                className="w-full p-2 mb-3 border border-gray-300 rounded"
+              />
+              <input
+                type="text"
+                name="address"
+                placeholder="Address"
+                value={formData.address}
+                onChange={handleInputChang}
+                className="w-full p-2 mb-3 border border-gray-300 rounded"
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleInputChang}
+                className="w-full p-2 mb-3 border border-gray-300 rounded"
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleInputChang}
+                className="w-full p-2 mb-3 border border-gray-300 rounded"
+              />
+              <input
+                type="number"
+                name="age"
+                placeholder="Age"
+                value={formData.age}
+                onChange={handleInputChang}
+                className="w-full p-2 mb-3 border border-gray-300 rounded"
+              />
+              <input
+                type="text"
+                name="phoneNumber"
+                placeholder="Phone Number"
+                value={formData.phoneNumber}
+                onChange={handleInputChang}
+                className="w-full p-2 mb-3 border border-gray-300 rounded"
+              />
+              <input
+                type="text"
+                name="grade"
+                placeholder="Grade"
+                value={formData.grade}
+                onChange={handleInputChang}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
+              />
+              <button
+                type="submit"
+                className="w-full py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
+              >
+                Sign Up
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+
+
+    
     </div>
   );
 };

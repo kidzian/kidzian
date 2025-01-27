@@ -11,6 +11,7 @@ import LMSCOURSE from './pages/LMSCOURSE'
 import Events from './pages/Events'
 import Blog from './pages/Blog'
 import BlogDetail from './components/BlogDetail'
+import LLL from './pages/lll'
 function App() {
   
 
@@ -18,6 +19,7 @@ function App() {
     <>
      <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/l" element={<LLL />} />
       <Route path="/courses" element={<Courses/>}/>
       <Route path="/contact-us" element={<Contact/>}/>
       <Route path="/lms" element={<LMS/>}/>
@@ -32,3 +34,4 @@ function App() {
 }
 
 export default App
+
