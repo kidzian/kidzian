@@ -14,7 +14,7 @@ const Courses = () => {
     // Fetch courses data from the backend API
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/courses'); // Assuming your backend is running on localhost:5000
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/courses`); // Assuming your backend is running on localhost:5000
         setCourseData(response.data); // Set the courses data
       } catch (error) {
         console.log('Error fetching courses:', error);
