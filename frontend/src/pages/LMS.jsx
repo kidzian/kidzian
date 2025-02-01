@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Heading from '../components/Heading';
 import Footer from '../components/Footer';
@@ -10,6 +11,7 @@ const LMS = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     name: '',
@@ -21,7 +23,7 @@ const LMS = () => {
     grade: '',
   });
 
-  // Fetch user information using the JWT token
+  // Fetch user information using JWT token
   const fetchUserInfo = async () => {
     const token = Cookies.get('jwt');
     if (token) {
@@ -31,7 +33,7 @@ const LMS = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUserInfo(response.data); // Set user information
+        setUserInfo(response.data);
         setIsTokenPresent(true);
       } catch (error) {
         console.error('Error fetching user info:', error);
@@ -51,6 +53,29 @@ const LMS = () => {
     }
   }, []);
 
+  // Validation Function
+  const validateForm = () => {
+    let errors = {};
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+      errors.email = 'Invalid email format';
+    }
+    if (formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
+    if (isNaN(parseInt(formData.age))) {
+      errors.age = 'Age must be a number';
+    }
+    if (isNaN(parseInt(formData.phoneNumber))) {
+      errors.phoneNumber = 'Phone number must be a number';
+    }
+    if (isNaN(parseInt(formData.grade))) {
+      errors.grade = 'Grade must be a number';
+    }
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Handle Input Change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -59,14 +84,24 @@ const LMS = () => {
     }));
   };
 
+  // Handle Form Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     const apiUrl = isLogin
       ? `${import.meta.env.VITE_API_URL}/api/login`
       : `${import.meta.env.VITE_API_URL}/api/signup`;
 
     try {
-      const response = await axios.post(apiUrl, formData);
+      console.log("clicked hyy")
+      const response = await axios.post(apiUrl, {
+        ...formData,
+        age: parseInt(formData.age),
+        phoneNumber: parseInt(formData.phoneNumber),
+        grade: parseInt(formData.grade),
+      });
 
       if (response.status === 200) {
         Cookies.set('jwt', response.data.token, { expires: 7 });
@@ -81,7 +116,7 @@ const LMS = () => {
           grade: '',
         });
 
-        await fetchUserInfo(); // Fetch user info after login/signup
+        await fetchUserInfo();
       }
     } catch (error) {
       console.error('Authentication failed:', error.response?.data?.message || error.message);
@@ -131,22 +166,25 @@ const LMS = () => {
                     onChange={handleInputChange}
                     className="w-full p-2 mb-3 border border-gray-300 rounded"
                   />
+                  {errors.age && <p className="text-red-500 text-sm">{errors.age}</p>}
                   <input
-                    type="text"
+                    type="number"
                     name="phoneNumber"
                     placeholder="Phone Number"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
                     className="w-full p-2 mb-3 border border-gray-300 rounded"
                   />
+                  {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
                   <input
-                    type="text"
+                    type="number"
                     name="grade"
                     placeholder="Grade"
                     value={formData.grade}
                     onChange={handleInputChange}
                     className="w-full p-2 mb-3 border border-gray-300 rounded"
                   />
+                  {errors.grade && <p className="text-red-500 text-sm">{errors.grade}</p>}
                 </>
               )}
               <input
@@ -157,6 +195,7 @@ const LMS = () => {
                 onChange={handleInputChange}
                 className="w-full p-2 mb-3 border border-gray-300 rounded"
               />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
               <input
                 type="password"
                 name="password"
@@ -165,6 +204,7 @@ const LMS = () => {
                 onChange={handleInputChange}
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
               />
+              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
               <button
                 type="submit"
                 className="w-full py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"

@@ -7,6 +7,7 @@ const User = require('./models/User.js');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const nodemailer = require('nodemailer');
+const Batch = require('./models/Batch');
 
 
 require('dotenv').config();
@@ -45,9 +46,10 @@ const transporter = nodemailer.createTransport({
 
 app.post('/api/submit-form', async (req, res) => {
   const { name, phone, course, grade } = req.body;
-
+ 
   try {
     // Send email with form details
+
     const mailOptions = {
       from: 'bhadula245@gmail.com', // Sender address
       to: 'bhadula245@gmail.com', // Recipient address (replace with your email)
@@ -107,6 +109,7 @@ app.post("/api/signup", async (req, res) => {
 
 app.post("/api/login", async (req, res) => {
   try {
+    
     const { email, password } = req.body;
     
     // Check if email and password are provided
@@ -150,6 +153,132 @@ app.get('/api/user', async (req, res) => {
   } catch (error) {
     console.error('Error fetching user:', error);
     res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+
+
+
+//admin
+
+app.post('/api/batches', async (req, res) => {
+  try {
+    console.log("batches")
+    const { name, course, startingDate } = req.body;
+    console.log(name, course, startingDate);
+    const batch = new Batch({ name, course, startingDate });
+    await batch.save();
+    res.status(201).json(batch);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+app.get('/api/batches', async (req, res) => {
+  try {
+    console.log("fetching batches...");
+    const batches = await Batch.find({});
+    console.log(batches);
+    res.status(200).json(batches);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get('/api/batches/:batchId', async (req, res) => {
+  try {
+    const batch = await Batch.findById(req.params.batchId);
+    if (!batch) {
+      return res.status(404).json({ message: 'Batch not found' });
+    }
+    res.status(200).json(batch);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Update a batch (add lectures, students, or attendance)
+// app.put('/api/batches/:batchId', async (req, res) => {
+//   try {
+//     const { batchId } = req.params;
+//     const updatedBatch = await Batch.findByIdAndUpdate(batchId, req.body, { new: true });
+//     res.status(200).json(updatedBatch);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// });
+
+app.put('/api/batches/:batchId', async (req, res) => {
+  try {
+    const { batchId } = req.params;
+    const updatedBatch = await Batch.findByIdAndUpdate(batchId, req.body, { new: true });
+    res.status(200).json(updatedBatch);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Create a new student
+// app.post('/api/students', async (req, res) => {
+//   try {
+//     const { name, age, grade, address, email, password, phoneNumber } = req.body;
+//     const student = new User({ name, age, grade, address, email, password, phoneNumber });
+    
+//     await student.save();
+//     console.log("creted student")
+//     res.status(201).json(student);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// });
+
+app.post('/api/students', async (req, res) => {
+  try {
+    const { name, age, grade, address, email, password, phoneNumber } = req.body;
+    const student = new User({ name, age, grade, address, email, password, phoneNumber });
+    await student.save();
+    res.status(201).json(student);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+
+// Search batches or students
+app.get('/search', async (req, res) => {
+  try {
+    const { type, query } = req.query;
+    let results;
+
+    if (type === 'batch') {
+      results = await Batch.find({ name: { $regex: query, $options: 'i' } });
+    } else if (type === 'student') {
+      results = await User.find({ name: { $regex: query, $options: 'i' } });
+    } else {
+      return res.status(400).json({ message: 'Invalid search type' });
+    }
+
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+//fetch students
+// app.get('/api/students', async (req, res) => {
+//   try {
+//     const students = await User.find({});
+//     res.status(200).json(students);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
+
+app.get('/api/students', async (req, res) => {
+  try {
+    const students = await User.find({});
+    res.status(200).json(students);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 

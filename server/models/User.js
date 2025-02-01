@@ -1,7 +1,4 @@
-
-
 const mongoose = require('mongoose');
-
 
 // Define the User Schema
 const userSchema = new mongoose.Schema({
@@ -35,13 +32,12 @@ const userSchema = new mongoose.Schema({
     max: 18, // Maximum age (assuming this is for kids)
   },
   phoneNumber: {
-    type: String,
+    type: Number,
     required: true,
     trim: true,
-    match: [/^\d{10}$/, 'Please enter a valid 10-digit phone number'], // Basic phone number validation
   },
   grade: {
-    type: String,
+    type: Number,
     required: true,
     trim: true,
   },
@@ -49,17 +45,17 @@ const userSchema = new mongoose.Schema({
 
   courses: [
     {
-      course: { type: String, required: true },
-      image: { type: String, required: true },
-      startingDate: { type: Date, required: true },
-      completion: { type: Number, required: true }, // Integer percentage of completion
-      totalClasses: { type: Number, required: true }, // Total number of classes in course
+      course: { type: String  },
+      image: { type: String},
+      startingDate: { type: Date },
+      completion: { type: Number}, // Integer percentage of completion
+      totalClasses: { type: Number}, // Total number of classes in course
       lecturesCompleted: { type: Number, default: 0 }, // Completed lectures count
       lecturesAttended: { type: Number, default: 0 }, // Attended lectures count
       lecturesUpcoming: { type: Number, default: 0 }, // Upcoming lectures count
       lectures: [
         {
-          name: { type: String, required: true }, // Lecture name
+          name: { type: String}, // Lecture name
           attendance: { type: Boolean, default: false }, // Whether attended or not
         },
       ],
