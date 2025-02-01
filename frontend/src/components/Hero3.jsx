@@ -6,6 +6,7 @@ import chinese from '../assets/chinese.png';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify'; // Import Toastify
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS for Toastify
+import Service from './Service';
 
 const Hero3 = () => {
   const [selectedGrade, setSelectedGrade] = useState(null);
@@ -181,16 +182,7 @@ const Hero3 = () => {
                       <option value="Java Course">Java Course</option>
                     </select>
                   </div>
-                  {/* <div className='mb-4'>
-                    <label className='block text-sm font-medium mb-1'>Grade</label>
-                    <input
-                      type='text'
-                      value={selectedGrade || ''}
-                      className='w-full border rounded-md p-2 bg-gray-100'
-                      readOnly
-                    />
-                  </div> */}
-
+                
 <div className='mb-4'>
   <label className='block text-sm font-medium mb-1'>Grade</label>
   <select
@@ -260,6 +252,8 @@ const Hero3 = () => {
 
       {/* ToastContainer for Toast Notifications */}
       <ToastContainer position="top-right" autoClose={3000} />
+
+      
     </div>
   );
 };

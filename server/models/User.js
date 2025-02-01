@@ -1,73 +1,33 @@
 const mongoose = require('mongoose');
 
-// Define the User Schema
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true, // Removes extra spaces
-  },
-  address: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true, // Ensures email is unique
-    trim: true,
-    lowercase: true, // Converts email to lowercase
-    match: [/.+\@.+\..+/, 'Please enter a valid email address'], // Basic email validation
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 6, // Minimum password length
-  },
-  age: {
-    type: Number,
-    required: true,
-    min: 5, // Minimum age
-    max: 18, // Maximum age (assuming this is for kids)
-  },
-  phoneNumber: {
-    type: Number,
-    required: true,
-    trim: true,
-  },
-  grade: {
-    type: Number,
-    required: true,
-    trim: true,
-  },
-  certificates: { type: Number, default: 0 },
 
-  courses: [
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true, trim: true },
+  address: { type: String, required: true, trim: true },
+  email: { type: String, required: true, unique: true, trim: true, lowercase: true, match: [/.+\@.+\..+/, 'Please enter a valid email address'] },
+  password: { type: String, required: true, minlength: 6 },
+  age: { type: Number, required: true, min: 5, max: 18 },
+  phoneNumber: { type: Number, required: true, trim: true },
+  grade: { type: Number, required: true, trim: true },
+  certificates: { type: Number, default: 0 },
+  batches: [
     {
-      course: { type: String  },
-      image: { type: String},
+      batch: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch' }, // Reference to Course
       startingDate: { type: Date },
-      completion: { type: Number}, // Integer percentage of completion
-      totalClasses: { type: Number}, // Total number of classes in course
-      lecturesCompleted: { type: Number, default: 0 }, // Completed lectures count
-      lecturesAttended: { type: Number, default: 0 }, // Attended lectures count
-      lecturesUpcoming: { type: Number, default: 0 }, // Upcoming lectures count
+      completion: { type: Number },
+      totalClasses: { type: Number },
+      lecturesCompleted: { type: Number, default: 0 },
+      lecturesAttended: { type: Number, default: 0 },
+      lecturesUpcoming: { type: Number, default: 0 },
       lectures: [
         {
-          name: { type: String}, // Lecture name
-          attendance: { type: Boolean, default: false }, // Whether attended or not
+          name: { type: String },
+          attendance: { type: Boolean, default: false },
         },
       ],
     },
   ],
-
-  createdAt: {
-    type: Date,
-    default: Date.now, // Automatically sets the creation date
-  },
+  createdAt: { type: Date, default: Date.now },
 });
 
-
-// Create the User model
 module.exports=mongoose.model('User',userSchema);

@@ -83,6 +83,7 @@ app.get('/api/courses', async (req, res) => {
   }
 });
 
+
 // Signup Route
 app.post("/api/signup", async (req, res) => {
   try {
@@ -159,127 +160,213 @@ app.get('/api/user', async (req, res) => {
 
 
 
-//admin
-
-app.post('/api/batches', async (req, res) => {
-  try {
-    console.log("batches")
-    const { name, course, startingDate } = req.body;
-    console.log(name, course, startingDate);
-    const batch = new Batch({ name, course, startingDate });
-    await batch.save();
-    res.status(201).json(batch);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-app.get('/api/batches', async (req, res) => {
-  try {
-    console.log("fetching batches...");
-    const batches = await Batch.find({});
-    console.log(batches);
-    res.status(200).json(batches);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
 
 app.get('/api/batches/:batchId', async (req, res) => {
   try {
-    const batch = await Batch.findById(req.params.batchId);
+    const batchId = req.params.batchId;
+
+    // Find the batch by ID and populate the students field
+    const batch = await Batch.findById(batchId).populate('students', 'name email'); // Populate student details
+
     if (!batch) {
       return res.status(404).json({ message: 'Batch not found' });
     }
-    res.status(200).json(batch);
+
+    res.status(200).json(batch); // Return the batch details
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Update a batch (add lectures, students, or attendance)
-// app.put('/api/batches/:batchId', async (req, res) => {
-//   try {
-//     const { batchId } = req.params;
-//     const updatedBatch = await Batch.findByIdAndUpdate(batchId, req.body, { new: true });
-//     res.status(200).json(updatedBatch);
-//   } catch (error) {
-//     res.status(400).json({ message: error.message });
-//   }
-// });
-
-app.put('/api/batches/:batchId', async (req, res) => {
-  try {
-    const { batchId } = req.params;
-    const updatedBatch = await Batch.findByIdAndUpdate(batchId, req.body, { new: true });
-    res.status(200).json(updatedBatch);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// Create a new student
-// app.post('/api/students', async (req, res) => {
-//   try {
-//     const { name, age, grade, address, email, password, phoneNumber } = req.body;
-//     const student = new User({ name, age, grade, address, email, password, phoneNumber });
-    
-//     await student.save();
-//     console.log("creted student")
-//     res.status(201).json(student);
-//   } catch (error) {
-//     res.status(400).json({ message: error.message });
-//   }
-// });
-
-app.post('/api/students', async (req, res) => {
-  try {
-    const { name, age, grade, address, email, password, phoneNumber } = req.body;
-    const student = new User({ name, age, grade, address, email, password, phoneNumber });
-    await student.save();
-    res.status(201).json(student);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error fetching batch:', error);
+    res.status(500).json({ message: 'Error fetching batch', error: error.message });
   }
 });
 
 
-// Search batches or students
-app.get('/search', async (req, res) => {
-  try {
-    const { type, query } = req.query;
-    let results;
+app.post('/api/batches/:batchId/add-lecture', async (req, res) => {
+  const { batchId } = req.params;
+  const { title, date } = req.body;
 
-    if (type === 'batch') {
-      results = await Batch.find({ name: { $regex: query, $options: 'i' } });
-    } else if (type === 'student') {
-      results = await User.find({ name: { $regex: query, $options: 'i' } });
-    } else {
-      return res.status(400).json({ message: 'Invalid search type' });
+  try {
+    console.log("Received Data:", req.body);
+
+    const batch = await Batch.findById(batchId).populate('students');
+
+    if (!batch) {
+      return res.status(404).json({ message: 'Batch not found' });
     }
 
-    res.status(200).json(results);
+    // Create new lecture
+    const newLecture = {
+      name: title,
+      date,
+      completed: false,
+      attendance: batch.students.map(student => ({
+        studentId: student._id,
+        attended: false,
+      })),
+    };
+
+    console.log("New Lecture Data:", newLecture);
+
+    // Add lecture to batch
+    batch.lectures.push(newLecture);
+    batch.markModified('lectures'); // Force Mongoose to detect changes
+    await batch.save();
+
+    // Update each student in the batch
+    const updatePromises = batch.students.map(async (student) => {
+      const user = await User.findById(student._id);
+      if (user) {
+        const batchIndex = user.batches.findIndex(b => b.batch.toString() === batchId);
+        if (batchIndex !== -1) {
+          user.batches[batchIndex].lectures.push({
+            name: title,
+            attendance: false,
+          });
+          await user.save();
+        }
+      }
+    });
+
+    await Promise.all(updatePromises);
+
+    res.status(201).json({ 
+      message: 'Lecture added successfully and updated in all students.', 
+      updatedBatch: batch 
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error adding lecture:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-//fetch students
-// app.get('/api/students', async (req, res) => {
-//   try {
-//     const students = await User.find({});
-//     res.status(200).json(students);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-app.get('/api/students', async (req, res) => {
+app.get('/api/courses/:courseId', async (req, res) => {
   try {
-    const students = await User.find({});
-    res.status(200).json(students);
+    const course = await Course.findById(req.params.courseId);
+    console.log(course)
+    res.status(200).json(course);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Error fetching course' });
   }
 });
+
+app.get('/api/batches', async (req, res) => {
+  try {
+    console.log("finding batches...");
+    const batches = await Batch.find({ course: req.query.courseId });
+    console.log(batches);
+    res.status(200).json(batches);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching batches' });
+  }
+});
+
+
+app.post('/api/batches', async (req, res) => {
+  try {
+    const { name, startingDate, courseId } = req.body;
+
+    if (!name || !startingDate || !courseId) {
+      return res.status(400).json({ message: "Name, start date, and courseId are required" });
+    }
+
+    const batch = new Batch({
+      name,
+      startingDate: new Date(startingDate),
+      course: courseId,
+    });
+
+    await batch.save();
+
+    await Course.findByIdAndUpdate(
+      courseId,
+      { $push: { batches: batch._id } },
+      { new: true }
+    );
+
+    res.status(201).json(batch);
+  } catch (error) {
+    console.error('Error creating batch:', error);
+    res.status(500).json({ message: 'Error creating batch', error: error.message });
+  }
+});
+app.delete('/api/batches/:batchId', async (req, res) => {
+  try {
+    const batchId = req.params.batchId;
+
+    // Find the batch to get its course reference
+    const batch = await Batch.findById(batchId);
+    if (!batch) {
+      return res.status(404).json({ message: 'Batch not found' });
+    }
+
+    const courseId = batch.course; // Get the course ID from the batch
+
+    // Delete the batch
+    await Batch.findByIdAndDelete(batchId);
+
+    // Remove the batch ID from the course's batches array
+    await Course.findByIdAndUpdate(
+      courseId,
+      { $pull: { batches: batchId } }, // Remove the batch ID from the batches array
+      { new: true }
+    );
+
+    res.status(200).json({ message: 'Batch deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting batch:', error); // Debugging
+    res.status(500).json({ message: 'Error deleting batch', error: error.message });
+  }
+});
+
+app.post('/api/batches/:batchId/add-student', async (req, res) => {
+  try {
+    console.log("reached here");
+    const { name, email, address, phoneNumber, age, grade,password } = req.body;
+    const batchId = req.params.batchId;
+
+    // Check if batch exists
+    const batch = await Batch.findById(batchId);
+    if (!batch) {
+      return res.status(404).json({ message: 'Batch not found' });
+    }
+
+    // Check if user with same email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email is already registered' });
+    }
+
+    // Create new user
+    const newUser = new User({
+      name,
+      email,
+      address,
+      phoneNumber,
+      age,
+      grade,
+      password,
+      batches: [{ batch: batchId, startingDate: batch.startingDate }]
+    });
+
+    await newUser.save();
+
+    // Update batch to include this student
+    batch.students.push(newUser._id);
+    await batch.save();
+
+    res.status(201).json({ message: 'Student added successfully', student: newUser });
+  } catch (error) {
+    console.error("Error in adding student:", error); // Log for debugging
+
+    let errorMessage = "Server error";
+    if (error.name === "ValidationError") {
+      errorMessage = "Invalid input data";
+    } else if (error.code === 11000) {
+      errorMessage = "Duplicate entry detected";
+    }
+
+    res.status(500).json({ message: errorMessage, errorDetails: error.message });
+  }
+});
+
 
 app.listen(PORT, () => console.log(`Server is now listening on ${PORT}`));

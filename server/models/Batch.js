@@ -1,54 +1,24 @@
 const mongoose = require('mongoose');
 
 const batchSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  course: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  startingDate: {
-    type: Date,
-    required: true,
-  },
-  lectures: [
-    {
-      name: {
-        type: String,
-        required: true,
-      },
-      date: {
-        type: Date,
-        required: true,
-      },
-      attendance: [
-        {
-          studentId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+    name: { type: String, required: true, trim: true },
+    course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' }, 
+    startingDate: { type: Date },
+    lectures: [
+      {
+        name: { type: String },
+        date: { type: Date},
+        completed:{type: Boolean},
+        attendance: [
+          {
+            studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            attended: { type: Boolean, default: false },
           },
-          attended: {
-            type: Boolean,
-            default: false,
-          },
-        },
-      ],
-    },
-  ],
-  students: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-  ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+        ],
+      },
+    ],
+    students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Reference to User
+    createdAt: { type: Date, default: Date.now },
+  });
 
-module.exports = mongoose.model('Batch', batchSchema);
+  module.exports = mongoose.model('Batch', batchSchema);

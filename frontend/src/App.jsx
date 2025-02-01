@@ -1,7 +1,7 @@
 
 import './App.css'
 import Courses from './pages/Courses'
-import LandingPage from './pages/LandingPage'
+
 import Landing from './pages/Landing'
 import { Routes,Route } from 'react-router-dom'
 import Contact from './pages/Contact'
@@ -12,19 +12,13 @@ import Events from './pages/Events'
 import Blog from './pages/Blog'
 import BlogDetail from './components/BlogDetail'
 
-import { useState } from 'react'
 
-
-import BatchList from './components/BatchList';
-import StudentList from './components/StudentList';
-import SearchBar from './components/SearchBar';
-import Admin from './pages/Admin'
-import BatchDetails from './pages/BatchDetails'
+import AdminDashboard from './components/AdminDashboard'
+import CourseBatches from './components/CourseBatches'
+import BatchDetails from './components/BatchDetails'
 
 function App() {
 
- 
-  const [searchType, setSearchType] = useState('batch');
   return (
     <>
      <Routes>
@@ -35,12 +29,11 @@ function App() {
       {/* <Route path="/admin" element={<Admin/>}/>
       <Route path="/admin/:courseId" element={<CourseDetail />} /> */}
 
-<Route path="/batches" element={<BatchList />} />
-<Route path="/students" element={<StudentList />} />
 
-<Route path="/admin" element={<Admin/>}/>
-<Route path="/admin/batch/:batchId" element={<BatchDetails />} />
 
+<Route path="/admin" element={<AdminDashboard/>}/>
+<Route path="/courses/:courseId/batches" element={<CourseBatches/>}/>
+<Route path="/courses/:courseId/batches/:batchId" element={<BatchDetails />} />
       <Route path="/lms" element={<LMS/>}/>
       <Route path="/:id1/:id2" element={<LMSCOURSE/>}/>
       <Route path="/about-us" element={<About/>}/>
