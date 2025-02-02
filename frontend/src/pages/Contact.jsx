@@ -20,18 +20,57 @@ const Contact = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const { firstName, lastName, email, phone, message } = formData;
+
+  //   // Check if all required fields are filled
+  //   if (!firstName || !lastName || !email || !phone || !message) {
+  //     toast.error('Please fill in all fields!');
+  //   } else {
+  //     console.log('Form submitted:', formData);
+  //     toast.success('Message is sent!');
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const { firstName, lastName, email, phone, message } = formData;
-
+  
     // Check if all required fields are filled
     if (!firstName || !lastName || !email || !phone || !message) {
       toast.error('Please fill in all fields!');
-    } else {
-      console.log('Form submitted:', formData);
-      toast.success('Message is sent!');
+      return;
+    }
+  
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (response.ok) {
+        toast.success('Message sent successfully!');
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          category: '',
+          message: '',
+        });
+      } else {
+        toast.error('Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Something went wrong. Please try again later.');
     }
   };
+  
 
   return (
     <div>

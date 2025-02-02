@@ -71,6 +71,31 @@ app.post('/api/submit-form', async (req, res) => {
   }
 });
 
+app.post('/api/contact', async (req, res) => {
+  const { firstName, lastName, email, phone, message } = req.body;
+
+  try {
+    const mailOptions = {
+      from: 'bhadula245@gmail.com',
+      to: 'bhadula245@gmail.com',
+      subject: 'New Contact Form Submission',
+      text: `New message from:
+             Name: ${firstName} ${lastName}
+             Email: ${email}
+             Phone: ${phone}
+             Message: ${message}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: 'Form submitted successfully!' });
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    res.status(500).json({ message: 'Error sending email' });
+  }
+});
+
+
+
 // GET endpoint to fetch all courses
 app.get('/api/courses', async (req, res) => {
   try {
