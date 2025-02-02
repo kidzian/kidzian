@@ -181,8 +181,13 @@ const Service = () => {
                 >
                   <option value="" disabled>Select a course</option>
                   <option value="Little Innovators">Little Innovators</option>
-                  <option value="Junior Innovators">Junior Innovators</option>
-                  <option value="Senior Innovators">Senior Innovators</option>
+                      <option value="Junior Innovators">Junior Innovators</option>
+                      <option value="Senior Innovators">Senior Innovators</option>
+                      <option value="Artificial Intelligence">Artificial Intelligence</option>
+                      <option value="Web Development Course">Web Development Course</option>
+                      <option value="App Development Course (Junior)">App Development Course (Junior)</option>
+                      <option value="App Development Course (Senior)">App Development Course (Senior)</option>
+                      <option value="Java Course">Java Course</option>
                 </select>
               </div>
 
