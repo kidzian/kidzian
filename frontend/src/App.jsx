@@ -16,6 +16,7 @@ import BlogDetail from './components/BlogDetail'
 import AdminDashboard from './components/AdminDashboard'
 import CourseBatches from './components/CourseBatches'
 import BatchDetails from './components/BatchDetails'
+import Chatbot from './components/Chatbot'
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
     <>
      <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/chatbot" element={<Chatbot/>} />
      
       <Route path="/courses" element={<Courses/>}/>
       <Route path="/contact-us" element={<Contact/>}/>

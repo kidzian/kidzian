@@ -91,9 +91,11 @@ const Contact = () => {
            <h1 className="flex gap-1 items-center text-[#6e2cf6] font-semibold tracking-tighter text-[14px] cursor-pointer">
               <Send size={15} /> info@kidzians.com
             </h1>
+            <a href='https://in.linkedin.com/company/kidzian?trk=public_post_feed-actor-name'>
             <h1 className="flex gap-1 items-center text-[#6e2cf6] font-semibold tracking-tighter text-[14px] cursor-pointer">
               <LinkedinIcon size={15} /> Message us on LinkedIn
             </h1>
+            </a>
            </div>
           </div>
 

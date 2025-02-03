@@ -11,6 +11,7 @@ import Feature1 from '../components/Feature1'
 import Gamified from '../components/Gamified'
 import Faq from '../components/Faq'
 import Testimonials from '../components/Testimonials'
+import Chatbot from '../components/Chatbot'
 const Landing = () => {
   return (
     <div className="w-[100vw] h-auto">
@@ -24,6 +25,7 @@ const Landing = () => {
       <Testimonials/>
       <Faq/>
       <Footer/>
+      <Chatbot className="z-40"/>
     </div>
   )
 }
