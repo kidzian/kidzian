@@ -47,7 +47,7 @@ const BatchDetails = () => {
 
   const markAttendance = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/attendance/mark`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/attendance/mark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -82,7 +82,7 @@ const BatchDetails = () => {
   });
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/batches/${batchId}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/batches/${batchId}`)
       .then((res) => res.json())
       .then((data) => setBatch(data))
       .catch((err) => console.error("Error fetching batch:", err));
@@ -100,7 +100,7 @@ const BatchDetails = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://localhost:5000/api/batches/${batchId}/add-student`,
+        `${import.meta.env.VITE_API_URL}/api/batches/${batchId}/add-student`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -134,7 +134,7 @@ const BatchDetails = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://localhost:5000/api/batches/${batchId}/add-lecture`,
+        `${import.meta.env.VITE_API_URL}/api/batches/${batchId}/add-lecture`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
