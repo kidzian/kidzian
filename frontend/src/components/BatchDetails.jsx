@@ -1,10 +1,72 @@
 import { useEffect, useState } from "react";
 
 const BatchDetails = () => {
-  const batchId = "679e1e60b5c14f00ed9917e1"; // Your batch ID
+  const batchId = "67a22c8836c28ba50deebadc"; // Your batch ID
   const [batch, setBatch] = useState(null);
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
   const [isLectureModalOpen, setIsLectureModalOpen] = useState(false);
+
+  const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false);
+  const [selectedLecture, setSelectedLecture] = useState(null);
+  const [attendance, setAttendance] = useState([]);
+
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleStudentClick = async (student) => {
+    try {
+      console.log('Fetching student with ID:', student._id);
+      
+      // Send request to backend to fetch the student data
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/student/${student._id}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Save the fetched student data to state
+        setSelectedStudent(data);
+        console.log(data);
+        setIsModalOpen(true);
+      } else {
+        console.error('Failed to fetch student data:', response.statusText);
+      }
+    } catch (err) {
+      console.error('Error fetching student data:', err);
+    }
+  };
+
+  const openAttendanceModal = (lecture) => {
+    setSelectedLecture(lecture);
+    setAttendance(batch.students.map((student) => ({ studentId: student._id, present: false })));
+    setIsAttendanceModalOpen(true);
+  };
+
+  const toggleAttendance = (studentId) => {
+    setAttendance(attendance.map(a => a.studentId === studentId ? { ...a, present: !a.present } : a));
+  };
+
+  const markAttendance = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/attendance/mark`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lectureId: selectedLecture._id,
+          batchId,
+          attendance,
+        }),
+      });
+      if (response.ok) {
+        alert("Attendance marked successfully!");
+        setIsAttendanceModalOpen(false);
+      } else {
+        alert("Failed to mark attendance.");
+      }
+    } catch (error) {
+      console.error("Error marking attendance:", error);
+    }
+  };
+
   const [studentData, setStudentData] = useState({
     name: "",
     email: "",
@@ -110,12 +172,61 @@ const BatchDetails = () => {
             <p className="text-gray-500">No students enrolled yet.</p>
           )}
 
+<h2 className="text-xl font-bold mt-4 mb-2">Students</h2>
+      <div className="border border-gray-300 rounded-lg p-4">
+        {batch.students.length > 0 ? (
+          <ul>
+            {batch.students.map((student) => (
+              <li key={student.id} className="mb-2">
+                <button className="text-blue-600 underline" onClick={() => handleStudentClick(student)}>{student.name}</button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-500">No students enrolled.</p>
+        )}
+      </div>
+
+  
+{isModalOpen && selectedStudent && (
+  
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+      <h2 className="text-xl font-bold mb-2">{selectedStudent.name}</h2>
+      <p className="text-gray-600">Grade: {selectedStudent.grade}</p>
+      <p className="text-gray-600">Age: {selectedStudent.age}</p>
+      <p className="text-gray-600">Email: {selectedStudent.email}</p>
+      <p className="text-gray-600">Phone: {selectedStudent.phoneNumber}</p> {/* Correcting the phone number display */}
+      <p className="text-gray-600">Address: {selectedStudent.address}</p>
+      <p className="text-gray-600">Password: {selectedStudent.password}</p>
+
+      <h3 className="text-lg font-semibold mt-4">Attended Lectures</h3>
+      <div className="border-b border-gray-300 my-2"></div>
+
+      {selectedStudent.batches?.[0]?.lectures?.filter(lec => lec.attendance).length > 0 ? (
+        <ul>
+          {selectedStudent.batches[0].lectures
+            .filter(lecture => lecture.attendance)  // Ensuring you check attendance
+            .map((lecture) => (
+              <li key={lecture.name}>{lecture.name}</li> 
+          ))}
+        </ul>
+      ) : (
+        <p className="text-gray-500">No attended lectures.</p>
+      )}
+      
+      <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={() => setIsModalOpen(false)}>Close</button>
+    </div>
+  </div>
+)}
+
+
 
 <h2 className="text-xl font-bold mt-4">Lectures</h2>
           {batch.lectures && batch.lectures.length > 0 ? (
             <ul className="list-disc list-inside text-gray-700">
               {batch.lectures.map((lecture) => (
-                <li key={lecture._id}>
+                <li key={lecture._id} onClick={() => openAttendanceModal(lecture)} className="cursor-pointer text-blue-600">
                   {lecture.name} on {new Date(lecture.date).toDateString()}
                 </li>
               ))}
@@ -123,6 +234,29 @@ const BatchDetails = () => {
           ) : (
             <p className="text-gray-500">No lectures scheduled yet.</p>
           )}
+
+          {isAttendanceModalOpen && (
+            <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+              <div className="bg-white p-6 rounded-lg w-96">
+                <h2 className="text-xl font-bold mb-4">Mark Attendance for {selectedLecture.title}</h2>
+                <ul>
+                  {batch.students.map((student) => (
+                    <li key={student._id} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={attendance.find(a => a.studentId === student._id)?.present || false}
+                        onChange={() => toggleAttendance(student._id)}
+                      />
+                      <span className="ml-2">{student.name}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button onClick={markAttendance} className="bg-green-500 text-white p-2 rounded mt-4 mr-2">Submit</button>
+                <button onClick={() => setIsAttendanceModalOpen(false)} className="mt-2 text-red-500">Cancel</button>
+              </div>
+            </div>
+          )}
+        
 
 
           <div className="flex gap-4 mt-4">

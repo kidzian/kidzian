@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Send, MessageCircle, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { Bot } from 'lucide-react';
+
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -13,7 +13,7 @@ const Chatbot = () => {
     if (isOpen && isFirstOpen) {
       setMessages([
         {
-          text: "Heyy! I'm your chatbot KidzAI. I'll help you know anything and everything about this website !",
+          text: "Heyy! I'm your chatbot KidzAI. I'll help you know anything and everything about this website!",
           sender: "bot",
         },
       ]);
@@ -29,10 +29,14 @@ const Chatbot = () => {
     setInput("");
 
     try {
-      const res = await axios.post("http://localhost:3001/api/chatbot", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/chatbot`, {
         message: input,
       });
-      setMessages([...newMessages, { text: res.data.reply, sender: "bot" }]);
+
+      // Format the response: Add a new line before each '*'
+      const formattedReply = res.data.reply.replace(/\*/g, "\n* ");
+
+      setMessages([...newMessages, { text: formattedReply, sender: "bot" }]);
     } catch (error) {
       console.error("Error fetching response:", error);
     }
@@ -57,24 +61,22 @@ const Chatbot = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="w-80 bg-white shadow-lg rounded-lg overflow-hidden flex flex-col"
+          className="w-[40vw] h-[90vh] bg-white shadow-lg rounded-lg overflow-hidden flex flex-col"
         >
           {/* Header */}
           <div className="bg-blue-500 text-white p-4 flex justify-between items-center">
-            <span className="font-bold">KidzAI </span>
+            <span className="font-bold">KidzAI</span>
             <button onClick={() => setIsOpen(false)}>
               <X size={24} />
             </button>
           </div>
 
           {/* Chat Messages */}
-          <div className="h-64 overflow-y-auto p-3 space-y-2 flex flex-col text-sm ">
+          <div className="h-[70vh] overflow-y-auto p-3 space-y-2 flex flex-col text-sm">
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`flex items-center ${
-                  msg.sender === "user" ? "justify-end" : "justify-start"
-                }`}
+                className={`flex items-start ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 {msg.sender === "bot" && (
                   <img
@@ -84,7 +86,7 @@ const Chatbot = () => {
                   />
                 )}
                 <div
-                  className={`p-2 rounded-md max-w-[75%] break-words ${
+                  className={`p-2 rounded-md max-w-[75%] break-words whitespace-pre-wrap ${
                     msg.sender === "user"
                       ? "bg-blue-200 self-end text-right"
                       : "bg-gray-200 text-left"
@@ -105,11 +107,8 @@ const Chatbot = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
             />
-            <button
-              onClick={sendMessage}
-              className="p-2 "
-            >
-              <Send size={20} color="#3b82f6" className="" />
+            <button onClick={sendMessage} className="p-2">
+              <Send size={20} color="#3b82f6" />
             </button>
           </div>
         </motion.div>

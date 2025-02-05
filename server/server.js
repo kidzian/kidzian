@@ -8,7 +8,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const nodemailer = require('nodemailer');
 const Batch = require('./models/Batch');
-
+const axios = require('axios');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 require('dotenv').config();
 const SECRET_KEY = "your_secret_key";
@@ -393,20 +394,206 @@ app.post('/api/batches/:batchId/add-student', async (req, res) => {
   }
 });
 
+// app.post("/api/attendance/mark", async (req, res) => {
+//   const { lectureId, batchId, attendance } = req.body;
+
+//   try {
+//     // Fetch batch
+//     console.log("marking attendance")
+//     const batch = await Batch.findById(batchId);
+//     if (!batch) return res.status(404).json({ message: "Batch not found" });
+
+//     // Find the lecture
+//     const lectureIndex = batch.lectures.findIndex(lec => lec._id.toString() === lectureId);
+//     if (lectureIndex === -1) return res.status(404).json({ message: "Lecture not found" });
+
+//     // Update attendance in batch
+//     batch.lectures[lectureIndex].attendance = attendance;
+//     await batch.save();
+
+//     // Update attendance for each student in the User collection
+//     for (const record of attendance) {
+//       const student = await User.findById(record.studentId);
+//       if (student) {
+//         const batchEntry = student.batches.find(b => b.batch.toString() === batchId);
+//         if (batchEntry) {
+//           const lectureEntry = batchEntry.lectures.find(l => l.name === batch.lectures[lectureIndex].name);
+//           if (lectureEntry) {
+//             lectureEntry.attendance = record.present;
+//           } else {
+//             batchEntry.lectures.push({
+//               name: batch.lectures[lectureIndex].name,
+//               attendance: record.present,
+//             });
+//           }
+//           batchEntry.lecturesAttended = batchEntry.lectures.filter(l => l.attendance).length;
+//         }
+//         await student.save();
+//       }
+//     }
+
+//     res.json({ message: "Attendance marked successfully" });
+//   } catch (error) {
+//     console.error("Error marking attendance:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+
 //chatbot
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateText?key=${GEMINI_API_KEY}`;
+// app.post("/api/attendance/mark", async (req, res) => {
+//   const { lectureId, batchId, attendance } = req.body;
 
-// Define your website's context
+//   try {
+//     console.log("Marking attendance");
+
+//     // Fetch the batch and populate lectures
+//     const batch = await Batch.findById(batchId);
+//     if (!batch) return res.status(404).json({ message: "Batch not found" });
+
+//     // Find the lecture inside the batch
+//     const lectureIndex = batch.lectures.findIndex(lec => lec._id.toString() === lectureId);
+//     if (lectureIndex === -1) return res.status(404).json({ message: "Lecture not found" });
+
+//     // Update attendance in the Batch model
+//     batch.lectures[lectureIndex].attendance = attendance.map(record => ({
+//       studentId: record.studentId,
+//       attended: true, // Set attended to true in Batch
+//     }));
+
+//     await batch.save(); // Save batch attendance
+
+//     // Update attendance for each student in the User model
+//     for (const record of attendance) {
+//       if (record.present) { // Only update for present students
+//         const student = await User.findById(record.studentId);
+//         if (student) {
+//           const batchEntry = student.batches.find(b => b.batch.toString() === batchId);
+//           if (batchEntry) {
+//             // Find the lecture entry for this batch
+//             let lectureEntry = batchEntry.lectures.find(l => l.name === batch.lectures[lectureIndex].name);
+            
+//             if (lectureEntry) {
+//               lectureEntry.attendance = true; // Mark attended as true in User
+//             } else {
+//               batchEntry.lectures.push({
+//                 name: batch.lectures[lectureIndex].name,
+//                 attendance: true, // Ensure attended is true in User
+//               });
+//             }
+
+//             // ✅ Increment lecturesAttended count
+//             batchEntry.lecturesAttended += 1;
+//           }
+//           await student.save();
+//         }
+//       }
+//     }
+
+//     res.json({ message: "Attendance marked successfully" });
+
+//   } catch (error) {
+//     console.error("Error marking attendance:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+app.post("/api/attendance/mark", async (req, res) => {
+  const { lectureId, batchId, attendance } = req.body;
+
+  try {
+    console.log("Marking attendance");
+
+    // Fetch the batch and populate lectures
+    const batch = await Batch.findById(batchId);
+    if (!batch) return res.status(404).json({ message: "Batch not found" });
+
+    // Find the lecture inside the batch
+    const lectureIndex = batch.lectures.findIndex(lec => lec._id.toString() === lectureId);
+    if (lectureIndex === -1) return res.status(404).json({ message: "Lecture not found" });
+
+    // ✅ Filter only students marked as present
+    const selectedAttendance = attendance.filter(record => record.present);
+
+    // Update attendance in the Batch model (only for selected students)
+    batch.lectures[lectureIndex].attendance = selectedAttendance.map(record => ({
+      studentId: record.studentId,
+      attended: true, // Set attended to true in Batch
+    }));
+
+    await batch.save(); // Save batch attendance
+
+    // Update attendance for each selected student in the User model
+    for (const record of selectedAttendance) {
+      const student = await User.findById(record.studentId);
+      if (student) {
+        const batchEntry = student.batches.find(b => b.batch.toString() === batchId);
+        if (batchEntry) {
+          // Find the lecture entry for this batch
+          let lectureEntry = batchEntry.lectures.find(l => l.name === batch.lectures[lectureIndex].name);
+          
+          if (lectureEntry) {
+            lectureEntry.attendance = true; // Mark attended as true in User
+          } else {
+            batchEntry.lectures.push({
+              name: batch.lectures[lectureIndex].name,
+              attendance: true, // Ensure attended is true in User
+            });
+          }
+
+          // ✅ Increment lecturesAttended count for selected students only
+          batchEntry.lecturesAttended += 1;
+        }
+        await student.save();
+      }
+    }
+
+    res.json({ message: "Attendance marked successfully for selected students" });
+
+  } catch (error) {
+    console.error("Error marking attendance:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.get('/api/student/:id', async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    
+    // Fetch the student and populate the related batches and lectures
+    const student = await User.findById(studentId)
+      .populate({
+        path: 'batches.batch',  // Populate batch reference
+        populate: {
+          path: 'lectures', // Populate the lectures in the batch
+        },
+      })
+      .exec();
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    res.json(student); // Send the student data back to frontend
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+const genAI = new GoogleGenerativeAI("AIzaSyD33BiuxCwLHsD2MypRLPsrRNAWeVYFeTE"); // Replace with your actual API key
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+// Define the chatbot's context
 const CONTEXT = `
-You are an AI chatbot for Kidzian, an educational platform specializing in technology courses for young learners. Your role is to assist users with inquiries **only related to Kidzian and its courses**.
+You are KidzAI, an AI chatbot for Kidzian, an innovative educational platform designed to inspire and guide young learners in the world of technology. Your primary role is to assist users with inquiries related to Kidzian and its courses.
 
 ### 📚 Our Courses:
 1. Little Innovators  
 2. Junior Innovators  
 3. Senior Innovators  
-4. Artificial Intelligence  
+4. Artificial Intelligence & Machine Learning  
 5. Web Development  
 6. App Development (Junior)  
 7. App Development (Senior)  
@@ -415,7 +602,7 @@ You are an AI chatbot for Kidzian, an educational platform specializing in techn
 ❗ **Note:** You are not programmed to answer questions outside of this scope. If asked about unrelated topics, respond with:  
 *"I'm designed to help with our courses only."*
 
----
+---  
 
 ## **🌟 About Kidzian**  
 Founded in 2023 by **Rashmi Raju**, a passionate software engineer and educator with an **M.Tech in Computer Science**, Kidzian was born from a desire to make tech education more **engaging, interactive, and accessible** for young minds.  
@@ -427,7 +614,7 @@ The idea sparked from a neighborhood coding workshop, where Rashmi saw the **exc
 
 Our **gamified, interactive learning platform** personalizes learning paths and fosters **creativity, collaboration, and problem-solving skills**.
 
----
+---  
 
 ## **🚀 Our Mission**
 ✅ **Inspire through creativity**  
@@ -437,23 +624,124 @@ Our **gamified, interactive learning platform** personalizes learning paths and 
 
 Backed by **WSS, Google Level Up Program, and the Cherie Blair Foundation for Women**, we are committed to **continuous innovation** in tech education.
 
-Join us at **Kidzian**, where learning technology is an exciting adventure! 🎯
-`;
+---  
+
+## **📝 Course Curriculums**
+
+### **1. Little Innovators** (Age Group: 7-9)
+- Fundamentals of coding  
+- Hardware and Software  
+- Parts of a computer  
+- Introduction to Block-based Coding  
+- Concept of Sequencing  
+- What are events  
+- Coding with events  
+- Introduction to Loops & Types of Loops  
+- Animation projects  
+- Conditionals and how to use them  
+- Single-player games/Flappy Bird Game  
+- Mini Projects in Code.org  
+- Introduction to Scratch  
+- Projects using Scratch  
+- Math and Science Projects using Scratch  
+- Platforms: Code.org, Scratch  
+**Awards:** Certificate of Completion from Kidzian Private Limited  
+
+### **2. Junior Innovators** (Age Group: 9-12)
+- Fundamentals of App Design  
+- Basics of Interactive Apps  
+- Implementing conditionals, loops, lists in projects  
+- Creating e-commerce, chat apps, yoga app, and more  
+- Machine Learning (ML) projects  
+- HTML Basics (Lists, Tables, Images, Hyperlinks)  
+- Basics of CSS  
+- Creating a simple website  
+- Platforms: Scratch, Teachable, Thunkable, Replit, and more  
+**Awards:** Certificate of Completion from Kidzian Private Limited  
+
+### **3. Senior Innovators** (Age Group: 12-17)
+- What is text-based coding and its advantages  
+- Introduction to Python  
+- Basics, Conditionals, and Loops  
+- Introduction to Turtle Graphics  
+- Functions and Data Structures in Python  
+- GUI and App Development in Python  
+- Classes and Inheritance  
+- Reading/Writing Files in Python  
+- Games and AI/ML in Python  
+- 3D Modeling, Arduino, AR & VR Projects  
+- Platforms: Replit, TinkerCAD, Teachable, and more  
+**Awards:** Certificate of Completion from Kidzian Private Limited  
+
+### **4. Artificial Intelligence & Machine Learning (AIML)**
+- Introduction to AI and ML  
+- Applications of AI/ML  
+- Teachable Machine Platform  
+- Data Classification in ML  
+- Image, File, and Audio Classification Projects  
+- Introduction to Pictoblox  
+- AI Projects: Face Recognition, Chatbots, Sensors, Language Translator, Object Recognition, Voice Commands  
+- Platforms: Pictoblox, Teachable, and more  
+**Awards:** Certificate of Completion from Kidzian Private Limited  
+
+### **5. Web Development** (Age Group: 12-17)
+- Introduction to Internet & Web Development  
+- HTML Structure (Elements, Tags)  
+- CSS Basics & UI/UX Design  
+- Advanced HTML Forms & CSS Animations  
+- JavaScript Basics  
+- Build a Personal Website  
+- Platforms: Replit and more  
+**Awards:** Web Development Certificate + Scholarship & Trophy for Top 3 Performers  
+
+### **6. Java Programming**
+- Java Syntax, Data Types, and Conditionals  
+- Loops (For, While, Do-While)  
+- Arrays, Strings, Methods & Recursion  
+- Object-Oriented Programming (OOP)  
+- Constructors, Method Overloading  
+- Inheritance, Polymorphism  
+- Game and Project Development  
+- Platforms: Replit and more  
+**Awards:** Java Development Certificate + Scholarship & Trophy for Top 3 Performers  
+
+### **7. App Development (Junior)** (Age Group: 12-17)
+- Introduction to App Development  
+- Coding Concepts with Code.org  
+- Loops & Conditional Statements  
+- UI Design & Planning Apps  
+- Creating Clicker Apps, Image Gallery, Quiz Apps  
+- Real-Time Apps and Game Development  
+- Platforms: Code.org, Thunkable, and more  
+**Awards:** App Development Certificate + Scholarship & Trophy for Top 3 Performers  
+
+---  
+
+## **📞 Contact Information**
+- **Website:** [Kidzian](https://www.linkedin.com/company/kidzian/?originalSubdomain=in)  
+- **Email:** info@kidzians.com  
+- **Phone:** 9599860105  
+
+---  
+
+Join us at **Kidzian**, where learning technology is an exciting adventure! 🎯`
 
 
-app.post('/api/chatbot', async (req, res) => {
+
+app.post("/api/chatbot", async (req, res) => {
   const { message } = req.body;
 
   try {
-    const response = await axios.post(GEMINI_API_URL, {
-      prompt: `${CONTEXT}\nUser: ${message}\nBot:`,
-    });
+    const prompt = `${CONTEXT}\nUser: ${message}\nBot:`;
 
-    const botReply = response.data.candidates[0].output;
+    const result = await model.generateContent(prompt);
+    const botReply = await result.response.text(); // Extracts response text
+
+    console.log(botReply);
     res.json({ reply: botReply });
   } catch (error) {
-    console.error('Error fetching chatbot response:', error);
-    res.status(500).json({ message: 'Error processing your request' });
+    console.error("Error fetching chatbot response:", error);
+    res.status(500).json({ message: "Error processing your request" });
   }
 });
 
