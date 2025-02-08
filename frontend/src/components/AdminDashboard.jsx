@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import axios
+import axios from 'axios'; 
 import CourseList from './CourseList';
 import BatchList from './BatchList';
 import LectureList from './LectureList';
 import SearchBar from './SearchBar';
-
 const AdminDashboard = () => {
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -24,7 +23,7 @@ const AdminDashboard = () => {
   return (
     <div>
       <SearchBar />
-      <div className="grid grid-cols-3 gap-4">
+      <div className="">
         <CourseList
           courses={courses}
           onSelectCourse={(course) => setSelectedCourse(course)}

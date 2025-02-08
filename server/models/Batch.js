@@ -4,11 +4,13 @@ const batchSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true },
     course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' }, 
     startingDate: { type: Date },
+    totalClasses:{type: Number},
     lectures: [
       {
         name: { type: String },
         date: { type: Date},
         completed:{type: Boolean},
+        
         attendance: [
           {
             studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

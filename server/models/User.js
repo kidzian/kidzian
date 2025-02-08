@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
       batch: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch' }, // Reference to Course
       startingDate: { type: Date },
       completion: { type: Number },
+      courseName:{ type: String},
       totalClasses: { type: Number },
       lecturesCompleted: { type: Number, default: 0 },
       lecturesAttended: { type: Number, default: 0 },

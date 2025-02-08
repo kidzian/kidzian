@@ -12,6 +12,7 @@ const Service = () => {
     name: '',
     phone: '',
     course: '',
+    email:''
   });
   const [loading, setLoading] = useState(false); // For managing loading state
 
@@ -93,7 +94,7 @@ const Service = () => {
       if (response.status === 200) {
         toast.success('Demo booked successfully!');
         setShowModal(false);
-        setFormData({ name: '', phone: '', course: '' });
+        setFormData({ name: '', phone: '', course: '' , email:''});
         setSelectedGrade(null);
       }
     } catch (error) {
@@ -171,6 +172,18 @@ const Service = () => {
                   required
                 />
               </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Email</label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full border rounded-md p-2"
+                  required
+                />
+              </div>
+
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Course</label>
                 <select

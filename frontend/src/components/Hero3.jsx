@@ -15,6 +15,7 @@ const Hero3 = () => {
     name: '',
     phone: '',
     course: '',
+    email:'',
   });
 
   const handleGradeSelect = (grade) => {
@@ -28,35 +29,7 @@ const Hero3 = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   // Include grade in the data being sent to the backend
-  //   const dataToSend = { ...formData, grade: selectedGrade };
-  //   console.log(dataToSend);
-
-  //   try {
-  //     const response = await axios.post(
-  //       `${import.meta.env.VITE_API_URL}/api/submit-form`,
-  //       dataToSend,
-  //       {
-  //         withCredentials: true, // Ensures cookies are sent
-  //       }
-  //     );
-
-  //     // Check response status
-  //     if (response.status === 200) {
-  //       toast.success('Demo booked successfully!'); // Show success toast
-  //       setShowModal(false);
-  //       setFormData({ name: '', phone: '', course: '' });
-  //       setSelectedGrade(null);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error submitting the form:', error);
-  //     toast.error('Failed to book a demo. Please try again.'); // Show error toast
-  //   }
-  // };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // Start loading
@@ -75,14 +48,14 @@ const Hero3 = () => {
       if (response.status === 200) {
         toast.success('Demo booked successfully!');
         setShowModal(false);
-        setFormData({ name: '', phone: '', course: '' });
+        setFormData({ name: '', phone: '', course: '',email:'' });
         setSelectedGrade(null);
       }
     } catch (error) {
       console.error('Error submitting the form:', error);
       toast.error('Failed to book a demo. Please try again.');
     } finally {
-      setLoading(false); // Stop loading after response
+      setLoading(false); 
     }
   };
 
@@ -157,6 +130,17 @@ const Hero3 = () => {
                       type='text'
                       name='phone'
                       value={formData.phone}
+                      onChange={handleInputChange}
+                      className='w-full border rounded-md p-2'
+                      required
+                    />
+                  </div>
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium mb-1'>email</label>
+                    <input
+                     type='email'
+                      name='email'
+                      value={formData.email}
                       onChange={handleInputChange}
                       className='w-full border rounded-md p-2'
                       required

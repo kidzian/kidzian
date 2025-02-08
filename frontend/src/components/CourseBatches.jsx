@@ -1,25 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import SearchBar from "./SearchBar";
 
 const CourseBatches = () => {
-  const { courseId } = useParams(); 
+  const { courseId } = useParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [batches, setBatches] = useState([]);
-  const [newBatchName, setNewBatchName] = useState('');
-  const [startDate, setStartDate] = useState('');
+  const [newBatchName, setNewBatchName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [totalClasses, setTotalClasses] = useState("");
 
   useEffect(() => {
     const fetchCourseAndBatches = async () => {
       try {
-        const courseResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/courses/${courseId}`);
+        const courseResponse = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/courses/${courseId}`
+        );
         setCourse(courseResponse.data);
 
-        const batchesResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/batches?courseId=${courseId}`);
+        const batchesResponse = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/batches?courseId=${courseId}`
+        );
         setBatches(batchesResponse.data);
       } catch (error) {
-        console.error('Error fetching course or batches:', error);
+        console.error("Error fetching course or batches:", error);
       }
     };
 
@@ -27,42 +33,47 @@ const CourseBatches = () => {
   }, [courseId]);
 
   const handleCreateBatch = async () => {
-    if (!newBatchName || !startDate) return;
+    if (!newBatchName || !startDate || !totalClasses) return;
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/batches`, {
-        name: newBatchName,
-        startingDate: startDate,
-        courseId: courseId,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/batches`,
+        {
+          name: newBatchName,
+          startingDate: startDate,
+          courseId: courseId,
+          totalClasses: Number(totalClasses),
+        }
+      );
+
       setBatches([...batches, response.data]);
-      setNewBatchName('');
-      setStartDate('');
+      setNewBatchName("");
+      setStartDate("");
+      setTotalClasses("");
     } catch (error) {
-      console.error('Error creating batch:', error);
+      console.error("Error creating batch:", error);
     }
   };
 
   const handleDeleteBatch = async (batchId) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/batches/${batchId}`);
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/batches/${batchId}`
+      );
       setBatches(batches.filter((batch) => batch._id !== batchId));
     } catch (error) {
-      console.error('Error deleting batch:', error);
+      console.error("Error deleting batch:", error);
     }
   };
 
   return (
     <div className="p-4">
-      <button
-        onClick={() => navigate('/admin')}
-        className="mb-4 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-      >
-        Back to Dashboard
-      </button>
+      <SearchBar />
+    
 
       <h1 className="text-2xl font-bold mb-4">Batches for {course?.title}</h1>
 
+      {/* Batch Creation Form */}
       <div className="mb-6">
         <input
           type="text"
@@ -77,6 +88,13 @@ const CourseBatches = () => {
           onChange={(e) => setStartDate(e.target.value)}
           className="px-4 py-2 border rounded-lg mr-2"
         />
+        <input
+          type="number"
+          value={totalClasses}
+          onChange={(e) => setTotalClasses(e.target.value)}
+          placeholder="Total Classes"
+          className="px-4 py-2 border rounded-lg mr-2"
+        />
         <button
           onClick={handleCreateBatch}
           className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
@@ -85,14 +103,20 @@ const CourseBatches = () => {
         </button>
       </div>
 
+      {/* List of Batches */}
       <div>
         {batches.map((batch) => (
           <div
             key={batch._id}
-            onClick={() => navigate(`/courses/${courseId}/batches/${batch._id}`)}
+            onClick={() =>
+              navigate(`/courses/${courseId}/batches/${batch._id}`)
+            }
             className="p-4 border rounded-lg mb-2 flex justify-between items-center cursor-pointer hover:bg-gray-100"
           >
-            <span>{batch.name} - {new Date(batch.startingDate).toLocaleDateString()}</span>
+            <span>
+              {batch.name} - {new Date(batch.startingDate).toLocaleDateString()} 
+             
+            </span>
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -105,6 +129,13 @@ const CourseBatches = () => {
           </div>
         ))}
       </div>
+
+      <button
+        onClick={() => navigate("/admin")}
+        className="mb-4 px-4 py-2 absolute top-[12vh] right-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+      >
+        Back to Dashboard
+      </button>
     </div>
   );
 };

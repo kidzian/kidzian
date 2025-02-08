@@ -1,7 +1,45 @@
 import React from 'react'
 import Heading from '../components/Heading'
 import { Clock, Calendar, Check, CalendarClock } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { useEffect ,useState} from 'react'
 const LMSCOURSE = () => {
+
+  const location=useLocation();
+  
+  const userInfo = location.state?.userInfo;  // Use optional chaining here
+  const {id1,id2}=useParams();
+  const batchId=id2;
+  const courseName=id1;
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const[batchData,setBatchData]=useState(null);
+  const[data,setData]=useState(null);
+  
+  console.log("in new page",userInfo); // Ensure userInfo is passed correctly
+
+  useEffect(() => {
+    // Fetch course data based on batchId
+    const fetchBatchDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/batch/${batchId}`);
+        if (!response.ok) {
+          throw new Error('Course not found');
+        }
+        const data = await response.json();
+        console.log(data)
+        setData(data);
+        const batchDetails = userInfo.batches.find(batch => batch.batch.toString() === batchId);
+        console.log("batch details are",batchDetails)
+        setBatchData(batchDetails);
+      } catch (err) {
+        setError(err.message);      
+      }
+    };
+    fetchBatchDetails();
+  }, [batchId]);
+
   return (
     <div>
       <Heading/>
@@ -12,7 +50,10 @@ const LMSCOURSE = () => {
          <div className='w-full h-[40vh] flex gap-1 items-center justify-between pl-2 pr-6'>
 
           <div>
-            <h1 className='text-2xl font-bold'>WebD Fundamentals & Best Practice</h1>
+           <div className='flex gap-4 items-center justify-start'>
+           <h1 className='text-2xl font-bold capitalize'>{courseName} </h1>
+           <h3 className='text-gray-500 text-sm'>( {data?.name} batch )</h3>
+           </div>
               <div className='flex gap-3 mt-3'>
                 <button className='bg-[#f5f4f6] text-[#b5b6b7] text-sm rounded-lg w-[8.5vw] h-[4vh]'>Fundamental</button>
                 <button className='bg-[#f5f4f6] text-[#b5b6b7] text-sm rounded-lg w-[6vw] h-[4vh]'>Design</button>
@@ -24,12 +65,13 @@ const LMSCOURSE = () => {
                   <h3 className='text-[#b5b6b7]'>Completed Course</h3>
                   <div className='flex flex-col items-center'>
                   <div className='w-[8vw] bg-gray-300 rounded-full h-2'>
-        <div
-          className='bg-green-500 h-2 rounded-full '
-          style={{ width: '80%' }} // Change percentage here
-        ></div>
+                  <div
+  className='bg-green-500 h-2 rounded-full'
+  style={{ width: `${(batchData?.lecturesCompleted / batchData?.totalClasses) * 100}%` }} // Correct calculation for width
+></div>
+
       </div>
-                  <h1 className='text-xl font-bold'>80%</h1>
+                  <h1 className='text-xl font-bold'>{batchData?.lecturesCompleted/batchData?.totalClasses* 100}%</h1>
                   </div>
                 </div>
 
@@ -55,62 +97,27 @@ const LMSCOURSE = () => {
          <div className='w-[100%] h-auto flex gap-2'>
               <div className='w-[75%] h-[70vh] overflow-y-scroll hide-scrollbar flex flex-col gap-2'>
               
-              <div className='w-full h-[10vh] bg-gray-200 rounded-md p-4 flex items-center justify-between'>
-              
-               <div>
-               <h1 className='text-md font-semibold text-gray-800'>Class 1</h1>
-               <p className='text-sm text-gray-600'>Understanding the fundamentals</p>
-               </div>
+              {batchData?.lectures?.map((lecture, index) => (
+        <div
+          key={lecture._id}
+          className="w-full h-[10vh] bg-gray-200 rounded-md p-4 flex items-center justify-between"
+        >
+          {/* Left Section: Lecture Name */}
+          <div>
+            <h1 className="text-md font-semibold text-gray-800">
+              Class {index + 1}
+            </h1>
+            <p className="text-sm text-gray-600">{lecture.name}</p>
+          </div>
 
-               <Check className='text-green-400 font-semibold'/>
-            
-              </div>
-
-              
-
-              <div className='w-full h-[12vh] bg-gray-200 rounded-md p-4 flex items-center justify-between'>
-              
-              <div>
-              <h1 className='font-semibold text-gray-800'>Class 2</h1>
-              <p className='text-sm text-gray-600'>Understanding the fundamentals</p>
-              </div>
-
-              <Check className='text-green-400 font-semibold'/>
-           
-             </div>
-
-
-             <div className='w-full h-[12vh] bg-gray-200 rounded-md p-4 flex items-center justify-between'>
-              
-              <div>
-              <h1 className=' font-semibold text-gray-800'>Class 3</h1>
-              <p className='text-sm text-gray-600'>Understanding the fundamentals</p>
-              </div>
-              <Check className='text-green-400 font-semibold'/>
-             </div>
-
-             <div className='w-full h-[12vh] bg-gray-200 rounded-md p-4 flex items-center justify-between'>
-              
-              <div>
-              <h1 className='font-semibold text-gray-800'>Class 4</h1>
-              <p className='text-sm text-gray-600'>Understanding the fundamentals</p>
-              </div>
-              <CalendarClock size={20} className='text-red-400 font-semibold'/>
-             </div>
-
-             <div className='w-full h-[12vh] bg-gray-200 rounded-md p-4 flex items-center justify-between'>
-              
-              <div>
-              <h1 className='font-semibold text-gray-800'>Class 5</h1>
-              <p className='text-sm text-gray-600'>Understanding the fundamentals</p>
-              </div>
-              <CalendarClock size={20} className='text-red-400 font-semibold'/>
-             </div>
-
-             
-
-            
-
+          {/* Right Section: Attendance Status */}
+          {lecture.attendance ? (
+            <Check className="text-green-400 font-semibold" />
+          ) : (
+            <CalendarClock size={20} className="text-red-400 font-semibold" />
+          )}
+        </div>
+      ))}
 
               </div>
 
@@ -120,31 +127,31 @@ const LMSCOURSE = () => {
             <h1 className='text-lg font-semibold'>Attendance</h1>
             <div className='flex gap-2 text-3xl items-center justify-center'>
               <Clock className='text-blue-500' size={40}/>
-              19/20
+              {batchData?.lecturesAttended}/{batchData?.totalClasses}
             </div>
             <h1 className='text-gray-500 text-sm '>Keep attending classes </h1>
           </div>
 
           <div className='w-[18vw] h-[40vh] rounded-3xl flex flex-col gap-2 border-gray-200 border p-4'>
             <h1 className='text-lg font-semibold'>Progress Statistics</h1>
-            <h1 className='text-4xl'>80%</h1>
+            <h1 className='text-4xl'>{batchData?.lecturesCompleted/batchData?.totalClasses *100} %</h1>
 
             <div className='flex gap-1'>
               <div className=' w-[7vw] h-[17vh] bg-[#f7f8fa] flex flex-col items-center justify-center rounded-md'>
                 <span className='bg-[#7132fe] w-[5vh] h-[5vh] rounded-full text-white flex items-center justify-center'><Clock size={18}/></span>
-                  <h1 className='text-xl font-bold'>8</h1>
+                  <h1 className='text-xl font-bold'>{batchData?.lecturesCompleted}</h1>
                   <h1 className='text-xs '>Lectures <br/> Completed</h1>
               </div>
 
               <div className='w-[7vw] h-[17vh] bg-[#f7f8fa] flex flex-col items-center justify-center rounded-md'>
               <span className='bg-[#46c97f] w-[5vh] h-[5vh] rounded-full text-white flex items-center justify-center'><Clock size={18}/></span>
-                  <h1 className='text-xl font-bold'>12</h1>
+                  <h1 className='text-xl font-bold'> {batchData?.lecturesAttended}</h1>
                   <h1 className='text-xs '>Lectures <br/> Attended</h1>
               </div>
 
               <div className='w-[7vw] h-[17vh] bg-[#f7f8fa] flex flex-col items-center justify-center rounded-md'>
               <span className='bg-[#fe7e29] w-[5vh] h-[5vh] rounded-full text-white flex items-center justify-center'><Calendar size={18}/></span>
-                  <h1 className='text-xl font-bold'>14</h1>
+                  <h1 className='text-xl font-bold'>{batchData?.totalClasses-batchData?.lecturesCompleted}</h1>
                   <h1 className='text-xs '>Lectures <br/> Upcoming</h1>
               </div>
 

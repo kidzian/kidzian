@@ -4,11 +4,11 @@ import certificate from '../assets/certificate.svg';
 import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Footer from '../components/Footer';
 import { useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 const UserInfo = ({ userInfo }) => {
+
 
     const [tasks, setTasks] = useState([
         { text: "Attend WebD class", completed: false },
@@ -52,11 +52,7 @@ const UserInfo = ({ userInfo }) => {
     
       const navigate = useNavigate();
     
-      const handleCardClicks = () => {
-        const firstId = "course123"; // Replace with dynamic ID logic
-        const secondId = "uiux456"; // Replace with dynamic ID logic
-        navigate(`/${firstId}/${secondId}`);
-      };
+      
     
       const handleCardClick = (course) => {
         setSelectedCourse(course);
@@ -81,7 +77,7 @@ const UserInfo = ({ userInfo }) => {
       );
 
     useEffect(() => {
-        console.log(userInfo)
+       
         const fetchData = async () => {
           // Fetch courses data from the backend API
           try {
@@ -96,6 +92,8 @@ const UserInfo = ({ userInfo }) => {
         fetchData(); // Call the fetch function when the component mounts
       }, []);
 
+      
+
   return (
     <>
       <div className="w-[80vw] p-1">
@@ -109,7 +107,7 @@ const UserInfo = ({ userInfo }) => {
                 <div className="flex items-center justify-center gap-2 border border-gray-300 rounded-md h-[7vh] w-[12vw] cursor-pointer hover:bg-gray-100">
                   <img className="w-6" src={certificate} alt="" />
                   <div className="flex flex-col items-center leading-tight justify-center">
-                    <h1 className="text-lg font-bold">2</h1>
+                    <h1 className="text-lg font-bold">{userInfo?.certificates}</h1>
                     <h1 className="text-gray-700 text-xs">Certificates</h1>
                   </div>
                 </div>
@@ -127,73 +125,58 @@ const UserInfo = ({ userInfo }) => {
                 </div>
 
                 <div className="flex flex-col gap-1 mt-5">
-                  <div
-                    className="group flex cursor-pointer w-full h-[16vh] rounded-md p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
-                    onClick={handleCardClicks}
-                  >
-                    <img
-                      src="https://kidzian.com/wp-content/uploads/2024/03/children-win-success-593313-1024x682.jpg"
-                      alt=""
-                      className="w-[10vw] rounded-md"
-                    />
-                    <div className="justify-center flex flex-col">
-                      <h1 className="text-gray-600">Course</h1>
-                      <h1 className="font-bold text-sm">Mastering UI/UX Design</h1>
-                    </div>
+                {userInfo?.batches.map((batch) => {
+  // Convert the startingDate to a readable date format
+  const startDate = new Date(batch.startingDate);
+  const formattedStartDate = startDate.toLocaleDateString();  // Format to the desired date format
 
-                    <div className="justify-center flex flex-col">
-                      <h1 className="text-gray-600">Starting Date</h1>
-                      <h1 className="font-bold">16 Dec</h1>
-                    </div>
+  const handleCardClicks=()=>{
+    navigate(`/${batch.courseName}/${batch.batch}`, { state: { userInfo } });
+  }
+                
 
-                    <div className="justify-center flex flex-col">
-                      <h1 className="text-gray-600">Completion</h1>
-                      <div className="flex gap-2 items-center">
-                        <span className="w-[1.5vw] h-[1.5vw] border-2 rounded-full border-green-500"></span>
-                        <h1 className="font-bold">100%</h1>
-                      </div>
-                    </div>
+  return (
+    <div
+      key={batch._id}
+      className="group flex cursor-pointer w-full h-[16vh] rounded-md p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
+      onClick={handleCardClicks}
+    >
+      <img
+        src="https://kidzian.com/wp-content/uploads/2024/03/children-win-success-593313-1024x682.jpg"
+        alt="course"
+        className="w-[10vw] rounded-md"
+      />
+      <div className="justify-center flex flex-col">
+        <h1 className="text-gray-600">Course</h1>
+        <h1 className="font-bold text-sm">{batch.courseName}</h1>
+      </div>
 
-                    <div className="justify-center flex flex-col">
-                      <button className="border-2 h-10 w-16 rounded-lg font-bold group-hover:bg-gray-200 transition-colors">
-                        View
-                      </button>
-                    </div>
-                  </div>
+      <div className="justify-center flex flex-col">
+        <h1 className="text-gray-600">Starting Date</h1>
+        <h1 className="font-bold">{formattedStartDate}</h1>
+      </div>
 
-                  <div
-                    className="flex group cursor-pointer w-full h-[16vh] rounded-md p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
-                    onClick={handleCardClicks}
-                  >
-                    <img
-                      src="https://kidzian.com/wp-content/uploads/2023/11/child-student-video-conference-5976952-300x225.jpg"
-                      alt=""
-                      className="w-[10vw] rounded-md"
-                    />
-                    <div className="justify-center flex flex-col">
-                      <h1 className="text-gray-600">Course</h1>
-                      <h1 className="font-bold">Mastering UI/UX Design</h1>
-                    </div>
+      <div className="justify-center flex flex-col">
+        <h1 className="text-gray-600">Completion</h1>
+        <div className="flex gap-2 items-center">
+          <span className="w-[1.5vw] h-[1.5vw] border-2 rounded-full border-green-500"></span>
+          <h1 className="font-bold">{(batch.lecturesCompleted / batch.totalClasses) * 100}%</h1>
+        </div>
+      </div>
 
-                    <div className="justify-center flex flex-col">
-                      <h1 className="text-gray-600">Starting Date</h1>
-                      <h1 className="font-bold">16 Dec</h1>
-                    </div>
+      <div className="justify-center flex flex-col">
+        <button className="border-2 h-10 w-16 rounded-lg font-bold group-hover:bg-gray-200 transition-colors">
+          View
+        </button>
+      </div>
+    </div>
+  );
+})}
 
-                    <div className="justify-center flex flex-col">
-                      <h1 className="text-gray-600">Completion</h1>
-                      <div className="flex gap-2 items-center">
-                        <span className="w-[1.5vw] h-[1.5vw] border-2 rounded-full border-green-500"></span>
-                        <h1 className="font-bold">100%</h1>
-                      </div>
-                    </div>
 
-                    <div className="justify-center flex flex-col">
-                      <button className="border-2 h-10 w-16 rounded-lg font-bold group-hover:bg-gray-200">
-                        View
-                      </button>
-                    </div>
-                  </div>
+
+
+                  
                 </div>
               </div>
 

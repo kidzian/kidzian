@@ -20,19 +20,6 @@ const Contact = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   const { firstName, lastName, email, phone, message } = formData;
-
-  //   // Check if all required fields are filled
-  //   if (!firstName || !lastName || !email || !phone || !message) {
-  //     toast.error('Please fill in all fields!');
-  //   } else {
-  //     console.log('Form submitted:', formData);
-  //     toast.success('Message is sent!');
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { firstName, lastName, email, phone, message } = formData;
