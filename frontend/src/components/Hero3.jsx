@@ -136,7 +136,7 @@ const Hero3 = () => {
                     />
                   </div>
                   <div className='mb-4'>
-                    <label className='block text-sm font-medium mb-1'>email</label>
+                    <label className='block text-sm font-medium mb-1'>Email</label>
                     <input
                      type='email'
                       name='email'
