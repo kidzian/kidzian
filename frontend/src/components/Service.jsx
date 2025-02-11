@@ -117,7 +117,7 @@ const Service = () => {
 
       {/* Cards Section */}
       <motion.div
-        className="flex flex-wrap  gap-8 w-full px-10 bg-red-400 items-center justify-center"
+        className="flex flex-wrap  gap-8 w-full items-center justify-center"
         initial={{ opacity: 0, y: 50 }}
         animate={hasScrolled ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
         transition={{ duration: 0.5, type: 'spring' }}
@@ -125,7 +125,7 @@ const Service = () => {
         {cardData.map((card, index) => (
           <div key={index}>
             <motion.div
-              className="bg-white h-[45vh] xl:w-[18vw] w-[80%] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer"
+              className="bg-white h-[48vh] xl:w-[18vw] w-[80%] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer sm:pl-10 md:pl-0 lg:pl-0 xl:pl-0 2xl:pl-0"
               whileHover={{ scale: 1.1, boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)' }}
             >
               <div className="flex flex-col items-center gap-4 w-full">
