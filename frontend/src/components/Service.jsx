@@ -117,7 +117,7 @@ const Service = () => {
 
       {/* Cards Section */}
       <motion.div
-        className="flex flex-wrap  gap-8 w-full items-center justify-center sm:pl-10"
+        className="sm:block md:flex lg:flex xl:flex flex-wrap  gap-8 w-full items-center justify-center "
         initial={{ opacity: 0, y: 50 }}
         animate={hasScrolled ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
         transition={{ duration: 0.5, type: 'spring' }}
