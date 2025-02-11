@@ -62,7 +62,7 @@ const Hero3 = () => {
 
   return (
     <div className='w-[100vw] min-h-[90vh] xl:flex lg:flex md:flex 2xl:flex sm:block items-center justify-center'>
-      <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] bg-red-400 gap-8 pt-32  flex flex-col items-center justify-center pl-12 '>
+      <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] gap-8 pt-32  flex flex-col items-center justify-center pl-12 '>
         
         {/* Heading Section */}
         <div className='text-5xl font-extrabold '>
@@ -214,7 +214,7 @@ const Hero3 = () => {
       </div>
 
       {/* Placeholder for other content */}
-      <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] bg-yellow-400 flex items-center justify-center mb-16 h-[60vh]'>
+      <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw]  flex items-center justify-center mb-16 h-[60vh]'>
         <img src={hero3} className='' alt="" />
       </div>
 
