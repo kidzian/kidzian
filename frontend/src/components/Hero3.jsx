@@ -63,7 +63,7 @@ const Hero3 = () => {
 
   return (
     <div className='w-[100vw] min-h-[90vh] 2xl:flex md:flex lg:flex xl:flex items-center justify-center sm:block  '>
-      <div className='sm:w-[100vw] md:w-[50vw] lg:w-[50vw] xl:w-[50vw] gap-8 md:pt-32 lg:pt-32 xl:pt-32 pl-10 flex flex-col items-center justify-center  '>
+      <div className='sm:w-[100vw] md:w-[50vw] lg:w-[50vw] xl:w-[50vw] gap-8 sm:pt-0 md:pt-32 lg:pt-32 xl:pt-32 pl-10 flex flex-col items-center justify-center  '>
         
         {/* Heading Section */}
         <div className='text-5xl font-extrabold '>
