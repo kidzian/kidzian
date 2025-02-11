@@ -15,7 +15,7 @@ import Chatbot from '../components/Chatbot'
 const Landing = () => {
   return (
     <div className="w-[100vw] h-auto">
-      <Heading/>
+      {/* <Heading/> */}
       <Hero3/>
      
       <Service/>
