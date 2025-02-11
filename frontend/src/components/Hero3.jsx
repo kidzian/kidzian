@@ -60,8 +60,8 @@ const Hero3 = () => {
   return (
     <div className='w-full min-h-screen flex flex-col lg:flex-row items-center justify-center p-4'>
       {/* Image Section - On top for smaller devices */}
-      <div className='w-full lg:w-1/2 flex items-center justify-center order-1 lg:order-2'>
-        <img src={hero3} alt='Hero' className='w-full max-w-md lg:max-w-lg' />
+      <div className='w-full lg:w-1/2 flex items-center justify-center order-1 lg:order-2 sm:h-[80vh]'>
+        <img src={hero3} alt='Hero' className='w-full max-w-md lg:max-w-full' />
       </div>
 
       {/* Content Section - Below image for smaller devices */}
