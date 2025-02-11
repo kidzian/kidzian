@@ -3,14 +3,14 @@ import { Phone, Mail, MapPin, Instagram, Facebook, Linkedin, Youtube, Star, Copy
 
 const Footer = () => {
   return (
-    <div className="h-auto  w-full py-10 px-5 md:px-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+    <div className="h-[100vh]  w-full py-[12.5vh]  px-5 md:px-10">
+      <div className="grid grid-cols-1 pt-12.5 md:grid-cols-2 lg:grid-cols-4 gap-12">
         {/* Section 1 */}
         <div className="flex flex-col">
           <p className="text-sm text-[#636363]">
             Kidzian unlocks the exciting world of coding and technology for children, empowering them to explore, create, and approach learning with confidence in today's digital age.
           </p>
-          <div className="mt-5">
+          <div className="md:mt-[30vh] lg:mt-[30vh] xl:mt-[30vh] mt-12">
             <h1 className="text-[18px] font-bold mb-2">Legal</h1>
             <ul className="text-sm text-[#636363] flex flex-col gap-3">
               <li className='cursor-pointer hover:text-black transition-transform'>Privacy Policy</li>
