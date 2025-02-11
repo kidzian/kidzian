@@ -65,7 +65,7 @@ const Hero3 = () => {
       <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] gap-8 md:pt-32 lg:pt-32 xl:pt-32 2xl:pt-32 sm:pt-0 flex flex-col items-center justify-center pl-12 '>
         
         {/* Heading Section */}
-        <div className='text-5xl font-extrabold '>
+        <div className='md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl font-extrabold sm:text-3xl'>
           <h1>
             Welcome to <span className="text-[#4b40de]">Kidzian</span>
           </h1>
