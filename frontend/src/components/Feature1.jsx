@@ -17,8 +17,8 @@ const Feature1 = () => {
   }, [controls]);
 
   return (
-    <div ref={ref} className="w-full min-h-screen flex flex-col lg:flex-row gap-10 p-10 items-center justify-center">
-      {/* Image Section (Comes first on small screens) */}
+    <div ref={ref} className="w-full min-h-screen flex flex-col lg:flex-row-reverse gap-10 p-10 items-center justify-center">
+      {/* Image Section (Appears on right in desktop) */}
       <div className="w-full lg:w-2/5 flex justify-center">
         <motion.img
           src="https://plus.unsplash.com/premium_photo-1664299935896-8b7638a6f105?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -30,10 +30,10 @@ const Feature1 = () => {
         />
       </div>
 
-      {/* Text Section */}
+      {/* Text Section (Appears on left in desktop) */}
       <div className="w-full lg:w-1/2 text-center lg:text-left">
         <motion.h1
-          className="capitalize text-[#231639] text-3xl lg:text-5xl font-semibold"
+          className="capitalize text-[#231639] text-3xl md:text-5xl 2xl:text-5xl font-semibold"
           initial={{ opacity: 0, x: -100 }}
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut' }}
@@ -42,7 +42,7 @@ const Feature1 = () => {
         </motion.h1>
 
         <motion.p
-          className="mt-5 lg:mt-10 text-[#606161] text-lg"
+          className="mt-5 lg:mt-10 text-[#606161] sm:text-lg md:text-sm"
           initial={{ opacity: 0, x: -100 }}
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut', delay: 0.2 }}

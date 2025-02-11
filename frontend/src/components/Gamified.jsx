@@ -42,7 +42,7 @@ const Gamified = () => {
         </motion.h1>
 
         <motion.p
-          className="mt-5 lg:mt-10 text-[#606161] text-lg"
+          className="mt-5 lg:mt-10 text-[#606161] text-lg md:text-sm"
           initial={{ opacity: 0, x: 100 }}
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut', delay: 0.2 }}
