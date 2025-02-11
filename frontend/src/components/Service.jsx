@@ -108,7 +108,7 @@ const Service = () => {
   return (
     <div className="w-[100vw] min-h-[100vh] bg-[#FFFFFF] flex flex-col items-center justify-start gap-16 p-24">
       {/* Section Title and Description */}
-      <div className="flex items-center justify-center flex-col w-[60vw] leading-tight gap-4 ">
+      <div className="flex items-center justify-center flex-col leading-tight gap-4 ">
         <h1 className="text-4xl font-bold text-center">Why Kidzian is for you?</h1>
         <p className="text-center text-gray-600 text-lg">
           If you are planning for a year, sow rice. If you are planning for a decade, plant trees. If you are planning for a lifetime, educate people.
@@ -117,7 +117,7 @@ const Service = () => {
 
       {/* Cards Section */}
       <motion.div
-        className="sm:block md:flex lg:flex xl:flex flex-wrap  gap-8 w-full items-center justify-center "
+        className="sm:block md:flex lg:flex xl:flex flex-wrap  gap-8  items-center justify-center w-full"
         initial={{ opacity: 0, y: 50 }}
         animate={hasScrolled ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
         transition={{ duration: 0.5, type: 'spring' }}
@@ -125,7 +125,7 @@ const Service = () => {
         {cardData.map((card, index) => (
           <div key={index}>
             <motion.div
-              className="bg-white h-[48vh] xl:w-[18vw] w-[95vw] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer mb-8 "
+              className="bg-white h-[48vh] xl:w-[18vw] w-[100%] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer mb-8 "
               whileHover={{ scale: 1.1, boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)' }}
             >
               <div className="flex flex-col items-center gap-4 w-full">
