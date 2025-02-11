@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
@@ -9,7 +8,6 @@ const Feature1 = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        // Trigger the animation when the element comes into the viewport
         controls.start({ opacity: 1, x: 0, y: 0, scale: 1 });
       }
     }, {
@@ -28,10 +26,24 @@ const Feature1 = () => {
   }, [controls]);
 
   return (
-    <div ref={ref} className='w-[100vw] h-[100vh] flex gap-10 p-10 items-center justify-center'>
-      <div className='w-[50%] text-sm'>
+    <div ref={ref} className='w-full min-h-screen flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 p-6 md:p-10'>
+      
+      {/* Image first on small screens */}
+      <div className='w-full md:w-[40%] flex justify-center'>
+        <motion.img 
+          src='https://plus.unsplash.com/premium_photo-1664299935896-8b7638a6f105?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+          alt="Feature Image" 
+          className='rounded-3xl h-auto md:h-[70vh] w-full max-w-[500px]'
+          initial={{ opacity: 0, scale: 0.8, x: 100 }}
+          animate={controls}
+          transition={{ duration: 1, ease: 'easeInOut' }}
+        />
+      </div>
+
+      {/* Text Section */}
+      <div className='w-full md:w-[50%] text-center md:text-left'>
         <motion.h1 
-          className="capitalize text-[#231639] text-5xl font-semibold"
+          className="capitalize text-[#231639] text-3xl md:text-5xl font-semibold"
           initial={{ opacity: 0, x: -100 }}
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut' }}
@@ -40,26 +52,15 @@ const Feature1 = () => {
         </motion.h1>
 
         <motion.p 
-          className='mt-10 text-[#606161]'
+          className='mt-4 md:mt-10 text-[#606161] text-sm md:text-base'
           initial={{ opacity: 0, x: -100 }}
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut', delay: 0.2 }}
         >
-         "At <strong>Kidzian</strong>, our team of seasoned experts from India's most prestigious institutes is committed to nurturing your child's future with years of proven experience and dedication."
+          "At <strong>Kidzian</strong>, our team of seasoned experts from India's most prestigious institutes is committed to nurturing your child's future with years of proven experience and dedication."
         </motion.p>
-
       </div>
-
-      <div className='w-[40%]'>
-        <motion.img 
-          src='https://plus.unsplash.com/premium_photo-1664299935896-8b7638a6f105?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          alt="" 
-          className='rounded-3xl h-[70vh]' 
-          initial={{ opacity: 0, scale: 0.8, x: 100 }}
-          animate={controls}
-          transition={{ duration: 1, ease: 'easeInOut' }}
-        />
-      </div>
+      
     </div>
   );
 }
