@@ -88,13 +88,13 @@ const GlobalTech = () => {
   return (
     <div
       ref={componentRef}
-      className="w-full h-[57.5vh] bg-[#ffffff] flex flex-col items-center justify-center"
+      className="w-full  bg-[#ffffff] flex flex-col items-center justify-center"
     >
       <h1 className="text-4xl font-bold text-black text-center ">
         Global Tech School for Children
       </h1>
 
-      <div className="sm:w-[90vw] w-full md:flex md:flex-wrap sm:flex-col items-center justify-center gap-10">
+      <div className="sm:w-[90vw] w-full md:flex lg:flex xl:flex 2xl:flex md:flex-wrap sm:block items-center justify-center gap-10">
         {/* Reviews Section */}
         <div className="text-[#504bd1] h-[40vh] md:w-[18vw] sm:w-[90vw] rounded-2xl flex items-center justify-center">
           <div className="text-center">
