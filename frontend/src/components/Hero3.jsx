@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import chinese from '../assets/chinese.png';
 import hero3 from '../assets/hero3.png';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify'; // Import Toastify
@@ -62,8 +61,8 @@ const Hero3 = () => {
 
 
   return (
-    <div className='w-[100vw] min-h-[90vh] 2xl:flex md:flex lg:flex xl:flex items-center justify-center sm:block  '>
-      <div className='sm:w-[100vw] md:w-[50vw] lg:w-[50vw] xl:w-[50vw] gap-8 sm:pt-0 md:pt-32 lg:pt-32 xl:pt-32 pl-10 flex flex-col items-center justify-center  '>
+    <div className='w-[100vw] min-h-[90vh] xl:flex lg:flex md:flex 2xl:flex sm:block items-center justify-center'>
+      <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] bg-red-400 gap-8 pt-32  flex flex-col items-center justify-center pl-12 '>
         
         {/* Heading Section */}
         <div className='text-5xl font-extrabold '>
@@ -215,8 +214,8 @@ const Hero3 = () => {
       </div>
 
       {/* Placeholder for other content */}
-      <div className='sm:w-[100vw] md:w-[50vw] lg:w-[50vw] xl:w-[50vw] flex items-center justify-center mb-16 '>  
-        <img src={hero3} alt="" />
+      <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] bg-yellow-400 flex items-center justify-center mb-16 h-[60vh]'>
+        <img src={hero3} className='' alt="" />
       </div>
 
       {/* ToastContainer for Toast Notifications */}
