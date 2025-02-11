@@ -106,7 +106,7 @@ const Service = () => {
   };
 
   return (
-    <div className="w-[120vw] min-h-[100vh] bg-[#FFFFFF] flex flex-col items-center justify-start gap-16 p-24">
+    <div className="w-[100vw] min-h-[100vh] bg-[#FFFFFF] flex flex-col items-center justify-start gap-16 p-24">
       {/* Section Title and Description */}
       <div className="flex items-center justify-center flex-col w-[60vw] leading-tight gap-4 ">
         <h1 className="text-4xl font-bold text-center">Why Kidzian is for you?</h1>
