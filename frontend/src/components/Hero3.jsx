@@ -214,7 +214,7 @@ const Hero3 = () => {
       </div>
 
       {/* Placeholder for other content */}
-      <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw]  flex items-center justify-center  bg-yellow-400'>
+      <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw]  flex items-center justify-center '>
         <img src={hero3} className='' alt="" />
       </div>
 
