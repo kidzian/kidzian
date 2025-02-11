@@ -14,7 +14,7 @@ import Testimonials from '../components/Testimonials'
 import Chatbot from '../components/Chatbot'
 const Landing = () => {
   return (
-    <div className="w-[100vw] h-auto">
+    <div className="w-[100vw] overflow-x-hidden h-auto">
       <Heading/>
       <Hero3/>
      
