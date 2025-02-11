@@ -125,7 +125,7 @@ const Service = () => {
         {cardData.map((card, index) => (
           <div key={index}>
             <motion.div
-              className="bg-white h-[48vh] xl:w-[18vw] w-[80%] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer sm:pl-10 md:pl-0 lg:pl-0 xl:pl-0 2xl:pl-0"
+              className="bg-white h-[48vh] xl:w-[18vw] w-[80%] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer sm:pl-10 md:pl-0 lg:pl-0 xl:pl-0 2xl:pl-0 sm:mb-5"
               whileHover={{ scale: 1.1, boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)' }}
             >
               <div className="flex flex-col items-center gap-4 w-full">
