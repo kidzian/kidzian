@@ -71,7 +71,7 @@ const Hero3 = () => {
          initial={{ x: '-100vw' }} 
          animate={{ x: 0 }} 
          transition={{ duration: 0.8, type: 'spring', stiffness: 50 }}
-        className='text-4xl md:text-3xl lg:text-3xl xl:text-3xl 2xl:text-3xl font-extrabold mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0'>
+        className='text-4xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl font-extrabold mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0'>
           <h1>
             Welcome to <span className="text-[#4b40de]">Kidzian</span>
           </h1>
