@@ -61,7 +61,7 @@ const Chatbot = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="w-[90vw]  md:w-[40vw] md:h-[90vh] bg-white shadow-lg rounded-lg overflow-hidden flex flex-col"
+          className="w-[90vw] md:w-[40vw] md:h-[90vh] bg-white shadow-lg rounded-lg overflow-hidden flex flex-col"
         >
           {/* Header */}
           <div className="bg-blue-500 text-white p-4 flex justify-between items-center">

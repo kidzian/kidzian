@@ -51,10 +51,10 @@ const Courses = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}
       >
-        <div className="w-[75vw]">
+        <div className="w-[90vw] md:w-[75vw]">
           {/* Hero Section */}
           <motion.div
-            className="flex gap-10 items-center justify-center mb-12 h-[64vh]"
+            className="flex flex-col md:flex-row gap-10 items-center justify-center mb-12 h-[64vh]"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeInOut', delay: 0.1 }}
@@ -62,11 +62,11 @@ const Courses = () => {
             <motion.img
               src={hero2}
               alt="Curious young boy"
-              className="h-[60vh] w-[38vw] rounded-2xl object-cover shadow-lg"
+              className="h-[60vh] w-full md:w-[38vw] rounded-2xl object-cover shadow-lg"
               whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 100, damping: 10 }}
             />
-            <div className="flex flex-col items-start w-[45vw]">
+            <div className="flex flex-col items-start w-full md:w-[45vw]">
               <motion.h1
                 className="text-3xl font-extrabold text-[#303030] mb-4 capitalize"
                 initial={{ opacity: 0, x: -30 }}
@@ -94,7 +94,7 @@ const Courses = () => {
               <motion.input
                 type="text"
                 placeholder="Search courses..."
-                className="w-[35vw] p-3 rounded-lg border border-gray-300 shadow-sm bg-[#F0F2F5] focus:outline-none focus:ring-2 focus:ring-[#AA14F0] transition text-sm"
+                className="w-full md:w-[35vw] p-3 rounded-lg border border-gray-300 shadow-sm bg-[#F0F2F5] focus:outline-none focus:ring-2 focus:ring-[#AA14F0] transition text-sm"
                 value={searchQuery}
                 onChange={handleSearchChange} // Handle change in search input
                 initial={{ opacity: 0, y: 20 }}
@@ -130,7 +130,7 @@ const Courses = () => {
               {filteredCourses.map((course, index) => (
                 <motion.div
                   key={index}
-                  className="bg-white w-[15vw] h-[300px] flex flex-col items-center rounded-xl cursor-pointer"
+                  className="bg-white w-full sm:w-[48%] md:w-[15vw] h-[300px] flex flex-col items-center rounded-xl cursor-pointer"
                   onClick={() => handleCardClick(course)}
                   variants={{
                     hidden: { opacity: 0, scale: 0.9 },
