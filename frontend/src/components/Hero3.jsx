@@ -66,7 +66,12 @@ const Hero3 = () => {
       <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] gap-8 md:pt-32 lg:pt-32 xl:pt-32 2xl:pt-32 sm:pt-0 flex flex-col items-center justify-center pl-12 '>
         
         {/* Heading Section */}
-        <div className='text-5xl font-extrabold '>
+       
+        <motion.div
+         initial={{ x: '-100vw' }} 
+         animate={{ x: 0 }} 
+         transition={{ duration: 0.8, type: 'spring', stiffness: 50 }}
+        className='text-5xl font-extrabold '>
           <h1>
             Welcome to <span className="text-[#4b40de]">Kidzian</span>
           </h1>
@@ -74,7 +79,7 @@ const Hero3 = () => {
           <h1>
             Learn, <span className="text-[#4b40de]">Play and Grow</span>
           </h1>
-        </div>
+        </motion.div>
 
         {/* Grade Selection Buttons and CTA */}
         <div className=' flex flex-col items-center justify-center gap-10 pr-8'>
@@ -215,13 +220,15 @@ const Hero3 = () => {
       </div>
 
       {/* Placeholder for other content */}
-      {/* <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] flex items-center justify-center md:h-auto lg:h-auto xl:h-auto 2xl:h-auto sm:h-[80vh] xl:pb-16 md:pb-16 lg:pb-16 2xl:pb-16 sm:pb-0 sm:pt-10 md:pt-0 lg:pt-0 xl:pt-0 2xl:pt-0 sm:mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0'>
-        <img src={hero3} className='' alt="" />
-      </div> */}
+      
 
-<div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] flex items-center justify-center md:h-auto lg:h-auto xl:h-auto 2xl:h-auto sm:h-[80vh] xl:pb-16 md:pb-16 lg:pb-16 2xl:pb-16 sm:pb-0 sm:pt-10 md:pt-0 lg:pt-0 xl:pt-0 2xl:pt-0 sm:mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0 order-first md:order-last'>
+<motion.div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] flex items-center justify-center md:h-auto lg:h-auto xl:h-auto 2xl:h-auto sm:h-[80vh] xl:pb-16 md:pb-16 lg:pb-16 2xl:pb-16 sm:pb-0 sm:pt-10 md:pt-0 lg:pt-0 xl:pt-0 2xl:pt-0 sm:mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0 order-first md:order-last'
+initial={{ x: '100vw' }} 
+animate={{ x: 0 }} 
+transition={{ duration: 0.8, type: 'spring', stiffness: 50 }}
+>
   <img src={hero3} className='' alt="" />
-</div>
+</motion.div>
 
       {/* ToastContainer for Toast Notifications */}
       <ToastContainer position="top-right" autoClose={3000} />
