@@ -51,10 +51,10 @@ const Courses = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}
       >
-        <div className="w-[90vw] md:w-[75vw]">
+        <div className="w-[90vw] sm:w-[80vw] md:w-[75vw]">
           {/* Hero Section */}
           <motion.div
-            className="flex flex-col md:flex-row gap-10 items-center justify-center mb-12 h-[64vh]"
+            className="flex flex-col sm:flex-row gap-6 sm:gap-10 items-center justify-center mb-12 h-[auto] sm:h-[64vh]"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeInOut', delay: 0.1 }}
@@ -62,13 +62,13 @@ const Courses = () => {
             <motion.img
               src={hero2}
               alt="Curious young boy"
-              className="h-[60vh] w-full md:w-[38vw] rounded-2xl object-cover shadow-lg"
+              className="w-full sm:w-[38vw] md:w-[35vw] h-[auto] sm:h-[60vh] rounded-2xl object-cover shadow-lg"
               whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 100, damping: 10 }}
             />
-            <div className="flex flex-col items-start w-full md:w-[45vw]">
+            <div className="flex flex-col items-start w-full sm:w-[45vw]">
               <motion.h1
-                className="text-3xl font-extrabold text-[#303030] mb-4 capitalize"
+                className="text-2xl sm:text-3xl font-extrabold text-[#303030] mb-4 capitalize"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.2 }}
@@ -76,7 +76,7 @@ const Courses = () => {
                 Coding Courses For Kids and Teens
               </motion.h1>
               <motion.p
-                className=" text-[#606060] font-semibold"
+                className=" text-[#606060] font-semibold mb-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.3 }}
@@ -94,7 +94,7 @@ const Courses = () => {
               <motion.input
                 type="text"
                 placeholder="Search courses..."
-                className="w-full md:w-[35vw] p-3 rounded-lg border border-gray-300 shadow-sm bg-[#F0F2F5] focus:outline-none focus:ring-2 focus:ring-[#AA14F0] transition text-sm"
+                className="w-full sm:w-[35vw] md:w-[35vw] p-3 rounded-lg border border-gray-300 shadow-sm bg-[#F0F2F5] focus:outline-none focus:ring-2 focus:ring-[#AA14F0] transition text-sm"
                 value={searchQuery}
                 onChange={handleSearchChange} // Handle change in search input
                 initial={{ opacity: 0, y: 20 }}
