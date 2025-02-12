@@ -61,7 +61,8 @@ const Hero3 = () => {
 
 
   return (
-    <div className='w-[100vw] min-h-[90vh] xl:flex lg:flex md:flex 2xl:flex sm:block items-center justify-center'>
+    <div className='w-[100vw] min-h-[90vh] flex flex-col md:flex-row items-center justify-center'>
+
       <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] gap-8 md:pt-32 lg:pt-32 xl:pt-32 2xl:pt-32 sm:pt-0 flex flex-col items-center justify-center pl-12 '>
         
         {/* Heading Section */}
@@ -214,9 +215,13 @@ const Hero3 = () => {
       </div>
 
       {/* Placeholder for other content */}
-      <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] flex items-center justify-center md:h-auto lg:h-auto xl:h-auto 2xl:h-auto sm:h-[80vh] xl:pb-16 md:pb-16 lg:pb-16 2xl:pb-16 sm:pb-0 sm:pt-10 md:pt-0 lg:pt-0 xl:pt-0 2xl:pt-0 sm:mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0'>
+      {/* <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] flex items-center justify-center md:h-auto lg:h-auto xl:h-auto 2xl:h-auto sm:h-[80vh] xl:pb-16 md:pb-16 lg:pb-16 2xl:pb-16 sm:pb-0 sm:pt-10 md:pt-0 lg:pt-0 xl:pt-0 2xl:pt-0 sm:mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0'>
         <img src={hero3} className='' alt="" />
-      </div>
+      </div> */}
+
+<div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] flex items-center justify-center md:h-auto lg:h-auto xl:h-auto 2xl:h-auto sm:h-[80vh] xl:pb-16 md:pb-16 lg:pb-16 2xl:pb-16 sm:pb-0 sm:pt-10 md:pt-0 lg:pt-0 xl:pt-0 2xl:pt-0 sm:mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0 order-first md:order-last'>
+  <img src={hero3} className='' alt="" />
+</div>
 
       {/* ToastContainer for Toast Notifications */}
       <ToastContainer position="top-right" autoClose={3000} />
