@@ -6,7 +6,7 @@ const Heading = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className='h-[5vh] w-full flex items-center justify-between p-6 lg:p-10 sticky top-0 z-40 bg-white'>
+    <div className='h-[12.5vh] w-full flex items-center justify-between p-6 lg:p-10 sticky top-0 z-40 bg-white'>
       <div className='flex gap-2 items-center'>
         <a href='/'>
           <img src={logo11} alt='Logo' className='w-[10vh]' />
