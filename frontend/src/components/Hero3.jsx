@@ -63,7 +63,7 @@ const Hero3 = () => {
   return (
     <div className='w-[100vw] min-h-[90vh] flex flex-col md:flex-row items-center justify-center'>
 
-      <div className='sm:w-full  md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] gap-8 md:pt-32 lg:pt-32 xl:pt-32 2xl:pt-32 sm:pt-0 flex flex-col items-center justify-center md:pl-12 lg:pl-12 xl:pl-12 2xl:pl-12 pl-2 '>
+      <div className='sm:w-full  md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] gap-8 md:pt-32 lg:pt-32 xl:pt-32 2xl:pt-32 sm:pt-0 flex flex-col items-center justify-center md:pl-12 lg:pl-12 xl:pl-12 2xl:pl-12  '>
         
         {/* Heading Section */}
        
@@ -82,7 +82,7 @@ const Hero3 = () => {
         </motion.div>
 
         {/* Grade Selection Buttons and CTA */}
-        <div className=' flex flex-col items-center justify-center gap-10 pr-8'>
+        <div className=' flex flex-col items-center justify-center gap-10 md:pr-8 lg:pr-8 xl:pr-8 2xl:pr-8 '>
           <div className='flex flex-col gap-2 items-center justify-center'>
             <h1 className=' font-bold text-gray-600 '>Choose your grade</h1>
             <div className='grid grid-cols-4 gap-1'>
