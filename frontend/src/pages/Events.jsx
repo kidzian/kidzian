@@ -3,7 +3,8 @@ import Heading from '../components/Heading';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react'; // Import SVG
 import Footer from '../components/Footer';
-import events from '../assets/events.jpg'
+import events from '../assets/events.jpg';
+
 // Mock hackathon data
 const hackathons = [
   {
@@ -104,25 +105,32 @@ const Events = () => {
   return (
     <div>
       <Heading />
-      <div className='flex flex-col items-center justify-center'>
-        <div className='w-[80vw] h-[82vh] flex gap-2 '>
+      <div className="flex flex-col items-center justify-center">
+        {/* Hero Section */}
+        <div className="w-[90vw] md:w-[80vw] flex flex-col md:flex-row gap-6 md:gap-2 mt-6 md:mt-0">
+          {/* Image Section */}
           <motion.div
-            className='h-[80vh] w-[50%] flex items-center justify-center'
+            className="w-full md:w-[50%] flex items-center justify-center"
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: 'easeInOut' }}
           >
-            <img className='rounded-xl w-[92%] h-[95%] mt-10' src={events} alt="Hackathon Illustration" />
+            <img
+              className="rounded-xl w-full md:w-[92%] h-auto md:h-[95%]"
+              src={events}
+              alt="Hackathon Illustration"
+            />
           </motion.div>
 
+          {/* Text Section */}
           <motion.div
-            className='w-[50%] h-[70vh] flex flex-col gap-4'
+            className="w-full md:w-[50%] flex flex-col gap-4"
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: 'easeInOut' }}
           >
             <motion.h1
-              className='text-3xl font-extrabold text-[#303030] capitalize text-center'
+              className="text-3xl font-extrabold text-[#303030] capitalize text-center md:text-left"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: 'easeInOut' }}
@@ -131,7 +139,7 @@ const Events = () => {
             </motion.h1>
 
             <motion.p
-              className='text-sm text-[#606060] font-bold'
+              className="text-sm text-[#606060] font-bold"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: 'easeInOut' }}
@@ -140,7 +148,7 @@ const Events = () => {
             </motion.p>
 
             <motion.p
-              className='font-bold text-lg text-[#303030]'
+              className="font-bold text-lg text-[#303030]"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: 'easeInOut' }}
@@ -149,7 +157,7 @@ const Events = () => {
             </motion.p>
 
             <motion.ul
-              className='text-sm list-disc list-inside text-[#606060] font-semibold flex flex-col gap-1'
+              className="text-sm list-disc list-inside text-[#606060] font-semibold flex flex-col gap-1"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: 'easeInOut' }}
@@ -157,7 +165,7 @@ const Events = () => {
               <li><strong>Collaboration:</strong> Hackathons foster teamwork, allowing participants to work with others, exchange ideas, and build solutions together.</li>
               <li><strong>Creativity:</strong> Participants are encouraged to think outside the box and come up with unique solutions to problems.</li>
               <li><strong>Coding & Development:</strong> Many hackathons focus heavily on software development, but some may also include hardware, design, or business development.</li>
-              <li><strong>Networking</strong>Networking: It's a great opportunity to meet other developers, designers, entrepreneurs, and industry experts.</li>
+              <li><strong>Networking:</strong> It's a great opportunity to meet other developers, designers, entrepreneurs, and industry experts.</li>
               <li><strong>Time-Constraint:</strong> Most hackathons have strict time limits, typically 24-48 hours, to create something tangible and presentable.</li>
               <li><strong>Prizes:</strong> Many hackathons offer prizes for the best ideas, prototypes, or solutions, such as cash, mentorship, job opportunities, or networking perks.</li>
             </motion.ul>
@@ -165,54 +173,52 @@ const Events = () => {
         </div>
 
         {/* Search Bar */}
-        <div className='flex items-center mt-4'>
-          <div className='flex items-center bg-white rounded-lg border w-[80vw]'>
-            
-            <Search className='w-6 h-6 ml-2'/>
+        <div className="flex items-center mt-6 w-[90vw] md:w-[80vw]">
+          <div className="flex items-center bg-white rounded-lg border w-full">
+            <Search className="w-6 h-6 ml-2" />
             <input
               type="text"
               placeholder="Search hackathons..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className='pl-2 pr-4 py-2 w-full focus:outline-none'
+              className="pl-2 pr-4 py-2 w-full focus:outline-none"
             />
           </div>
         </div>
 
         {/* Results Section */}
-        <div className='mt-10'>
-          <h2 className='text-2xl w-[80vw] font-bold text-[#303030]'>Upcoming Hackathons:</h2>
-          <div className='mt-5'>
+        <div className="mt-10 w-[90vw] md:w-[80vw]">
+          <h2 className="text-2xl font-bold text-[#303030]">Upcoming Hackathons:</h2>
+          <div className="mt-5">
             {filteredHackathons.map((hackathon) => (
               <motion.div
                 key={hackathon.id}
-                className='bg-[#f9f9f9] p-4 rounded-lg mb-4 w-full flex items-center justify-between hover:shadow-lg transition-shadow duration-300 cursor-pointer'
+                className="bg-[#f9f9f9] p-4 rounded-lg mb-4 w-full flex flex-col md:flex-row items-center justify-between hover:shadow-lg transition-shadow duration-300 cursor-pointer"
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: 'easeInOut' }}
               >
-                <div className='flex gap-2'>
-                  <div><img src={hackathon.imageUrl} alt={hackathon.title} className="h-20 w-20 rounded-lg" /></div>
+                <div className="flex gap-2">
                   <div>
-                    <h3 className='text-xl font-bold text-[#303030]'>{hackathon.title}</h3>
-                    <p className='text-sm text-[#606060]'>{hackathon.description}</p>
-                    <p className='text-sm text-[#606060]'>Date: {hackathon.date} | Location: {hackathon.location}</p>
+                    <img src={hackathon.imageUrl} alt={hackathon.title} className="h-20 w-20 rounded-lg" />
                   </div>
-
-                  
+                  <div>
+                    <h3 className="text-xl font-bold text-[#303030]">{hackathon.title}</h3>
+                    <p className="text-sm text-[#606060]">{hackathon.description}</p>
+                    <p className="text-sm text-[#606060]">Date: {hackathon.date} | Location: {hackathon.location}</p>
+                  </div>
                 </div>
                 <div>
-                  <button className='mt-2 bg-blue-500 text-white px-4 py-2 rounded'>Register</button>
+                  <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Register</button>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };
 
 export default Events;
-
