@@ -71,7 +71,7 @@ const Hero3 = () => {
          initial={{ x: '-100vw' }} 
          animate={{ x: 0 }} 
          transition={{ duration: 0.8, type: 'spring', stiffness: 50 }}
-        className='text-5xl font-extrabold '>
+        className='text-5xl font-extrabold mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0'>
           <h1>
             Welcome to <span className="text-[#4b40de]">Kidzian</span>
           </h1>
@@ -222,7 +222,7 @@ const Hero3 = () => {
       {/* Placeholder for other content */}
       
 
-<motion.div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] flex items-center justify-center md:h-auto lg:h-auto xl:h-auto 2xl:h-auto sm:h-[80vh] xl:pb-16 md:pb-16 lg:pb-16 2xl:pb-16 sm:pb-0 sm:pt-10 md:pt-0 lg:pt-0 xl:pt-0 2xl:pt-0 sm:mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0 order-first md:order-last'
+<motion.div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] flex items-center justify-center md:h-auto lg:h-auto xl:h-auto 2xl:h-auto sm:h-[80vh] xl:pb-16 md:pb-16 lg:pb-16 2xl:pb-16 sm:pb-0 sm:pt-10 md:pt-0 lg:pt-0 xl:pt-0 2xl:pt-0 sm:mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0 order-first md:order-last '
 initial={{ x: '100vw' }} 
 animate={{ x: 0 }} 
 transition={{ duration: 0.8, type: 'spring', stiffness: 50 }}
