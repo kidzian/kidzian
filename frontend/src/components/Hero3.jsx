@@ -63,7 +63,7 @@ const Hero3 = () => {
   return (
     <div className='w-[100vw] min-h-[90vh] flex flex-col md:flex-row items-center justify-center'>
 
-      <div className='sm:w-full md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] gap-8 md:pt-32 lg:pt-32 xl:pt-32 2xl:pt-32 sm:pt-0 flex flex-col items-center justify-center pl-12 '>
+      <div className='sm:w-full  md:w-[50vw] lg:w-[50vw] xl:w-[50vw] 2xl:w-[50vw] gap-8 md:pt-32 lg:pt-32 xl:pt-32 2xl:pt-32 sm:pt-0 flex flex-col items-center justify-center md:pl-12 lg:pl-12 xl:pl-12 2xl:pl-12 pl-2 '>
         
         {/* Heading Section */}
        
@@ -71,7 +71,7 @@ const Hero3 = () => {
          initial={{ x: '-100vw' }} 
          animate={{ x: 0 }} 
          transition={{ duration: 0.8, type: 'spring', stiffness: 50 }}
-        className='text-5xl font-extrabold mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0'>
+        className='text-4xl md:text-3xl lg:text-3xl xl:text-3xl 2xl:text-3xl font-extrabold mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0'>
           <h1>
             Welcome to <span className="text-[#4b40de]">Kidzian</span>
           </h1>
