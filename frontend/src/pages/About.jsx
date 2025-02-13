@@ -133,7 +133,7 @@ const About = () => {
       <div className="w-full min-h-[75vh] flex flex-col items-center justify-center px-4">
       <h1 className="text-lg font-bold mb-16 text-center">Our Mission</h1>
 
-      <div className="ml-10  md:ml-0 lg:ml-0 xl:ml-0 2xl:ml-0 md:flex lg:flex xl:flex 2xl:flex  sm:mb-2 flex-wrap justify-center gap-6 w-full">
+      <div className=" md:ml-0 lg:ml-0 xl:ml-0 2xl:ml-0 md:flex lg:flex xl:flex 2xl:flex  sm:mb-2 flex-wrap justify-center gap-6 w-full">
         {missionData.map((item, index) => (
           <motion.div
             key={index}
