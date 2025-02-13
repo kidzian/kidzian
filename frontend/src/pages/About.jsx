@@ -8,6 +8,34 @@ import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import about from '../assets/about-us.jpg';
 const About = () => {
+
+  const missionData = [
+    {
+      icon: <Gamepad2 className="h-16 w-16 text-purple-500" />,
+      title: "Make Learning Fun And Accessible",
+      description:
+        "Our gamified learning approach and personalized learning paths ensure that every child can enjoy and succeed in their tech education journey.",
+    },
+    {
+      icon: <Cpu className="h-16 w-16 text-blue-500" />,
+      title: "Inspire Creativity Through Technology",
+      description:
+        "We foster creativity through interactive learning that encourages experimentation and innovation.",
+    },
+    {
+      icon: <Earth className="h-16 w-16 text-green-500" />,
+      title: "Promote Diversity and Inclusion in Tech",
+      description:
+        "Our mission is to provide equal opportunities for all children to explore and excel in technology education, regardless of background or gender.",
+    },
+    {
+      icon: <BicepsFlexed className="h-16 w-16 text-orange-500" />,
+      title: "Empower Future Innovators",
+      description:
+        "We aim to equip children with the skills and confidence needed to thrive in a technology-driven world, preparing them to solve real-world problems.",
+    },
+  ];
+
   return (
     <div className='overflow-x-hidden'>
       <Heading/>
@@ -100,92 +128,28 @@ const About = () => {
 
 
 
-      <div className='w-full h-[75vh] flex flex-col items-center justify-center '>
-        <h1 className='text-lg font-bold mb-16'>Our Mission</h1>
+      
 
-   <div className='flex gap-2 pl-16 pr-16'>
-   <motion.div
-  className="flex flex-wrap justify-center gap-8 w-full px-10"
- l
->
+      <div className="w-full min-h-[75vh] flex flex-col items-center justify-center px-4">
+      <h1 className="text-lg font-bold mb-16 text-center">Our Mission</h1>
 
-    <motion.div
-    
-      className="bg-white h-[45vh] w-[18vw] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer"
-    >
-      <div className="flex flex-col items-center gap-4 w-full"> 
-        <Gamepad2 className="h-16 w-16 text-purple-500" />
-        <h1 className="text-black text-lg font-semibold">Make Learning Fun And Accessible</h1>
-        <p className="leading-tight text-sm text-left text-gray-500 h-10  w-full">Our gamified learning approach and personalized learning paths ensure that every child can enjoy and succeed in their tech education journey.</p>
+      <div className="ml-10  md:ml-0 lg:ml-0 xl:ml-0 2xl:ml-0 md:flex lg:flex xl:flex 2xl:flex  sm:mb-2 flex-wrap justify-center gap-6 w-full">
+        {missionData.map((item, index) => (
+          <motion.div
+            key={index}
+            className="bg-white h-[45vh] w-[100vw] max-w-xs rounded-lg p-6 shadow-lg flex flex-col items-center mb-2 md:mb-0 lg:mb-0 xl:mb-0 2xl:mb-0 gap-4 text-center cursor-pointer md:w-[20vw] sm:w-[80vw]"
+          >
+            <div className="flex flex-col items-center gap-4 w-full">
+              {item.icon}
+              <h1 className="text-black text-lg font-semibold">{item.title}</h1>
+              <p className="leading-tight text-sm text-left text-gray-500">
+                {item.description}
+              </p>
+            </div>
+          </motion.div>
+        ))}
       </div>
-     
-    </motion.div>
- 
-</motion.div>
-
-
-<motion.div
-  className="flex flex-wrap justify-center gap-8 w-full px-10"
- 
->
-
-    <motion.div
-    
-      className="bg-white h-[45vh] w-[18vw] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer"
-    >
-      <div className="flex flex-col items-center gap-4 w-full"> 
-        <Cpu className="h-16 w-16 text-blue-500" />
-        <h1 className="text-black text-lg font-semibold">Inspire Creativity Through Technology</h1>
-        <p className="leading-tight text-sm text-left text-gray-500 h-10 w-full">We foster creativity through interactive learning that encourages experimentation and innovation.</p>
-      </div>
-     
-    </motion.div>
- 
-</motion.div>
-
-
-<motion.div
-  className="flex flex-wrap justify-center gap-8 w-full px-10"
- 
->
-
-    <motion.div
-    
-      className="bg-white h-[45vh] w-[18vw] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer"
-    >
-      <div className="flex flex-col items-center gap-4 w-full"> 
-        <Earth className="h-16 w-16 text-green-500"/>
-        <h1 className="text-black text-lg font-semibold">Promote diversity and inclusion in tech</h1>
-        <p className="leading-tight text-sm text-left text-gray-500 h-10 w-full">Our mission is to provide equal opportunities for all children to explore and excel in technology education, regardless of background or gender.</p>
-      </div>
-     
-    </motion.div>
- 
-</motion.div>
-
-
-<motion.div
-  className="flex flex-wrap justify-center gap-8 w-full px-10"
- 
->
-
-    <motion.div
-    
-      className="bg-white h-[45vh] w-[18vw] rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer"
-    >
-      <div className="flex flex-col items-center gap-4 w-full"> 
-      <BicepsFlexed className="h-16 w-16 text-orange-500"/>
-        <h1 className="text-black text-lg font-semibold">Empower Future Innovators</h1>
-        <p className="leading-tight text-sm text-left text-gray-500 h-10 w-full">We aim to equip children with the skills and confidence needed to thrive in a technology-driven world, preparing them to solve real-world problems .</p>
-      </div>
-     
-    </motion.div>
- 
-</motion.div>
-
-   </div>
-
-      </div>
+    </div>
 
       <div className='w-full h-[60vh] flex flex-col items-center justify-start '>
         <h1 className='text-lg font-bold mb-16'>Kidzian is Backed By</h1>
