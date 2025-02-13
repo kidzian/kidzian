@@ -9,9 +9,9 @@ import { motion } from 'framer-motion';
 import about from '../assets/about-us.jpg';
 const About = () => {
   return (
-    <div>
+    <div className='overflow-x-hidden'>
       <Heading/>
-      <div className='flex w-[100vw] h-[87.5vh] justify-center'>
+      {/* <div className='flex w-[100vw] h-[87.5vh] justify-center'>
           
             <div className=' w-[40%] h-full flex flex-col items-start justify-center '>
                <img src={about} alt="" className='h-[80vh] w-[90%] rounded-xl'/>
@@ -53,7 +53,53 @@ const About = () => {
 
 
 
+      </div> */}
+
+<div className="flex flex-col lg:flex-row w-full min-h-screen items-center justify-center px-6 lg:px-16 py-12 gap-8">
+      
+      {/* Image Section */}
+      <div className="w-full lg:w-1/2 flex justify-center">
+        <img src={about} alt="About Us" className="w-full max-w-[500px] rounded-xl shadow-lg" />
       </div>
+
+      {/* Text Section */}
+      <div className="w-full lg:w-1/2 flex flex-col gap-6">
+        <h1 className="text-3xl font-bold text-center lg:text-left">Our Story</h1>
+
+        <div className="flex gap-4">
+          <FaRocket size={80} className="text-[#3b82f6]" />
+          <p className="text-gray-700">
+          Kidzian was founded in 2023 by Rashmi Raju, a passionate software engineer and educator with an M.Tech in Computer Science. Having worked in top-tier software companies, Rashmi gained invaluable experience and insights into the tech world. Despite her successful career, she felt a strong desire to inspire the next generation through education.
+          </p>
+        </div>
+
+        <div className="flex gap-4">
+          <FaLightbulb size={60} className="text-[#f49e0a]" />
+          <p className="text-gray-700">
+          The idea for Kidzian was sparked by a neighborhood coding workshop she organized, where the children’s enthusiasm and excitement were contagious. Rashmi realized the potential of a more engaging approach to tech education and decided to create Kidzian to make learning technology fun, interactive, and impactful.
+          </p>
+        </div>
+
+        <div className="flex gap-4">
+          <FaStar size={80} className="text-[#8b5cf6]" />
+          <p className="text-gray-700">
+          Starting with a small center and a handful of students, Kidzian has grown into a leading tech school for children aged 7 to 17, offering courses in block-based coding, Python, Java, JavaScript, HTML, CSS, and more. Our gamified, interactive learning platform provides personalized paths and collaborative projects to foster creativity and problem-solving skills.
+          </p>
+        </div>
+
+        <div className="flex gap-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="red" className="lucide lucide-heart">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+          </svg>
+          <p className="text-gray-700">
+          We are committed to continuous innovation, ensuring our students stay ahead in the ever-evolving world of technology. Join us at Kidzian, where learning technology is an exciting adventure!
+          </p>
+        </div>
+      </div>
+    </div>
+
+
+
       <div className='w-full h-[75vh] flex flex-col items-center justify-center '>
         <h1 className='text-lg font-bold mb-16'>Our Mission</h1>
 
