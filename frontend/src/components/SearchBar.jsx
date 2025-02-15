@@ -18,6 +18,7 @@ const SearchBar = () => {
         const response = await fetch(`http://localhost:5000/api/students/search?term=${searchTerm}`);
         if (response.ok) {
           const data = await response.json();
+          
           setSearchResults(data);
         } else {
           console.error('Failed to fetch search results');
@@ -36,6 +37,8 @@ const SearchBar = () => {
       const response = await fetch(`http://localhost:5000/api/student/${studentId}`);
       if (response.ok) {
         const data = await response.json();
+        console.log("yes");
+        console.log(data)
         setSelectedStudent(data);
         setIsModalOpen(true);
       } else {
@@ -178,10 +181,11 @@ const SearchBar = () => {
 
             {/* Attendance Field for each Batch */}
             <div className="mb-4">
-              <label>Attendance</label>
+              <label >Attendance</label>
               {selectedStudent.batches.map((batch, index) => (
-                <div key={batch.batch._id} className="mb-4">
-                  <h3>Batch: {batch.batch.name}</h3>
+                <div key={batch.batch._id} className="mb-4 mt-4">
+                  <h3><strong>Course Name:</strong> {batch.courseName}</h3>
+                  <h3>Batch: {batch.batch.name} </h3>
                   {batch.lectures.map((lecture, i) => (
                     <div key={i} className="flex items-center mb-2">
                       <span>{lecture.name}</span>
@@ -201,6 +205,9 @@ const SearchBar = () => {
                 </div>
               ))}
             </div>
+
+
+
 
             {/* Buttons */}
             <button onClick={handleUpdateStudent} className="bg-green-500 text-white px-4 py-2 rounded mt-4">

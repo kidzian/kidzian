@@ -71,7 +71,10 @@ const LMSCOURSE = () => {
 ></div>
 
       </div>
-                  <h1 className='text-xl font-bold'>{batchData?.lecturesCompleted/batchData?.totalClasses* 100}%</h1>
+                  <h1 className='text-xl font-bold'>
+  {((batchData?.lecturesCompleted / batchData?.totalClasses) * 100).toFixed(1)} %
+</h1>
+
                   </div>
                 </div>
 
@@ -134,7 +137,10 @@ const LMSCOURSE = () => {
 
           <div className='w-[18vw] h-[40vh] rounded-3xl flex flex-col gap-2 border-gray-200 border p-4'>
             <h1 className='text-lg font-semibold'>Progress Statistics</h1>
-            <h1 className='text-4xl'>{batchData?.lecturesCompleted/batchData?.totalClasses *100} %</h1>
+            <h1 className='text-4xl'>
+  {((batchData?.lecturesCompleted / batchData?.totalClasses) * 100).toFixed(1)} %
+</h1>
+
 
             <div className='flex gap-1'>
               <div className=' w-[7vw] h-[17vh] bg-[#f7f8fa] flex flex-col items-center justify-center rounded-md'>
