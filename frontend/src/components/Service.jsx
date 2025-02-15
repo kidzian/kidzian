@@ -343,7 +343,7 @@ const Service = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-white flex flex-col items-center gap-16 p-6 md:p-24">
+    <div className="w-full min-h-screen bg-white flex flex-col items-center gap-16 p-6 md:p-24 pt-[16vh] pb-[16vh]">
       <div className="flex flex-col items-center text-center gap-4">
         <h1 className="text-2xl md:text-4xl font-bold">Why Kidzian is for you?</h1>
         <p className="text-gray-600 text-sm md:text-lg">
