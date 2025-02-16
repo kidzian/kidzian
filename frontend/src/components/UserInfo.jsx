@@ -130,7 +130,7 @@ const UserInfo = ({ userInfo }) => {
                 return (
                   <div
                     key={batch._id}
-                    className="group flex flex-col sm:flex-row cursor-pointer w-full h-auto sm:h-[16vh] rounded-md p-2 shadow-md justify-around hover:bg-gray-100 text-sm gap-4"
+                    className="group flex flex-col sm:flex-row cursor-pointer w-full h-auto sm:h-[16vh] rounded-md p-2 shadow-md justify-around hover:bg-gray-100 text-sm gap-3"
                     onClick={handleCardClicks}
                   >
                     <img
