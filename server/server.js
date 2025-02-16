@@ -332,7 +332,7 @@ app.post('/api/batches/:batchId/add-lecture', async (req, res) => {
 
           // Increase lecturesCompleted
           user.batches[batchIndex].lecturesCompleted += 1;
-
+          user.batches[batchIndex].lecturesAttended += 1;
           await user.save();
         }
       }
@@ -1082,6 +1082,8 @@ app.get('/api/students/search', async (req, res) => {
 app.put('/api/student/:id', async (req, res) => {
   const studentId = req.params.id;
   const updateData = req.body; // Assume the request body contains the fields to be updated
+  console.log(updateData)
+  
 
   try {
     const updatedStudent = await User.findByIdAndUpdate(studentId, updateData, { new: true }).exec();

@@ -62,22 +62,22 @@ const BlogDetail = () => {
     <div className="min-h-screen">
       <Heading />
       <div className="flex items-center justify-center pt-10 pb-20">
-        <div className="grid grid-cols-12 gap-6 w-[90%]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-[90%]">
           {/* Blog Content */}
-          <div className="col-span-8 rounded-lg shadow-lg overflow-hidden ">
+          <div className="lg:col-span-8 rounded-lg shadow-lg overflow-hidden">
             <img
               src={blog.image}
               alt={blog.title}
-              className="w-full h-72 object-cover"
+              className="w-full h-48 sm:h-72 object-cover"
             />
-            <div className="p-8">
-             <div className='flex items-center justify-between'>
-             <h1 className="text-2xl font-extrabold text-gray-800 mb-4">{blog.title}</h1>
-             <div className='flex gap-6 text-gray-600'>
-             <h1 className="text-sm font-bold mb-4">{blog.author}</h1>
-             <h1 className="text-sm font-bold mb-4">{blog.date}</h1>
-             </div>
-             </div>
+            <div className="p-4 sm:p-8">
+              <div className="flex flex-col sm:flex-row items-center justify-between">
+                <h1 className="text-xl sm:text-2xl font-extrabold text-gray-800 mb-4">{blog.title}</h1>
+                <div className="flex gap-4 sm:gap-6 text-gray-600">
+                  <h1 className="text-sm font-bold mb-4">{blog.author}</h1>
+                  <h1 className="text-sm font-bold mb-4">{blog.date}</h1>
+                </div>
+              </div>
               <p className="text-gray-600 leading-relaxed mb-8">{blog.content}</p>
               <div className="flex flex-wrap gap-2">
                 {blog.tags.map((tag, index) => (
@@ -99,7 +99,7 @@ const BlogDetail = () => {
           </div>
 
           {/* Suggestions - Sticky on scroll */}
-          <div className="w-[25vw] rounded-lg shadow-lg p-4 bg-white fixed right-[10vh] top-30 h-[80vh] overflow-y-auto hide-scrollbar">
+          <div className="lg:col-span-4 lg:fixed lg:right-[5%] lg:top-24 lg:w-[25%] h-[80vh] overflow-y-auto hide-scrollbar">
             <h2 className="text-md font-bold text-gray-800 mb-4">Recommended</h2>
             <div className="space-y-4">
               {suggestions.map((suggestion) => (
@@ -132,9 +132,8 @@ const BlogDetail = () => {
             </div>
           </div>
         </div>
-       
       </div>
-    
+      <Footer />
     </div>
   );
 };
