@@ -22,7 +22,7 @@ const LMSCOURSE = () => {
     // Fetch course data based on batchId
     const fetchBatchDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/batch/${batchId}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/batch/${batchId}`);
         if (!response.ok) {
           throw new Error('Course not found');
         }
