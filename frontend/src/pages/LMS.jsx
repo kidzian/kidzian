@@ -16,17 +16,13 @@ const LMS = () => {
     password: '',
   });
 
-  // Fetch user information using JWT token
   const fetchUserInfo = async () => {
     const token = Cookies.get('jwt');
     if (token) {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/user`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(response.data)
         setUserInfo(response.data);
         setIsTokenPresent(true);
       } catch (error) {
@@ -47,7 +43,6 @@ const LMS = () => {
     }
   }, []);
 
-  // Validation Function
   const validateForm = () => {
     let errors = {};
     if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
@@ -60,72 +55,56 @@ const LMS = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Handle Input Change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // Handle Form Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    const apiUrl = `${import.meta.env.VITE_API_URL}/api/login`;  // Login API URL
+    const apiUrl = `${import.meta.env.VITE_API_URL}/api/login`;
 
     try {
-      console.log('Logging in...');
-      const response = await axios.post(apiUrl, {
-        ...formData,
-      });
+      const response = await axios.post(apiUrl, { ...formData });
 
       if (response.status === 200) {
         Cookies.set('jwt', response.data.token, { expires: 7 });
         setIsModalOpen(false);
-        setFormData({
-          email: '',
-          password: '',
-        });
+        setFormData({ email: '', password: '' });
 
         await fetchUserInfo();
-        console.log(userInfo)
       }
     } catch (error) {
-      console.error('Authentication failed:', error.response?.data?.message || error.message);
-
-      // Show a user-friendly error message if it's available from the backend
       const errorMessage = error.response?.data?.message || 'Something went wrong! Please try again.';
       alert(errorMessage);
     }
   };
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col justify-between">
       <div className={`${isTokenPresent ? '' : 'filter blur-sm pointer-events-none'} p-4`}>
         <Heading />
         <div className="flex flex-col items-center">
-          <UserInfo userInfo={userInfo}/>
+          <UserInfo userInfo={userInfo} />
         </div>
         <Footer />
       </div>
 
-      {/* Modal for login */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[40vw] text-center">
-            <h2 className="text-xl font-semibold mb-4">Login</h2>
-            <form onSubmit={handleSubmit}>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 px-4">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl shadow-lg">
+            <h2 className="text-xl font-semibold mb-4 text-center">Login</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="email"
                 name="email"
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full p-2 mb-3 border border-gray-300 rounded"
+                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
               <input
@@ -134,7 +113,7 @@ const LMS = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
               <button
