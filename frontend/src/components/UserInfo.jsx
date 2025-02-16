@@ -130,13 +130,13 @@ const UserInfo = ({ userInfo }) => {
                 return (
                   <div
                     key={batch._id}
-                    className="group flex flex-col sm:flex-row cursor-pointer w-full h-auto sm:h-[16vh] rounded-md p-2 shadow-md justify-around hover:bg-gray-100 text-sm"
+                    className="group flex flex-col sm:flex-row cursor-pointer w-full h-auto sm:h-[16vh] rounded-md p-2 shadow-md justify-around hover:bg-gray-100 text-sm gap-4"
                     onClick={handleCardClicks}
                   >
                     <img
                       src="https://kidzian.com/wp-content/uploads/2024/03/children-win-success-593313-1024x682.jpg"
                       alt="course"
-                      className="w-full sm:w-[10vw] h-[100px] sm:h-auto rounded-md"
+                      className="w-full sm:w-[10vw] h-[200px] sm:h-auto rounded-md"
                     />
                     <div className="justify-center flex flex-col">
                       <h1 className="text-gray-600">Course</h1>
