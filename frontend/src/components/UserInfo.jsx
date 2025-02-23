@@ -152,7 +152,9 @@ const UserInfo = ({ userInfo }) => {
                       <h1 className="text-gray-600">Completion</h1>
                       <div className="flex gap-2 items-center">
                         <span className="w-[1.5vw] h-[1.5vw] border-2 rounded-full border-green-500"></span>
-                        <h1 className="font-bold">{(batch.lecturesCompleted / batch.totalClasses) * 100}%</h1>
+                        <h1 className="font-bold">
+  {((batch.lecturesCompleted / batch.totalClasses) * 100).toFixed(1)}%
+</h1>
                       </div>
                     </div>
 

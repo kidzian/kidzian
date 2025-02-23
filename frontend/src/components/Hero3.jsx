@@ -73,11 +73,11 @@ const Hero3 = () => {
          transition={{ duration: 0.8, type: 'spring', stiffness: 50 }}
         className='text-4xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl font-extrabold mt-10 md:mt-0 lg:mt-0 xl:mt-0 2xl:mt-0'>
           <h1>
-            Welcome to <span className="text-[#4b40de]">Kidzian</span>
+            Welcome to <span className="text-[#3a84f6]">Kidzian</span>
           </h1>
           <h1>Your Place To</h1>
           <h1>
-            Learn, <span className="text-[#4b40de]">Play and Grow</span>
+            Learn, <span className="text-[#3a84f6]">Play and Grow</span>
           </h1>
         </motion.div>
 

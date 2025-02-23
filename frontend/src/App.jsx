@@ -15,8 +15,17 @@ import BlogDetail from './components/BlogDetail'
 
 import AdminDashboard from './components/AdminDashboard'
 import CourseBatches from './components/CourseBatches'
-import BatchDetails from './components/BatchDetails'
+
 import Chatbot from './components/Chatbot'
+import AdminLogin from './pages/AdminLogin'
+import AdminCourse from './pages/AdminCourse'
+import BatchDetail from './pages/BatchDetail'
+import Students from './pages/Students'
+import Teachers from './pages/Teachers'
+import StudentDetails from './pages/StudentDetails'
+import TeacherDetails from './pages/TeacherDetails'
+import TeacherLogin from './pages/TeacherLogin'
+import TeacherDashboard from './components/TeacherDashboard'
 
 function App() {
 
@@ -28,20 +37,35 @@ function App() {
      
       <Route path="/courses" element={<Courses/>}/>
       <Route path="/contact-us" element={<Contact/>}/>
-      {/* <Route path="/admin" element={<Admin/>}/>
-      <Route path="/admin/:courseId" element={<CourseDetail />} /> */}
-
-
-
-<Route path="/admin" element={<AdminDashboard/>}/>
-<Route path="/courses/:courseId/batches" element={<CourseBatches/>}/>
-<Route path="/courses/:courseId/batches/:batchId" element={<BatchDetails />} />
+     
       <Route path="/lms" element={<LMS/>}/>
       <Route path="/:id1/:id2" element={<LMSCOURSE/>}/>
       <Route path="/about-us" element={<About/>}/>
       <Route path="/events" element={<Events/>}/>
       <Route path="/blogs" element={<Blog/>}/>
       <Route path="/blog/:id" element={<BlogDetail/>}/>
+      
+      <Route path="/login/admin" element={<AdminLogin/>} />
+      <Route path="/login/teacher" element={<TeacherLogin/>} /> 
+
+      <Route path="/admin-dashboard" element={<AdminDashboard/>} />
+      teacher-dashboard
+      <Route path="/teacher-dashboard" element={<TeacherDashboard/>} />
+
+      <Route path="/teacher-dashboard/:courseName" element={<AdminCourse/>} />
+      <Route path="/admin-dashboard/:courseName" element={<AdminCourse/>} />
+
+      <Route path="/teacher-dashboard/:courseName/batch/:batchName" element={<BatchDetail />} />
+      <Route path="/admin-dashboard/:courseName/batch/:batchName" element={<BatchDetail />} />
+      
+      <Route path="/teacher-dashboard/students" element={<Students />} />
+      <Route path="/admin-dashboard/students" element={<Students />} />
+
+     
+      <Route path="/admin-dashboard/teachers" element={<Teachers />} />
+
+      <Route path="/students/:id" element={<StudentDetails />} />
+      <Route path="/admin-dashboard/teachers/:teacherId" element={<TeacherDetails />} />
      </Routes>
     </>
   )

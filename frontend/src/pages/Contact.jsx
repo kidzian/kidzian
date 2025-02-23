@@ -99,13 +99,13 @@ const Contact = () => {
     <h1 className="text-5xl font-bold">Get In Touch</h1>
     <p className="text-gray-700">We're here to help. Chat to our friendly team 24/7.</p>
     <div className="flex flex-col gap-2">
-      <h1 className="flex items-center text-[#6e2cf6] font-semibold text-sm">
+      <h1 className="flex items-center text-[#3a84f6] font-semibold text-sm">
         <Phone size={15} className="mr-1" /> +91-9599-860-105
       </h1>
-      <h1 className="flex items-center text-[#6e2cf6] font-semibold text-sm">
+      <h1 className="flex items-center text-[#3a84f6] font-semibold text-sm">
         <Send size={15} className="mr-1" /> info@kidzians.com
       </h1>
-      <a href='https://in.linkedin.com/company/kidzian?trk=public_post_feed-actor-name' className="text-[#6e2cf6] font-semibold text-sm flex">
+      <a href='https://in.linkedin.com/company/kidzian?trk=public_post_feed-actor-name' className="text-[#3a84f6] font-semibold text-sm flex">
         <LinkedinIcon size={15} className="mr-1" /> Message us on LinkedIn
       </a>
     </div>
@@ -118,7 +118,7 @@ const Contact = () => {
       <input type="email" name="email" placeholder="Email" onChange={handleChange} value={formData.email} className="p-2 border rounded-md w-full" required />
       <input type="tel" name="phone" placeholder="Phone" onChange={handleChange} value={formData.phone} className="p-2 border rounded-md w-full" required />
       <textarea name="message" placeholder="Message" rows="5" onChange={handleChange} value={formData.message} className="p-2 border rounded-md w-full"></textarea>
-      <button type="submit" className="w-full py-2 bg-[#6e2cf6] text-white font-semibold rounded-md hover:bg-blue-600">Submit</button>
+      <button type="submit" className="w-full py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-semibold rounded-md hover:bg-blue-800">Submit</button>
     </form>
   </div>
 
