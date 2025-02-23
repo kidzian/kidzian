@@ -215,7 +215,7 @@ app.delete('/batch/:batchId', async (req, res) => {
 app.post("/api/admin/signup", async (req, res) => {
   try {
     const { name, email, password, role, address, age, phoneNumber } = req.body;
-
+  
     let admin = await Admin.findOne({ email });
     if (admin) {
       return res.status(400).json({ message: "Admin already exists" });
@@ -231,10 +231,11 @@ app.post("/api/admin/signup", async (req, res) => {
       age,
       phoneNumber,
     });
-
+    console.log(admin)
     await admin.save();
     res.status(201).json({ message: "Signup successful", adminId: admin._id });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Server error" });
   }
 });

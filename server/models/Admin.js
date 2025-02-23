@@ -25,7 +25,7 @@ const adminSchema = new mongoose.Schema({
   age: {
     type: Number,
     required: true,
-    min: 18, // Assuming admin should be at least 18
+    min: 1, // Assuming admin should be at least 18
   },
   phoneNumber: {
     type: String,
