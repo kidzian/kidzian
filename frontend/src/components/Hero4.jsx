@@ -98,10 +98,11 @@ const Hero4 = () => {
                     scale: 1.1,
                     transition: { duration: 0.2, ease: 'easeInOut' },
                   }}
+                //   bg-gradient-to-br from-orange-400 to-red-500
                   className={`${
                     selectedGrade === i + 1
                       ? 'bg-blue-500'
-                      : 'bg-gradient-to-br from-orange-400 to-red-500'
+                      : 'bg-gray-700'
                   } text-white w-[4rem] h-[4rem] rounded-2xl shadow-lg flex items-center justify-center text-lg font-semibold`}
                 >
                   {i + 1}
