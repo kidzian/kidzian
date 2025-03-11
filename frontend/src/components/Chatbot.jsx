@@ -49,10 +49,14 @@ const Chatbot = () => {
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           whileHover={{ scale: 1.1 }}
-          className="w-14 h-14 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg"
+          className="w-42 h-10 bg-blue-500 p-2 text-white rounded-md flex items-center justify-center shadow-lg"
           onClick={() => setIsOpen(true)}
         >
+          
           <MessageCircle size={28} />
+          <h1 className="ml-1"> Need help? Ask us!</h1>
+         
+          
         </motion.button>
       )}
 

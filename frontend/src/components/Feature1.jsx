@@ -38,7 +38,7 @@ const Feature1 = () => {
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut' }}
         >
-          Safe your future with industry experts
+          Secure your future with industry experts
         </motion.h1>
 
         <motion.p
@@ -47,7 +47,7 @@ const Feature1 = () => {
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut', delay: 0.2 }}
         >
-          "At <strong>Kidzian</strong>, our team of seasoned experts from India's most prestigious institutes is committed to nurturing your child's future with years of proven experience and dedication."
+          At <strong>Kidzian</strong>, our expert mentors—graduates from India's top institutes—are dedicated to empowering young minds with future-ready skills and hands-on learning experiences
         </motion.p>
       </div>
     </div>

@@ -4,12 +4,12 @@ import { motion } from 'framer-motion';
 
 const Testimonials = () => {
   const testimonials = [
-    { id: 1, name: 'John Doe', title: 'Parent', country: 'United States', age: '40', quote: 'Kidzian has transformed my child’s learning experience. The platform is engaging, and the progress is remarkable!' },
-    { id: 2, name: 'Jane Smith', title: 'Teacher', country: 'Canada', age: '35', quote: 'The tools and resources provided by Kidzian have made teaching so much more effective and fun.' },
-    { id: 3, name: 'Kirthi', title: 'Student', country: 'India', age: '12', quote: 'Learning has never been this exciting. I love the interactive lessons and games!' },
-    { id: 4, name: 'Emily Clark', title: 'Parent', country: 'United Kingdom', age: '38', quote: 'My child is excited every day to learn something new with Kidzian!' },
-    { id: 5, name: 'Rajesh Kumar', title: 'Teacher', country: 'India', age: '45', quote: 'Kidzian is revolutionizing how we approach education. It’s a game changer.' },
-    { id: 6, name: 'Sam', title: 'Student', country: 'India', age: '15', quote: 'Kidzian is revolutionizing how we approach education. It’s a game changer.' },
+    { id: 1, name: 'Kirthi', title: 'Student', country: 'United States', age: '8', quote: 'I love coding and creating games and I love Kidzian!' },
+    { id: 2, name: 'Daiwik', title: 'Student', country: 'Canada', age: '12', quote: 'Coding is very interesting. The concepts are made clear by the teachers and we are encouraged to code independently' },
+    { id: 3, name: 'Vihaan', title: 'Student', country: 'India', age: '9', quote: `Kidzian is like my supertech gaming playground, I'm 9 and now I can make my own games. Coding is like magic and Kidzian taught me to be  a wizard` },
+    { id: 4, name: 'Shreyas', title: 'Student', country: 'United Kingdom', age: '14', quote: `I'm 14 and now i started with blocks at Kidzian. Now I'm a Java Explorer. The journey was like playing my favourite game levels` },
+    { id: 5, name: 'Aryan', title: 'Student', country: 'India', age: '16', quote: 'At 16 fueled my dream of becoming a tech wizard, from Html to Python ,every lesson felt like a magic spell' },
+    { id: 6, name: 'Aryamanan Tandon', title: 'Parent', country: 'India', age: '15', quote: 'Kidzian is revolutionizing how we approach education. It’s a game changer.' },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0); // Start from the first testimonial

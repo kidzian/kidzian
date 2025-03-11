@@ -38,7 +38,7 @@ const Gamified = () => {
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut' }}
         >
-          Learn with a Gamified approach
+          Learning Made Fun: A Gamified Approach
         </motion.h1>
 
         <motion.p
@@ -47,7 +47,7 @@ const Gamified = () => {
           animate={controls}
           transition={{ duration: 1, ease: 'easeInOut', delay: 0.2 }}
         >
-          Experience the joy of learning with <strong>Kidzian</strong>, where our gamified approach transforms education into an exciting adventure. Engage, play, and master skills like never before!
+          At <strong>Kidzian</strong>, we turn learning into an adventure! Our gamified approach keeps kids engaged, excited, and eager to master new skills through interactive challenges and hands-on activities.
         </motion.p>
       </div>
     </div>

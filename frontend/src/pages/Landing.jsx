@@ -5,6 +5,7 @@ import Hero3 from '../components/Hero3'
 import ChooseGrade from '../components/ChooseGrade'
 import Service from '../components/Service'
 import Hero from '../components/Hero'
+import Hero4 from '../components/Hero4'
 import Footer from '../components/Footer'
 import GlobalTech from '../components/GlobalTech'
 import Feature1 from '../components/Feature1'
@@ -16,7 +17,7 @@ const Landing = () => {
   return (
     <div className="w-[100vw] overflow-x-hidden h-auto">
       <Heading/>
-      <Hero3/>
+      <Hero4/>
      
       <Service/>
       <GlobalTech/>

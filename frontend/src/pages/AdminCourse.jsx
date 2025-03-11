@@ -85,16 +85,16 @@ const CourseDetail = () => {
       <div className="bg-white p-6 rounded-lg shadow-lg mb-8 flex items-center justify-around">
        
         <img
-          src={course.image}
-          alt={course.title}
+          src={course?.image}
+          alt={course?.title}
           className="w-full max-w-xs h-auto rounded-lg mb-4"
         />
 
 <div>
-<h1 className="text-3xl font-bold text-gray-900 mb-4">{course.title}</h1>
+<h1 className="text-3xl font-bold text-gray-900 mb-4">{course?.title}</h1>
 
 <p className="text-lg text-gray-700">
-  <strong>Age Group:</strong> {course.ageGroup}
+  <strong>Age Group:</strong> {course?.ageGroup}
 </p>
 </div>
       </div>
@@ -171,24 +171,34 @@ const CourseDetail = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {course.batches.map((batch) => (
           <div
-            key={batch._id}
+            key={batch?._id}
             className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-            onClick={() => navigate(`/teacher-dashboard/${course.title}/batch/${batch.name}?batchId=${batch._id}`)}
+            onClick={() => navigate(`/teacher-dashboard/${course?.title}/batch/${batch?.name}?batchId=${batch?._id}`)}
           >
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">{batch.name}</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">{batch?.name}</h3>
             <p className="text-lg text-gray-700">
-              <strong>Start Date:</strong> {new Date(batch.startingDate).toLocaleDateString()}
+              <strong>Start Date:</strong> {new Date(batch?.startingDate).toLocaleDateString()}
             </p>
             <p className="text-lg text-gray-700">
-              <strong>Total Classes:</strong> {batch.totalClasses}
+              <strong>Total Classes:</strong> {batch?.totalClasses}
             </p>
 
-            <button
-              onClick={() => handleDeleteBatch(batch._id)}
+            {/* <button
+              onClick={() => handleDeleteBatch(batch?._id)}
               className="delete-button bg-red-400 w-[10vw] h-[5vh] rounded-md"
             >
               Delete Batch
-            </button>
+            </button> */}
+
+            <button
+        onClick={(e) => {
+          e.stopPropagation(); // This prevents the click from propagating to the parent div
+          handleDeleteBatch(batch?._id);
+        }}
+        className="delete-button bg-red-400 w-[10vw] h-[5vh] rounded-md"
+      >
+        Delete Batch
+      </button>
           </div>
         ))}
       </div>

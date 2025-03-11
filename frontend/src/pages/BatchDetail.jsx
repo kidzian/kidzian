@@ -453,7 +453,7 @@ const BatchDetail = () => {
   };
 
   const handleSubmitAttendance = async (lectureId) => {
-    const updatedAttendance = batch.lectures.find(l => l._id === lectureId).attendance.map(att => ({
+    const updatedAttendance = batch?.lectures?.find(l => l._id === lectureId).attendance.map(att => ({
       studentId: att.studentId,
       attended: attendanceData[lectureId]?.[att.studentId] ?? att.attended,
     }));
@@ -483,11 +483,11 @@ const BatchDetail = () => {
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-900 mb-4">Batch: {batch.name}</h1>
-      <p className="text-lg text-gray-700 mb-2">Course: {batch.course?.title || "No course linked"}</p>
+      <h1 className="text-3xl font-bold text-gray-900 mb-4">Batch: {batch?.name}</h1>
+      <p className="text-lg text-gray-700 mb-2">Course: {batch?.course?.title || "No course linked"}</p>
       <p className="text-lg text-gray-700 mb-2">Batch ID: {batchId}</p>
-      <p className="text-lg text-gray-700 mb-2">Start Date: {new Date(batch.startingDate).toLocaleDateString()}</p>
-      <p className="text-lg text-gray-700 mb-4">Total Classes: {batch.totalClasses}</p>
+      <p className="text-lg text-gray-700 mb-2">Start Date: {new Date(batch?.startingDate).toLocaleDateString()}</p>
+      <p className="text-lg text-gray-700 mb-4">Total Classes: {batch?.totalClasses}</p>
 
       <button
         // onClick={() => setShowModal(true)}
@@ -667,7 +667,7 @@ const BatchDetail = () => {
       )}
 
       <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Lectures</h2>
-      {batch.lectures.length > 0 ? (
+      {batch?.lectures?.length > 0 ? (
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-200">
@@ -677,7 +677,7 @@ const BatchDetail = () => {
             </tr>
           </thead>
           <tbody>
-            {batch.lectures.map((lecture) => (
+            {batch?.lectures?.map((lecture) => (
               <tr key={lecture._id} className="border-b">
                 <td className="p-3">{lecture.name}</td>
                 <td className="p-3">{new Date(lecture.date).toLocaleDateString()}</td>
@@ -698,7 +698,7 @@ const BatchDetail = () => {
       </ul>
 
       <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Attendance</h2>
-      {batch.lectures.map((lecture) => (
+      {batch?.lectures?.map((lecture) => (
         <div key={lecture._id} className="mb-6">
           <h3 className="text-xl font-semibold text-gray-800">{lecture.name} - {new Date(lecture.date).toLocaleDateString()}</h3>
           <ul className="mt-2">

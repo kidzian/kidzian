@@ -284,12 +284,12 @@ const Service = () => {
       title: 'Learn the Latest Technology',
       paragraph: 'Stay updated by learning the latest technology trends and tools.',
       image: <Code className="h-16 w-16 text-green-500" />,
-      buttonText: 'Get Started',
+      buttonText: 'Explore Now',
       redirectLink: '/courses',
     },
     {
       title: 'Learn with a Gamified Approach',
-      paragraph: 'Enjoy learning with our fun and engaging methods that make education exciting.',
+      paragraph: 'Experience interactive and project-based learning that keeps kids engaged and excited about technology!',
       image: <Gamepad2 className="h-16 w-16 text-purple-500" />,
       buttonText: 'Enroll Now',
     },
@@ -345,9 +345,9 @@ const Service = () => {
   return (
     <div className="w-full min-h-screen bg-white flex flex-col items-center gap-16 p-6 md:p-24 pt-[16vh] pb-[16vh]">
       <div className="flex flex-col items-center text-center gap-4">
-        <h1 className="text-2xl md:text-4xl font-bold">Why Kidzian is for you?</h1>
+        <h1 className="text-2xl md:text-4xl font-bold">Why Choose Kidzian?</h1>
         <p className="text-gray-600 text-sm md:text-lg">
-          If you are planning for a year, sow rice. If you are planning for a decade, plant trees. If you are planning for a lifetime, educate people.
+        Invest in lifelong learning. Empower your child with coding and technology skills that last a lifetime.
         </p>
       </div>
 
@@ -371,7 +371,7 @@ const Service = () => {
               onClick={() => handleCardClick(card.buttonText)}
               className="mt-auto"
             >
-              <button className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white px-4 py-2 rounded-lg mt-4">
+              <button className=" bg-gradient-to-r from-cyan-400 to-blue-500 text-white px-4 py-2 rounded-lg mt-4">
                 {card.buttonText}
               </button>
             </a>

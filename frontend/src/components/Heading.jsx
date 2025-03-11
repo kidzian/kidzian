@@ -25,7 +25,7 @@ const Heading = () => {
         </ul>
         <a href='/contact-us'>
           <button className='bg-gradient-to-r from-cyan-400 to-blue-500 text-white w-[10vw] h-[8vh] rounded-xl flex items-center justify-center transition-transform duration-300'>
-            Contact Us
+            Get started
           </button>
         </a>
       </div>
