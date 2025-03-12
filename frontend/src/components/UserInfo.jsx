@@ -134,7 +134,7 @@ const UserInfo = ({ userInfo }) => {
                     onClick={handleCardClicks}
                   >
                     <img
-                      src="https://kidzian.com/wp-content/uploads/2024/03/children-win-success-593313-1024x682.jpg"
+                      src="https://res.cloudinary.com/djvzbol6s/image/upload/v1741770034/little-innovators_kczq6o.jpg"
                       alt="course"
                       className="w-full sm:w-[10vw] h-[200px] sm:h-auto rounded-md"
                     />
