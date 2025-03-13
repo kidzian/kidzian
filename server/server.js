@@ -43,8 +43,8 @@ app.use(express.json());
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'bhadula245@gmail.com',
-    pass: 'lhys zsur sufh myvp',
+    user: 'demokidzians@gmail.com',
+    pass: 'enkb fzsn ocpg akud',
   },
 });
 
@@ -68,8 +68,8 @@ app.post('/api/submit-form', async (req, res) => {
     // Send email with form details
 
     const mailOptions1 = {
-      from: 'bhadula245@gmail.com', // Sender address
-      to: 'bhadula245@gmail.com', // Recipient address (replace with your email)
+      from: 'demokidzians@gmail.com', // Sender address
+      to: 'demokidzians@gmail.com', // Recipient address (replace with your email)
       subject: 'Demo Booking Request', // Email subject
       text: `Details:
              Name: ${name}
@@ -80,7 +80,7 @@ app.post('/api/submit-form', async (req, res) => {
     };
 
     const mailOptions2 = {
-      from: 'bhadula245@gmail.com', // Sender address
+      from: 'demokidzians@gmail.com', // Sender address
       to: email, // Recipient address (replace with your email)
       subject: 'Your Demo Booking is Confirmed , Kidzian Team Will Contact You Soon', // Email subject
       text: `Dear Parents,
@@ -124,8 +124,8 @@ app.post('/api/contact', async (req, res) => {
 
   try {
     const mailOptions = {
-      from: 'bhadula245@gmail.com',
-      to: 'bhadula245@gmail.com',
+      from: 'demokidzians@gmail.com',
+      to: 'demokidzians@gmail.com',
       subject: 'New Contact Form Submission',
       text: `New message from:
              Name: ${firstName} ${lastName}
@@ -1402,7 +1402,7 @@ app.put('/api/student/:id', async (req, res) => {
   }
 });
 
-const genAI = new GoogleGenerativeAI("AIzaSyD33BiuxCwLHsD2MypRLPsrRNAWeVYFeTE"); // Replace with your actual API key
+const genAI = new GoogleGenerativeAI("AIzaSyB0d08P3EAm32OtYK8-kN9i1xg8Vw9VRcE"); // Replace with your actual API key
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // Define the chatbot's context
