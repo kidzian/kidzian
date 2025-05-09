@@ -3,19 +3,19 @@ import { Phone, Mail, MapPin, Instagram, Facebook, Linkedin, Youtube, Star, Copy
 
 const Footer = () => {
   return (
-    <div className="h-[100vh]  w-full py-[12.5vh]  px-5 md:px-10">
+    <div className="h-[100vh] dark:bg-gray-900 text-black dark:text-white min-h-screen w-full py-[12.5vh] px-5 md:px-10">
       <div className="grid grid-cols-1 pt-12.5 md:grid-cols-2 lg:grid-cols-4 gap-12">
         {/* Section 1 */}
         <div className="flex flex-col">
-          <p className="text-sm text-[#636363]">
+          <p className="text-sm text-[#636363] dark:text-[#d1d5db]">
             Kidzian unlocks the exciting world of coding and technology for children, empowering them to explore, create, and approach learning with confidence in today's digital age.
           </p>
           <div className="md:mt-[30vh] lg:mt-[30vh] xl:mt-[30vh] mt-12">
             <h1 className="text-[18px] font-bold mb-2">Legal</h1>
-            <ul className="text-sm text-[#636363] flex flex-col gap-3">
-              <li className='cursor-pointer hover:text-black transition-transform'>Privacy Policy</li>
-              <li className='cursor-pointer hover:text-black transition-transform'>Terms & Conditions</li>
-              <li className='cursor-pointer hover:text-black transition-transform'>Refund/Cancellation Policy</li>
+            <ul className="text-sm text-[#636363] dark:text-[#d1d5db] flex flex-col gap-3">
+              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'>Privacy Policy</li>
+              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'>Terms & Conditions</li>
+              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'>Refund/Cancellation Policy</li>
             </ul>
           </div>
         </div>
@@ -23,10 +23,10 @@ const Footer = () => {
         {/* Section 2 */}
         <div className="flex flex-col">
           <h1 className="text-[18px] font-bold mb-2">Company</h1>
-          <ul className="flex flex-col gap-3 text-sm text-[#636363]">
+          <ul className="flex flex-col gap-3 text-sm text-[#636363] dark:text-[#d1d5db]">
             {['Home', 'Courses', 'LMS', 'Blog', 'Events', 'About', 'Contact Us'].map((item) => (
               <a href={`/${item.toLowerCase().replace(' ', '-')}`} key={item}>
-                <li className="hover:text-black cursor-pointer">{item}</li>
+                <li className="hover:text-black dark:hover:text-white cursor-pointer">{item}</li>
               </a>
             ))}
           </ul>
@@ -35,8 +35,8 @@ const Footer = () => {
         {/* Section 3 */}
         <div className="flex flex-col">
           <h1 className="text-[18px] font-bold mb-2">Follow Us</h1>
-          <ul className="flex flex-col gap-3 text-sm text-[#636363]">
-            {[
+          <ul className="flex flex-col gap-3 text-sm text-[#636363] dark:text-[#d1d5db]">
+            {[ 
               { name: 'Instagram', icon: <Instagram size={15} />, link: 'https://www.instagram.com/kidzians/' },
               { name: 'Facebook', icon: <Facebook size={15} />, link: 'https://www.facebook.com/people/Kidzian/100090913967070/' },
               { name: 'Linkedin', icon: <Linkedin size={15} />, link: 'https://in.linkedin.com/company/kidzian?trk=public_post_feed-actor-name' },
@@ -44,7 +44,7 @@ const Footer = () => {
               { name: 'Google', icon: <Star size={15} />, link: 'https://maps.app.goo.gl/PEhEBVdNzC44nVY47' }
             ].map(({ name, icon, link }) => (
               <a href={link} target="_blank" rel="noopener noreferrer" key={name}>
-                <li className="flex items-center gap-4 hover:text-black cursor-pointer">{icon} {name}</li>
+                <li className="flex items-center gap-4 hover:text-black dark:hover:text-white cursor-pointer">{icon} {name}</li>
               </a>
             ))}
           </ul>
@@ -53,14 +53,14 @@ const Footer = () => {
         {/* Section 4 */}
         <div className="flex flex-col">
           <h1 className="text-[18px] font-bold mb-2">Contact Us</h1>
-          <ul className="flex flex-col gap-3 text-sm text-[#636363]">
-            <li className="flex gap-4 items-center hover:text-black cursor-pointer">
+          <ul className="flex flex-col gap-3 text-sm text-[#636363] dark:text-[#d1d5db]">
+            <li className="flex gap-4 items-center hover:text-black dark:hover:text-white cursor-pointer">
               <Phone size={15} /> +91 9599-860-105
             </li>
-            <li className="flex gap-4 items-center hover:text-black cursor-pointer">
+            <li className="flex gap-4 items-center hover:text-black dark:hover:text-white cursor-pointer">
               <Mail size={15} /> info@kidzians.com
             </li>
-            <li className="flex gap-4 items-center hover:text-black cursor-pointer">
+            <li className="flex gap-4 items-center hover:text-black dark:hover:text-white cursor-pointer">
               <MapPin size={15} /> India
             </li>
           </ul>
@@ -69,17 +69,14 @@ const Footer = () => {
 
       {/* Divider Line */}
       <div className="flex flex-col items-center mt-10">
-        <span className="w-full md:w-[90%] border-t border-gray-300 mb-4"></span>
-        <div className="text-sm text-[#636363] flex items-center gap-1">Copyright <Copyright size={12}/> 2025 Kidzian</div>
+        <span className="w-full md:w-[90%] border-t border-gray-300 dark:border-gray-600 mb-4"></span>
+        <div className="text-sm text-[#636363] dark:text-[#d1d5db] flex items-center gap-1">Copyright <Copyright size={12}/> 2025 Kidzian</div>
       </div>
     </div>
   );
 };
 
 export default Footer;
-
-
-
 
 
 

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import hero2 from '../assets/kid_building_software-removebg-preview.png';
 const Hero = () => {
   return (
-    <div className='h-[100vh] w-[100%] flex items-center justify-center tracking-tighter  bg-[#FEFDFF]'>
+    <div className='h-[100vh] w-[100%]  flex items-center justify-center tracking-tighter  bg-[#FEFDFF]'>
       <div className='w-[45%] h-full flex flex-col items-center justify-center'>
         {/* <span className='bg-[#46d156] h-[6.5vw] w-[6.5vw] rounded-3xl absolute top-[22vh] -left-8 transform rotate-45 z-1'></span> */}
         <motion.span

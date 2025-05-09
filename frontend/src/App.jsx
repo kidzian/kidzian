@@ -26,12 +26,15 @@ import StudentDetails from './pages/StudentDetails'
 import TeacherDetails from './pages/TeacherDetails'
 import TeacherLogin from './pages/TeacherLogin'
 import TeacherDashboard from './components/TeacherDashboard'
+import Layout from './components/Layout'
+import SuccessStories from './pages/Success-Stories'
 
 function App() {
 
   return (
     <>
-     <Routes>
+    <Layout>
+    <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/chatbot" element={<Chatbot/>} />
      
@@ -43,6 +46,7 @@ function App() {
       <Route path="/about-us" element={<About/>}/>
       <Route path="/events" element={<Events/>}/>
       <Route path="/blogs" element={<Blog/>}/>
+      <Route path='/success-stories' element={<SuccessStories/>}/>
       <Route path="/blog/:id" element={<BlogDetail/>}/>
       
       <Route path="/login/admin" element={<AdminLogin/>} />
@@ -67,6 +71,8 @@ function App() {
       <Route path="/students/:id" element={<StudentDetails />} />
       <Route path="/admin-dashboard/teachers/:teacherId" element={<TeacherDetails />} />
      </Routes>
+    </Layout>
+    
     </>
   )
 }
