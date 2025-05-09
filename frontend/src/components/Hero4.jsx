@@ -95,28 +95,25 @@ const Hero4 = () => {
         </motion.div>
 
         {/* Primary CTA Button */}
-        
         <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.7, duration: 0.5 }}
-          className="w-full flex  justify-center mb-6"
-        >
-          <button
-            onClick={() => setShowModal(true)}
-            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-8 py-4 text-xl font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg"
-          >
-        
+  initial={{ y: 50, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ delay: 0.7, duration: 0.5 }}
+  className="w-full flex justify-center mb-6"
+>
+  <button
+    onClick={() => setShowModal(true)}
+    className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-xl font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg w-fit max-w-[90%]"
+  >
+    <span className="relative z-10 flex items-center justify-center gap-2">
+      <Sparkles className="h-5 w-5" />
+      START YOUR FREE TRIAL 
+      <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+    </span>
+    <span className="absolute inset-0 z-0 bg-gradient-to-r from-blue-700 to-cyan-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+  </button>
+</motion.div>
 
-          
-            <span className="relative z-10 flex   items-center justify-center gap-2">
-              <Sparkles className="h-5 w-5" />
-              START YOUR FREE TRIAL TODAY
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </span>
-            <span className="absolute inset-0 z-0 bg-gradient-to-r from-blue-700 to-cyan-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
-          </button>
-        </motion.div>
 
         {/* Grade Selection Buttons */}
         <div className="flex flex-col items-center lg:-mt-3 justify-center gap-6 md:pr-8 lg:pr-8 xl:pr-8 2xl:pr-8">

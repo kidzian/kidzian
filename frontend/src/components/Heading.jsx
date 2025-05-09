@@ -71,7 +71,7 @@ const Heading = () => {
         } lg:hidden`}
       >
         <ul className="flex flex-col gap-10 font-semibold text-[18px] text-center">
-          {['Home', 'Courses', 'LMS', 'Blog', 'Events', 'About'].map((item) => (
+          {['Home', 'Courses', 'LMS', 'Success-Stories', 'Events', 'About'].map((item) => (
             <li key={item} className="relative group">
               <a
                 href={`/${item.toLowerCase().replace(/\s+/g, '-')}`}
