@@ -1,54 +1,66 @@
-import React, { useRef, useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
 const Gamified = () => {
-  const ref = useRef(null);
-  const controls = useAnimation();
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        controls.start({ opacity: 1, x: 0, y: 0, scale: 1 });
-      }
-    }, { threshold: 0.5 });
-
-    if (ref.current) observer.observe(ref.current);
-    return () => ref.current && observer.unobserve(ref.current);
-  }, [controls]);
+  const [ref, inView] = useInView({
+    threshold: 0.2,
+    triggerOnce: true
+  });
 
   return (
-    <div ref={ref} className="w-full min-h-screen flex flex-col lg:flex-row gap-10 p-10 items-center justify-center">
-      {/* Image Section (Maintains left appearance on desktop) */}
-      <div className="w-full lg:w-2/5 flex justify-center">
-        <motion.img
-          src="https://plus.unsplash.com/premium_photo-1664104722112-ecaeb6c00a22?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8a2lkcyUyMGxlYXJuaW5nJTIwaW4lMjBoYXBweXxlbnwwfHwwfHx8MA%3D%3D"
-          alt=""
-          className="rounded-3xl w-full max-w-lg h-auto lg:h-[70vh]"
-          initial={{ opacity: 0, scale: 0.8, x: -100 }}
-          animate={controls}
-          transition={{ duration: 1, ease: 'easeInOut' }}
-        />
-      </div>
+    <div ref={ref} className="w-full min-h-screen bg-gradient-to-b from-gray-50 to-white flex flex-col lg:flex-row gap-10 p-6 md:p-10 items-center justify-center">
+      {/* Image Section */}
+      <motion.div 
+        className="w-full lg:w-2/5 flex justify-center"
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: inView ? 1 : 0, x: inView ? 0 : -100 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <div className="relative w-full max-w-lg">
+          <div className="absolute -inset-1 bg-[#1E3A8A]/20 rounded-3xl blur-lg"></div>
+          <img
+            src="https://images.pexels.com/photos/8535230/pexels-photo-8535230.jpeg"
+            alt="Gamified learning"
+            className="relative rounded-3xl w-full h-[45vh] lg:h-[70vh] object-cover shadow-xl"
+          />
+        </div>
+      </motion.div>
 
       {/* Text Section */}
       <div className="w-full lg:w-1/2 text-center lg:text-left">
-        <motion.h1
-          className="capitalize text-[#231639] text-3xl lg:text-5xl font-semibold"
-          initial={{ opacity: 0, x: 100 }}
-          animate={controls}
-          transition={{ duration: 1, ease: 'easeInOut' }}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 30 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Learning Made Fun: A Gamified Approach
-        </motion.h1>
+          <h1 className="text-[#1E3A8A] text-3xl md:text-5xl 2xl:text-6xl font-bold mb-6">
+            Learning Made Fun: A Gamified Approach
+          </h1>
+          <p className="text-gray-600 text-lg md:text-xl leading-relaxed">
+            Transform learning into an exciting adventure! Our gamified approach keeps students engaged and motivated through interactive challenges, rewards, and hands-on activities.
+          </p>
 
-        <motion.p
-          className="mt-5 lg:mt-10 text-[#606161] text-lg md:text-sm"
-          initial={{ opacity: 0, x: 100 }}
-          animate={controls}
-          transition={{ duration: 1, ease: 'easeInOut', delay: 0.2 }}
-        >
-          At <strong>Kidzian</strong>, we turn learning into an adventure! Our gamified approach keeps kids engaged, excited, and eager to master new skills through interactive challenges and hands-on activities.
-        </motion.p>
+          <motion.div 
+            className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 20 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#1E3A8A]">
+              <h3 className="text-[#1E3A8A] font-bold text-xl mb-2">Interactive Learning</h3>
+              <p className="text-gray-600">Engage with dynamic content and real-time feedback</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#1E3A8A]">
+              <h3 className="text-[#1E3A8A] font-bold text-xl mb-2">Achievement System</h3>
+              <p className="text-gray-600">Earn badges and rewards as you progress</p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#1E3A8A]">
+              <h3 className="text-[#1E3A8A] font-bold text-xl mb-2">Progress Tracking</h3>
+              <p className="text-gray-600">Monitor your learning journey with detailed analytics</p>
+            </div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );
