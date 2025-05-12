@@ -34,7 +34,7 @@ const Feature1 = () => {
           animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 30 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <h1 className="text-[#1E3A8A] text-3xl md:text-5xl 2xl:text-6xl font-bold mb-6">
+          <h1 className="text-teal-700 text-3xl md:text-5xl 2xl:text-6xl font-bold mb-6">
             Secure Your Future with Industry Experts
           </h1>
           <p className="text-gray-600 text-lg md:text-xl leading-relaxed">
@@ -48,15 +48,15 @@ const Feature1 = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <div className="bg-white p-4 rounded-xl shadow-lg">
-              <div className="text-[#1E3A8A] font-bold text-3xl">500+</div>
+              <div className="text-teal-700 font-bold text-3xl">500+</div>
               <div className="text-gray-600">Expert Mentors</div>
             </div>
             <div className="bg-white p-4 rounded-xl shadow-lg">
-              <div className="text-[#1E3A8A] font-bold text-3xl">10k+</div>
+              <div className="text-teal-700 font-bold text-3xl">10k+</div>
               <div className="text-gray-600">Students Taught</div>
             </div>
             <div className="bg-white p-4 rounded-xl shadow-lg">
-              <div className="text-[#1E3A8A] font-bold text-3xl">95%</div>
+              <div className="text-teal-700 font-bold text-3xl">95%</div>
               <div className="text-gray-600">Success Rate</div>
             </div>
           </motion.div>

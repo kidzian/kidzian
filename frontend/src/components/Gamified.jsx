@@ -34,7 +34,7 @@ const Gamified = () => {
           animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 30 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <h1 className="text-[#1E3A8A] text-3xl md:text-5xl 2xl:text-6xl font-bold mb-6">
+          <h1 className="text-teal-700 text-3xl md:text-5xl 2xl:text-6xl font-bold mb-6">
             Learning Made Fun: A Gamified Approach
           </h1>
           <p className="text-gray-600 text-lg md:text-xl leading-relaxed">
@@ -48,15 +48,15 @@ const Gamified = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#1E3A8A]">
-              <h3 className="text-[#1E3A8A] font-bold text-xl mb-2">Interactive Learning</h3>
+              <h3 className="text-teal-700 font-bold text-xl mb-2">Interactive Learning</h3>
               <p className="text-gray-600">Engage with dynamic content and real-time feedback</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#1E3A8A]">
-              <h3 className="text-[#1E3A8A] font-bold text-xl mb-2">Achievement System</h3>
+              <h3 className="text-teal-700 font-bold text-xl mb-2">Achievement System</h3>
               <p className="text-gray-600">Earn badges and rewards as you progress</p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#1E3A8A]">
-              <h3 className="text-[#1E3A8A] font-bold text-xl mb-2">Progress Tracking</h3>
+              <h3 className="text-teal-700 font-bold text-xl mb-2">Progress Tracking</h3>
               <p className="text-gray-600">Monitor your learning journey with detailed analytics</p>
             </div>
           </motion.div>

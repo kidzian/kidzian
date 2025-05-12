@@ -9,7 +9,7 @@ const Heading = () => {
   return (
     <header className="w-full fixed top-0 left-0 isolate z-[9999]">
       {/* Desktop navbar */}
-      <div className="hidden lg:flex w-full h-[12.5vh] bg-[#1E3A8A] dark:bg-gray-900 text-white dark:text-white shadow-xl items-center justify-between px-10 relative">
+      <div className="hidden lg:flex w-full h-[12.5vh] bg-[#28826a] dark:bg-gray-900 text-white dark:text-white shadow-xl items-center justify-between px-10 relative">
         {/* Logo */}
         <a href="/" className="flex gap-2 items-center relative z-[9999]">
           <img src={logo11} alt="Logo" className="w-[10vh]" />
@@ -32,7 +32,7 @@ const Heading = () => {
 
           </ul>
           <a href="/contact-us" className="relative z-[9999]">
-            <button className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white w-[10vw] h-[8vh] rounded-xl flex items-center justify-center transition-transform duration-300 hover:scale-105 transform-gpu">
+            <button className="bg-gradient-to-r bg-[#c79d27] text-white w-[10vw] h-[8vh] rounded-xl flex items-center justify-center transition-transform duration-300 hover:scale-105 transform-gpu">
               Get started
             </button>
           </a>

@@ -90,13 +90,13 @@ const GlobalTech = () => {
       ref={componentRef}
       className="w-full  bg-[#ffffff] flex flex-col items-center justify-center"
     >
-      <h1 className="text-4xl font-bold text-black text-center ">
+      <h1 className="text-4xl font-bold text-teal-700 text-center ">
         Global Tech School for Children
       </h1>
 
       <div className="sm:w-[90vw] w-full md:flex lg:flex xl:flex 2xl:flex md:flex-wrap sm:block items-center justify-center gap-10">
         {/* Reviews Section */}
-        <div className="text-[#3a84f6] h-[40vh] md:w-[18vw] sm:w-[90vw] rounded-2xl flex items-center justify-center">
+        <div className="text-teal-700 h-[40vh] md:w-[18vw] sm:w-[90vw] rounded-2xl flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-5xl font-bold">
               {visible && (
@@ -114,7 +114,7 @@ const GlobalTech = () => {
         </div>
 
         {/* Enrolled Students Section */}
-        <div className="text-[#3a84f6] h-[40vh] md:w-[18vw] sm:w-[90vw] rounded-2xl flex items-center justify-center">
+        <div className="text-teal-700 h-[40vh] md:w-[18vw] sm:w-[90vw] rounded-2xl flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-5xl font-bold">
               {visible && <Counter target={1114} duration={duration} trigger={visible} />}
@@ -126,7 +126,7 @@ const GlobalTech = () => {
         </div>
 
         {/* IT Expert Mentors Section */}
-        <div className="text-[#3a84f6] h-[40vh] md:w-[18vw] sm:w-[90vw] rounded-2xl flex items-center justify-center">
+        <div className="text-teal-700 h-[40vh] md:w-[18vw] sm:w-[90vw] rounded-2xl flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-5xl font-bold">
               {visible && <Counter target={102} duration={duration} trigger={visible} />}+
@@ -138,7 +138,7 @@ const GlobalTech = () => {
         </div>
 
         {/* Completed Sessions Section */}
-        <div className="text-[#3a84f6] h-[40vh] md:w-[18vw] sm:w-[90vw] rounded-2xl flex items-center justify-center">
+        <div className="text-teal-700 h-[40vh] md:w-[18vw] sm:w-[90vw] rounded-2xl flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-5xl font-bold">
               {visible && <Counter target={3120} duration={duration} trigger={visible} />}
