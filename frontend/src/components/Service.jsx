@@ -355,7 +355,7 @@ const Service = () => {
       {/* Section Title */}
       <div className="flex flex-col items-center text-center gap-4 max-w-3xl">
         <motion.h1
-          className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500"
+          className="text-3xl md:text-5xl font-bold bg-clip-text  text-teal-600"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}

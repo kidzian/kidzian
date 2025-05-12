@@ -43,7 +43,7 @@ function App() {
      
       <Route path="/lms" element={<LMS/>}/>
       <Route path="/:id1/:id2" element={<LMSCOURSE/>}/>
-      <Route path="/about-us" element={<About/>}/>
+      <Route path="/About" element={<About/>}/>
       <Route path="/events" element={<Events/>}/>
       <Route path="/blogs" element={<Blog/>}/>
       <Route path='/success-stories' element={<SuccessStories/>}/>

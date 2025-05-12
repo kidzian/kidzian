@@ -1,5 +1,6 @@
 import React from 'react';
 import { Phone, Mail, MapPin, Instagram, Facebook, Linkedin, Youtube, Star, Copyright } from 'lucide-react';
+import {Link} from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -11,7 +12,7 @@ const Footer = () => {
             Kidzian unlocks the exciting world of coding and technology for children, empowering them to explore, create, and approach learning with confidence in today's digital age.
           </p>
           <div className="md:mt-[30vh] lg:mt-[30vh] xl:mt-[30vh] mt-12">
-            <h1 className="text-[18px] font-bold mb-2">Legal</h1>
+            <h1 className="text-[18px] text-teal-800 font-bold mb-2">Legal</h1>
             <ul className="text-sm text-[#636363] dark:text-[#d1d5db] flex flex-col gap-3">
               <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'>Privacy Policy</li>
               <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'>Terms & Conditions</li>
@@ -22,19 +23,21 @@ const Footer = () => {
 
         {/* Section 2 */}
         <div className="flex flex-col">
-          <h1 className="text-[18px] font-bold mb-2">Company</h1>
-          <ul className="flex flex-col gap-3 text-sm text-[#636363] dark:text-[#d1d5db]">
-            {['Home', 'Courses', 'LMS', 'Blog', 'Events', 'About', 'Contact Us'].map((item) => (
-              <a href={`/${item.toLowerCase().replace(' ', '-')}`} key={item}>
-                <li className="hover:text-black dark:hover:text-white cursor-pointer">{item}</li>
-              </a>
-            ))}
-          </ul>
-        </div>
+      <h1 className="text-[18px] font-bold text-teal-800 mb-2">Company</h1>
+      <ul className="flex flex-col gap-3 text-sm text-[#636363] dark:text-[#d1d5db]">
+        {['Home', 'Courses', 'LMS', 'Blog', 'Events', 'About', 'Contact Us'].map((item) => (
+          <li key={item} className="hover:text-black dark:hover:text-white cursor-pointer">
+            <Link to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}>
+              {item}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
 
         {/* Section 3 */}
         <div className="flex flex-col">
-          <h1 className="text-[18px] font-bold mb-2">Follow Us</h1>
+          <h1 className="text-[18px] font-bold text-teal-800 mb-2">Follow Us</h1>
           <ul className="flex flex-col gap-3 text-sm text-[#636363] dark:text-[#d1d5db]">
             {[ 
               { name: 'Instagram', icon: <Instagram size={15} />, link: 'https://www.instagram.com/kidzians/' },
@@ -52,7 +55,7 @@ const Footer = () => {
 
         {/* Section 4 */}
         <div className="flex flex-col">
-          <h1 className="text-[18px] font-bold mb-2">Contact Us</h1>
+          <h1 className="text-[18px]  text-teal-800 font-bold mb-2">Contact Us</h1>
           <ul className="flex flex-col gap-3 text-sm text-[#636363] dark:text-[#d1d5db]">
             <li className="flex gap-4 items-center hover:text-black dark:hover:text-white cursor-pointer">
               <Phone size={15} /> +91 9599-860-105

@@ -18,7 +18,7 @@ const Courses = () => {
       rating: 4.8,
       reviews: 127,
       isBestseller: true,
-    
+      
       description: "Learn Python programming through fun game development projects",
       about: [
         "Build 5 exciting games from scratch",
@@ -44,7 +44,7 @@ const Courses = () => {
       rating: 4.6,
       reviews: 89,
       isBestseller: false,
-   
+     
       description: "Start your journey in web development with HTML, CSS, and JavaScript",
       about: [
         "Create responsive websites",
@@ -70,7 +70,7 @@ const Courses = () => {
       rating: 4.9,
       reviews: 76,
       isBestseller: true,
-  
+     
       description: "Master modern JavaScript and React development",
       about: [
         "Build complex React applications",
@@ -96,7 +96,7 @@ const Courses = () => {
       rating: 4.7,
       reviews: 94,
       isBestseller: true,
-     
+ 
       description: "Explore data science and analytics with Python",
       about: [
         "Data analysis fundamentals",
@@ -122,7 +122,7 @@ const Courses = () => {
       rating: 4.5,
       reviews: 63,
       isBestseller: false,
-      price: "$179",
+      
       description: "Create mobile apps with React Native",
       about: [
         "Cross-platform development",
@@ -148,7 +148,7 @@ const Courses = () => {
       rating: 4.8,
       reviews: 42,
       isBestseller: false,
-      
+   
       description: "Introduction to AI and machine learning concepts",
       about: [
         "Basic AI concepts",
@@ -186,7 +186,7 @@ const Courses = () => {
   };
 
   const heroImages = {
-    backgroundImage: "url('https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')",
+    backgroundImage: "url('https://images.pexels.com/photos/3769981/pexels-photo-3769981.jpeg')",
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   };
@@ -202,7 +202,7 @@ const Courses = () => {
       >
         {/* Hero Section */}
         <div className="relative h-[60vh] flex items-center justify-center" style={heroImages}>
-          <div className="absolute inset-0 bg-[#1E3A8A]/80"></div>
+          <div className="absolute inset-0 bg-[#0F766E]/90"></div>
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.h1
               className="text-4xl md:text-6xl font-bold text-white mb-6"
@@ -246,7 +246,7 @@ const Courses = () => {
                 key={filter}
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   activeFilter === filter
-                    ? 'bg-[#1E3A8A] text-white'
+                    ? 'bg-teal-700 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
                 onClick={() => setActiveFilter(filter)}
@@ -278,7 +278,7 @@ const Courses = () => {
                       alt={course.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1E3A8A]/90 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-teal-800/90 to-transparent" />
                     {course.isBestseller && (
                       <div className="absolute top-4 left-4 bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
                         <FiAward className="w-4 h-4" />
@@ -306,17 +306,17 @@ const Courses = () => {
                         ))}
                         <span className="text-sm text-gray-600 ml-2">({course.reviews} reviews)</span>
                       </div>
-                      <span className="text-[#1E3A8A] font-bold">{course.price}</span>
+                      <span className="text-teal-700 font-bold">{course.price}</span>
                     </div>
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                       {course.description}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-[#1E3A8A] font-semibold">
+                      <span className="text-teal-700 font-semibold">
                         Age: {course.ageGroup}
                       </span>
                       <button
-                        className="flex items-center gap-2 text-white bg-[#1E3A8A] px-4 py-2 rounded-lg hover:bg-[#2B4BA1] transition-colors duration-300"
+                        className="flex items-center gap-2 text-white bg-teal-700 px-4 py-2 rounded-lg hover:bg-teal-800 transition-colors duration-300"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDownload(course.pdf);
@@ -412,7 +412,7 @@ const Courses = () => {
                         <ul className="space-y-3">
                           {selectedCourse.about.map((item, idx) => (
                             <li key={idx} className="flex items-start gap-3 text-gray-700">
-                              <FiChevronRight className="mt-1 flex-shrink-0 text-[#1E3A8A] w-5 h-5" />
+                              <FiChevronRight className="mt-1 flex-shrink-0 text-teal-700 w-5 h-5" />
                               <span>{item}</span>
                             </li>
                           ))}
@@ -426,7 +426,7 @@ const Courses = () => {
                         <ul className="space-y-3">
                           {selectedCourse.learningOutcomes.map((item, idx) => (
                             <li key={idx} className="flex items-start gap-3 text-gray-700">
-                              <FiChevronRight className="mt-1 flex-shrink-0 text-[#1E3A8A] w-5 h-5" />
+                              <FiChevronRight className="mt-1 flex-shrink-0 text-teal-700 w-5 h-5" />
                               <span>{item}</span>
                             </li>
                           ))}
@@ -434,7 +434,7 @@ const Courses = () => {
                       </div>
 
                       <button
-                        className="w-full bg-[#1E3A8A] text-white py-4 rounded-2xl hover:bg-[#2B4BA1] transition-all duration-300 flex items-center justify-center gap-3 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                        className="w-full bg-teal-700 text-white py-4 rounded-2xl hover:bg-teal-800 transition-all duration-300 flex items-center justify-center gap-3 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                         onClick={() => handleDownload(selectedCourse.pdf)}
                       >
                         <FiDownload className="w-5 h-5" /> Download Curriculum

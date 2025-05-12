@@ -209,7 +209,7 @@ const Events = () => {
                   </div>
                 </div>
                 <div>
-                  <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Register</button>
+                  <button className="mt-2 bg-[#047857] text-white px-4 py-2 rounded">Register</button>
                 </div>
               </motion.div>
             ))}
