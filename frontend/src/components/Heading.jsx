@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import DarkModeToggle from './Darkmode';
-import logo11 from "../assets/logo11.png"
+import logo11 from "../assets/logo11.png"; // Make sure the image is imported here
 
 const Heading = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +29,7 @@ const Heading = () => {
       <div className="hidden lg:flex w-full h-[12.5vh] bg-[#28826a] dark:bg-gray-900 text-white dark:text-white shadow-xl items-center justify-between px-10 relative">
         {/* Logo with white circle background */}
         <a href="/" className="flex gap-2 items-center relative z-[9999]">
-          <div className="rounded-full bg-white/90 p-[2px] shadow-lg"> {/* Adjusted background opacity and added shadow */}
+          <div className="rounded-full bg-white/90 p-[2px] shadow-lg">
             <img 
               src={logo11} 
               alt="Logo" 
@@ -78,9 +78,9 @@ const Heading = () => {
       <div className="lg:hidden flex h-[12.5vh] w-full items-center justify-between px-6 bg-[#28826a] dark:bg-gray-900 text-white dark:text-white shadow-xl relative z-[9999]">
         {/* Logo with white circle background */}
         <a href="/" className="flex gap-2 items-center">
-          <div className="rounded-full bg-white/90 p-[2px] shadow-lg"> {/* Adjusted background opacity and added shadow */}
+          <div className="rounded-full bg-white/90 p-[2px] shadow-lg">
             <img 
-              src="/logo11.png" 
+              src={logo11}  // Updated this to use the imported logo
               alt="Logo" 
               className="w-[10vh] brightness-125 contrast-125 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" 
             />
