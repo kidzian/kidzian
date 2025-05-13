@@ -1,5 +1,5 @@
-"use client"
-import Heading from "../components/Heading"
+import React from 'react';
+import Heading from "../components/Heading";
 import {
   DumbbellIcon as BicepsFlexed,
   Cpu,
@@ -14,48 +14,48 @@ import {
   Sparkles,
   ChevronRight,
   GraduationCap,
-} from "lucide-react"
-import { FaRocket } from "react-icons/fa"
-import { FaLightbulb } from "react-icons/fa6"
-import { FaStar } from "react-icons/fa6"
-import Footer from "../components/Footer"
-import { motion } from "framer-motion"
-import about from "../assets/about-us.jpg"
+} from "lucide-react";
+import { FaRocket } from "react-icons/fa";
+import { FaLightbulb } from "react-icons/fa6";
+import { FaStar } from "react-icons/fa6";
+import Footer from "../components/Footer";
+import { motion } from "framer-motion";
+import about from "../assets/about-us.jpg";
 
 const About = () => {
   const missionData = [
     {
-      icon: <Gamepad2 className="h-16 w-16 text-purple-500" />,
+      icon: <Gamepad2 className="h-16 w-16 text-[#28826a]" />,
       title: "Make Learning Fun And Accessible",
       description:
         "Our gamified learning approach and personalized learning paths ensure that every child can enjoy and succeed in their tech education journey.",
     },
     {
-      icon: <Cpu className="h-16 w-16 text-blue-500" />,
+      icon: <Cpu className="h-16 w-16 text-[#28826a]" />,
       title: "Inspire Creativity Through Technology",
       description:
         "We foster creativity through interactive learning that encourages experimentation and innovation in coding, robotics, and digital design.",
     },
     {
-      icon: <Earth className="h-16 w-16 text-green-500" />,
+      icon: <Earth className="h-16 w-16 text-[#28826a]" />,
       title: "Promote Diversity and Inclusion in Tech",
       description:
         "Our mission is to provide equal opportunities for all children to explore and excel in technology education, regardless of background or gender.",
     },
     {
-      icon: <BicepsFlexed className="h-16 w-16 text-orange-500" />,
+      icon: <BicepsFlexed className="h-16 w-16 text-[#28826a]" />,
       title: "Empower Future Innovators",
       description:
         "We aim to equip children with the skills and confidence needed to thrive in a technology-driven world, preparing them to solve real-world problems.",
     },
-  ]
+  ];
 
   const statsData = [
-    { number: "5000+", label: "Students Taught", icon: <Users className="h-8 w-8 text-blue-500" /> },
-    { number: "25+", label: "Tech Courses", icon: <BookOpen className="h-8 w-8 text-purple-500" /> },
-    { number: "98%", label: "Satisfaction Rate", icon: <Award className="h-8 w-8 text-green-500" /> },
-    { number: "100K+", label: "Lines of Code Written", icon: <Code className="h-8 w-8 text-orange-500" /> },
-  ]
+    { number: "5000+", label: "Students Taught", icon: <Users className="h-8 w-8 text-[#28826a]" /> },
+    { number: "25+", label: "Tech Courses", icon: <BookOpen className="h-8 w-8 text-[#28826a]" /> },
+    { number: "98%", label: "Satisfaction Rate", icon: <Award className="h-8 w-8 text-[#28826a]" /> },
+    { number: "100K+", label: "Lines of Code Written", icon: <Code className="h-8 w-8 text-[#28826a]" /> },
+  ];
 
   const ageGroups = [
     {
@@ -63,50 +63,50 @@ const About = () => {
       title: "Tech Explorers",
       description:
         "Introduction to coding through visual programming, basic robotics, and interactive games that make learning a playful adventure.",
-      color: "bg-blue-500",
+      color: "bg-[#28826a]",
     },
     {
       age: "10-13 years",
       title: "Digital Creators",
       description:
         "Advancing to block-based coding, web design fundamentals, game development, and collaborative tech projects.",
-      color: "bg-purple-500",
+      color: "bg-[#28826a]",
     },
     {
       age: "14-17 years",
       title: "Future Innovators",
       description:
         "Mastering text-based programming languages, app development, advanced robotics, AI basics, and industry-relevant projects.",
-      color: "bg-green-500",
+      color: "bg-[#28826a]",
     },
-  ]
+  ];
 
   const courses = [
     {
       title: "Scratch Programming",
       description: "A visual programming language perfect for beginners to create animations and games",
       age: "7-10 years",
-      icon: <Gamepad2 className="h-10 w-10 text-purple-500" />,
+      icon: <Gamepad2 className="h-10 w-10 text-[#28826a]" />,
     },
     {
       title: "Python Fundamentals",
       description: "Learn the basics of Python programming with fun, interactive projects",
       age: "10-14 years",
-      icon: <Code className="h-10 w-10 text-blue-500" />,
+      icon: <Code className="h-10 w-10 text-[#28826a]" />,
     },
     {
       title: "Web Development",
       description: "Create your own websites using HTML, CSS, and JavaScript",
       age: "12-17 years",
-      icon: <Earth className="h-10 w-10 text-green-500" />,
+      icon: <Earth className="h-10 w-10 text-[#28826a]" />,
     },
     {
       title: "App Development",
       description: "Design and build mobile applications for Android and iOS",
       age: "14-17 years",
-      icon: <Sparkles className="h-10 w-10 text-orange-500" />,
+      icon: <Sparkles className="h-10 w-10 text-[#28826a]" />,
     },
-  ]
+  ];
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -115,7 +115,7 @@ const About = () => {
       y: 0,
       transition: { duration: 0.6 },
     },
-  }
+  };
 
   const staggerContainer = {
     hidden: { opacity: 0 },
@@ -125,7 +125,7 @@ const About = () => {
         staggerChildren: 0.2,
       },
     },
-  }
+  };
 
   return (
     <div className="overflow-x-hidden">
@@ -136,7 +136,7 @@ const About = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="relative w-full h-[50vh] md:h-[60vh] bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center overflow-hidden"
+        className="relative w-full h-[50vh] md:h-[60vh] bg-gradient-to-r from-[#28826a] to-[#1f6e59] flex items-center justify-center overflow-hidden"
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 z-10">
@@ -162,7 +162,7 @@ const About = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="mt-8 px-8 py-3 bg-white text-blue-600 rounded-full font-bold text-lg flex items-center"
+            className="mt-8 px-8 py-3 bg-[#c79d27] text-white rounded-full font-bold text-lg flex items-center hover:bg-[#d4a82c] transition-colors shadow-lg"
           >
             Explore Our Courses <ChevronRight className="ml-2" />
           </motion.button>
@@ -223,7 +223,7 @@ const About = () => {
           </motion.h1>
 
           <motion.div variants={fadeIn} className="flex gap-4">
-            <FaRocket size={80} className="text-[#3b82f6] flex-shrink-0" />
+            <FaRocket size={80} className="text-[#28826a] flex-shrink-0" />
             <p className="text-gray-700">
               Kidzian was founded in 2023 by Rashmi Raju, a passionate software engineer and educator with an M.Tech in
               Computer Science. Having worked in top-tier software companies, Rashmi gained invaluable experience and
@@ -233,7 +233,7 @@ const About = () => {
           </motion.div>
 
           <motion.div variants={fadeIn} className="flex gap-4">
-            <FaLightbulb size={60} className="text-[#f49e0a] flex-shrink-0" />
+            <FaLightbulb size={60} className="text-[#c79d27] flex-shrink-0" />
             <p className="text-gray-700">
               The idea for Kidzian was sparked by a neighborhood coding workshop she organized, where the children's
               enthusiasm and excitement were contagious. Rashmi realized the potential of a more engaging approach to
@@ -242,7 +242,7 @@ const About = () => {
           </motion.div>
 
           <motion.div variants={fadeIn} className="flex gap-4">
-            <FaStar size={80} className="text-[#8b5cf6] flex-shrink-0" />
+            <FaStar size={80} className="text-[#28826a] flex-shrink-0" />
             <p className="text-gray-700">
               Starting with a small center and a handful of students, Kidzian has grown into a leading tech school for
               children aged 7 to 17, offering courses in block-based coding, Python, Java, JavaScript, HTML, CSS, and
@@ -252,7 +252,7 @@ const About = () => {
           </motion.div>
 
           <motion.div variants={fadeIn} className="flex gap-4">
-            <Heart className="h-12 w-12 text-red-500 flex-shrink-0" />
+            <Heart className="h-12 w-12 text-[#c79d27] flex-shrink-0" />
             <p className="text-gray-700">
               We are committed to continuous innovation, ensuring our students stay ahead in the ever-evolving world of
               technology. Join us at Kidzian, where learning technology is an exciting adventure!
@@ -338,7 +338,7 @@ const About = () => {
           </div>
 
           <motion.div variants={fadeIn} className="mt-10 text-center">
-            <button className="px-8 py-3 bg-purple-600 text-white rounded-full font-bold text-lg hover:bg-purple-700 transition-colors flex items-center mx-auto">
+            <button className="px-8 py-3 bg-[#28826a] text-white rounded-full font-bold text-lg hover:bg-[#1f6e59] transition-colors flex items-center mx-auto shadow-lg">
               View All Courses <ChevronRight className="ml-2" />
             </button>
           </motion.div>
@@ -381,7 +381,7 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="py-16 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+        className="py-16 px-4 bg-gradient-to-r from-[#28826a] to-[#1f6e59] text-white"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div variants={fadeIn} className="text-center mb-12">
@@ -472,7 +472,7 @@ const About = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
           <motion.div variants={fadeIn} whileHover={{ y: -10 }} className="flex flex-col items-center justify-center">
             <div className="bg-gray-100 w-36 h-36 rounded-full flex items-center justify-center mb-4">
-              <div className="w-24 h-24 bg-blue-100 rounded-lg flex items-center justify-center text-blue-500 font-bold">
+              <div className="w-24 h-24 bg-[#28826a]/10 rounded-lg flex items-center justify-center text-[#28826a] font-bold">
                 WSS
               </div>
             </div>
@@ -509,7 +509,7 @@ const About = () => {
 
           <motion.div variants={fadeIn} whileHover={{ y: -10 }} className="flex flex-col items-center justify-center">
             <div className="bg-gray-100 w-36 h-36 rounded-full flex items-center justify-center mb-4">
-              <div className="w-24 h-24 bg-pink-100 rounded-lg flex items-center justify-center text-pink-500 font-bold">
+              <div className="w-24 h-24 bg-[#28826a]/10 rounded-lg flex items-center justify-center text-[#28826a] font-bold">
                 CBFW
               </div>
             </div>
@@ -540,11 +540,11 @@ const About = () => {
             <input
               type="email"
               placeholder="Enter your email"
-              className="px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-grow max-w-md"
+              className="px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#28826a] flex-grow max-w-md"
             />
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition duration-300 flex items-center justify-center"
+              className="bg-[#28826a] hover:bg-[#1f6e59] text-white px-6 py-3 rounded-lg transition duration-300 flex items-center justify-center shadow-lg"
             >
               Subscribe
               <MailCheck size={18} className="ml-2" />
@@ -555,7 +555,7 @@ const About = () => {
 
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default About
+export default About;

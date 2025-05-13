@@ -48,11 +48,12 @@ export default function Hero4() {
               className="space-y-2"
             >
               <h2 className="text-lg font-medium text-gray-700">
-              After-school, hands-on learning experiences that inspire young innovators
+              After-School Coding & STEM Innovation Program
               </h2>
               <h1 className="text-4xl md:text-5xl font-bold text-teal-600">
-                Unlocking Minds, <br />
-                Igniting Futures
+              Unleashing Potential, <br />
+              Shaping Tomorrow’s Leaders
+
               </h1>
             </motion.div>
 
@@ -63,16 +64,17 @@ export default function Hero4() {
               className="text-gray-700 space-y-6"
             >
               <p className="text-lg">
-              Ignite your child's curiosity with Kidzian! Inspire young minds to explore, create, and innovate with our world-class curriculum designed to build strong foundations in science, technology, and beyond.
+              At Kidzian, we believe that the future belongs to the creators of technology—not just its users. Our after-school program empowers students from Grade 3 onwards to master the language of the future through immersive coding and STEM experiences.
+
               </p>
 
               <div className="space-y-2">
-                <p className="text-sm ">Led by an industry expert with a deep-rooted love for coding, science, and inspiring young minds</p>
-                <p className="font-medium">For students ranging from beginner to advanced levels</p>
+                <p className="text-sm ">Founded by a researcher from IIT Delhi, Kidzian is driven by an unwavering commitment to coding, science, and inspiring the next generation of pioneers and thinkers.</p>
+                <p className="font-medium">For Grade 3 and above</p>
               </div>
 
               <div className="space-y-3">
-                {["Expert-led interactive classes", "Project-based learning approach", "Personalized learning path"].map((feature, index) => (
+                {["Expert-led interactive classes", "Project-based learning approach"].map((feature, index) => (
                   <motion.div
                     key={index}
                     initial={{ x: -20, opacity: 0 }}
