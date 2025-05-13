@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import asianBoyImage from "../assets/asian-boy-typing-laptop-keyboard-classmates-sitting-table-watching-him-doing-task-together.jpg";
+
 
 const Feature1 = () => {
   const [ref, inView] = useInView({
@@ -20,7 +22,7 @@ const Feature1 = () => {
         <div className="relative w-full max-w-lg">
           <div className="absolute -inset-1 bg-[#1E3A8A]/20 rounded-3xl blur-lg"></div>
           <img
-            src="https://images.pexels.com/photos/3769981/pexels-photo-3769981.jpeg"
+            src={asianBoyImage}
             alt="Expert mentoring"
             className="relative rounded-3xl w-full h-[45vh] lg:h-[70vh] object-cover shadow-xl"
           />
@@ -49,11 +51,11 @@ const Feature1 = () => {
           >
             <div className="bg-white p-4 rounded-xl shadow-lg">
               <div className="text-teal-700 font-bold text-3xl">500+</div>
-              <div className="text-gray-600">Expert Mentors</div>
+              <div className="text-gray-600">Projects Built by Kids</div>
             </div>
             <div className="bg-white p-4 rounded-xl shadow-lg">
-              <div className="text-teal-700 font-bold text-3xl">10k+</div>
-              <div className="text-gray-600">Students Taught</div>
+              <div className="text-teal-700 font-bold text-3xl">5+</div>
+              <div className="text-gray-600">Countries Reached</div>
             </div>
             <div className="bg-white p-4 rounded-xl shadow-lg">
               <div className="text-teal-700 font-bold text-3xl">95%</div>

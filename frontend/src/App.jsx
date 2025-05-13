@@ -11,6 +11,7 @@ import LMSCOURSE from './pages/LMSCOURSE'
 import Events from './pages/Events'
 import Blog from './pages/Blog'
 import BlogDetail from './components/BlogDetail'
+import ViewStory from './pages/view-story'
 
 
 import AdminDashboard from './components/AdminDashboard'
@@ -28,6 +29,7 @@ import TeacherLogin from './pages/TeacherLogin'
 import TeacherDashboard from './components/TeacherDashboard'
 import Layout from './components/Layout'
 import SuccessStories from './pages/Success-Stories'
+
 
 function App() {
 
@@ -70,6 +72,7 @@ function App() {
 
       <Route path="/students/:id" element={<StudentDetails />} />
       <Route path="/admin-dashboard/teachers/:teacherId" element={<TeacherDetails />} />
+      <Route path="/view-story" element={<ViewStory/>}/>
      </Routes>
     </Layout>
     
