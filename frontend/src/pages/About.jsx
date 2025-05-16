@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Heading from "../components/Heading";
 import {
   DumbbellIcon as BicepsFlexed,
@@ -21,8 +21,13 @@ import { FaStar } from "react-icons/fa6";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
 import about from "../assets/about-us.jpg";
+import { useNavigate } from 'react-router-dom';
 
 const About = () => {
+  const navigate =useNavigate();
+  const handleClick=()=>{
+    navigate('/courses');
+  }
   const missionData = [
     {
       icon: <Gamepad2 className="h-16 w-16 text-[#28826a]" />,
@@ -162,6 +167,7 @@ const About = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={handleClick}
             className="mt-8 px-8 py-3 bg-[#c79d27] text-white rounded-full font-bold text-lg flex items-center hover:bg-[#d4a82c] transition-colors shadow-lg"
           >
             Explore Our Courses <ChevronRight className="ml-2" />
@@ -338,7 +344,7 @@ const About = () => {
           </div>
 
           <motion.div variants={fadeIn} className="mt-10 text-center">
-            <button className="px-8 py-3 bg-[#28826a] text-white rounded-full font-bold text-lg hover:bg-[#1f6e59] transition-colors flex items-center mx-auto shadow-lg">
+            <button onClick={handleClick} className=" px-8 py-3 bg-[#28826a] text-white rounded-full font-bold text-lg hover:bg-[#1f6e59] transition-colors flex items-center mx-auto shadow-lg">
               View All Courses <ChevronRight className="ml-2" />
             </button>
           </motion.div>
