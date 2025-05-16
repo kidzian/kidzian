@@ -154,7 +154,7 @@
 // export default Teachers;
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
@@ -168,9 +168,28 @@ const Teachers = () => {
   });
   const [teachers, setTeachers] = useState([]);
 
+  const modalRef = useRef(null);
+
   // Open & Close Modal
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  // Click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open]);
 
   // Fetch Teachers
   const fetchTeachers = async () => {
@@ -194,6 +213,10 @@ const Teachers = () => {
   // Handle Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (teacherData.password.length < 6) {
+      alert('Password should be at least 6 characters');
+      return;
+    }
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/teachers`, teacherData);
       if (response.status === 200) {
@@ -212,7 +235,7 @@ const Teachers = () => {
     try {
       await axios.delete(`${import.meta.env.VITE_API_URL}/teachers/${id}`);
       alert('Teacher deleted successfully');
-      fetchTeachers(); // Refresh list
+      fetchTeachers();
     } catch (error) {
       console.error('Error deleting teacher:', error);
       alert('Error deleting teacher');
@@ -235,64 +258,71 @@ const Teachers = () => {
 
       {/* Modal */}
       {open && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-2xl font-semibold mb-4">Add Teacher</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div ref={modalRef} className="bg-white w-96 rounded-xl shadow-2xl">
+            {/* Modal Header */}
+            <div className="bg-teal-500 text-white text-xl font-semibold px-6 py-4 rounded-t-xl">
+              Add Teacher
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Name</label>
+                <label className="block text-sm font-medium mb-1">Name</label>
                 <input
                   type="text"
                   name="name"
                   value={teacherData.name}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
+                <label className="block text-sm font-medium mb-1">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={teacherData.email}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Password</label>
+                <label className="block text-sm font-medium mb-1">Password</label>
                 <input
                   type="password"
                   name="password"
                   value={teacherData.password}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Phone Number</label>
+                <label className="block text-sm font-medium mb-1">Phone Number</label>
                 <input
                   type="text"
                   name="phoneNumber"
                   value={teacherData.phoneNumber}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400"
                   required
                 />
               </div>
+
               <button 
-                type="submit" 
-                className="w-full py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 focus:outline-none"
+                type="submit"
+                className="w-full py-2 bg-teal-500 text-white font-semibold rounded-lg hover:bg-teal-600 transition"
               >
                 Submit
               </button>
             </form>
+
             <button 
-              onClick={handleClose} 
-              className="mt-4 px-6 py-2 bg-red-500 text-white font-bold rounded-lg w-full hover:bg-red-600 focus:outline-none"
+              onClick={handleClose}
+              className="w-full py-2 bg-red-500 text-white font-semibold rounded-b-xl hover:bg-red-600 transition"
             >
               Close
             </button>

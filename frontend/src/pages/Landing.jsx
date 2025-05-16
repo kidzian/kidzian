@@ -11,6 +11,7 @@ import GlobalTech from '../components/GlobalTech'
 import Feature1 from '../components/Feature1'
 import Gamified from '../components/Gamified'
 import Faq from '../components/Faq'
+import Steps from "../components/Steps"
 import Testimonials from '../components/Testimonials'
 import Chatbot from '../components/Chatbot'
 const Landing = () => {
@@ -23,6 +24,7 @@ const Landing = () => {
       <GlobalTech/>
       <Feature1/>
       <Gamified/>
+      <Steps/>
       <Testimonials/>
       <Faq/>
       <Footer/>

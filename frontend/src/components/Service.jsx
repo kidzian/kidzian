@@ -415,16 +415,16 @@ const Service = () => {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white rounded-2xl shadow-2xl w-[90vw] max-w-md overflow-hidden"
+              className="bg-white rounded-2xl shadow-2xl w-[90vw] mt-2 max-w-md overflow-hidden"
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               transition={{ type: "spring", damping: 25 }}
             >
-              <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-6 flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-white">Book a Free Demo</h2>
+              <div className=" bg-teal-700 p-6 flex justify-between items-center">
+                <h2 className="text-2xl font-bold mt-3 text-white">Book a Free Demo</h2>
                 <button onClick={handleModalClose} className="text-white hover:bg-white/20 p-2 rounded-full">
-                  <X size={20} />
+                  <X className="mt-3" size={20} />
                 </button>
               </div>
 
@@ -483,7 +483,7 @@ const Service = () => {
                     Cancel
                   </button>
                   <button type="submit" disabled={loading}
-                    className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-5 py-2.5 rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-70"
+                    className="bg-teal-700 text-white px-5 py-2.5 rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-70"
                   >
                     {loading ? "Booking..." : "Book Demo"}
                   </button>
