@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Search, UserPlus, X, Mail, Phone, MapPin, GraduationCap, Award, Trash2, Edit, ExternalLink } from 'lucide-react';
+import { Search, UserPlus, X, Mail, Phone, MapPin, GraduationCap, Award, Trash2, Edit, ExternalLink, AlertCircle } from 'lucide-react';
+import { gradeStringToNumber, gradeNumberToString } from '../utils/gradeUtils';
 
 const StudentsPage = () => {
   const [students, setStudents] = useState([]);
@@ -9,6 +10,8 @@ const StudentsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGrade, setSelectedGrade] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -27,7 +30,12 @@ const StudentsPage = () => {
     axios
       .get(`${import.meta.env.VITE_API_URL}/admin/users`)
       .then((response) => {
-        setStudents(response.data);
+        // Transform received grade numbers to strings for display
+        const formattedStudents = response.data.map(student => ({
+          ...student,
+          gradeDisplay: gradeNumberToString(student.grade)
+        }));
+        setStudents(formattedStudents);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -52,23 +60,101 @@ const StudentsPage = () => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+    
+    // Address validation
+    if (!formData.address.trim()) {
+      newErrors.address = "Address is required";
+    }
+    
+    // Email validation
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+    
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    
+    // Age validation
+    if (!formData.age) {
+      newErrors.age = "Age is required";
+    } else if (parseInt(formData.age) < 5 || parseInt(formData.age) > 18) {
+      newErrors.age = "Age must be between 5 and 18";
+    }
+    
+    // Phone number validation
+    if (!formData.phoneNumber) {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (!/^\d+$/.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = "Phone number must contain only digits";
+    }
+    
+    // Grade validation
+    if (!formData.grade) {
+      newErrors.grade = "Grade is required";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
+    
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
     try {
+      // Create a copy of form data with grade converted to number for API
+      const apiFormData = {
+        ...formData,
+        grade: gradeStringToNumber(formData.grade)
+      };
+      
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/admin/create-user`,
-        formData
+        apiFormData
       );
+      
       if (response.status === 201) {
-        setStudents([...students, response.data]);
+        // Add display grade to the returned student data
+        const newStudent = {
+          ...response.data,
+          gradeDisplay: formData.grade
+        };
+        
+        setStudents([...students, newStudent]);
         setIsModalOpen(false);
         setFormData({
           name: "",
@@ -80,17 +166,42 @@ const StudentsPage = () => {
           grade: "",
           certificates: 0,
         });
+        setErrors({});
       }
     } catch (error) {
       console.error("Error creating student:", error);
-      alert("Error creating student");
+      
+      // Handle validation errors from backend
+      if (error.response && error.response.data) {
+        if (error.response.data.errors) {
+          // Mongoose validation errors
+          const backendErrors = {};
+          error.response.data.errors.forEach(err => {
+            backendErrors[err.path] = err.message;
+          });
+          setErrors(backendErrors);
+        } else if (error.response.data.message) {
+          // Single error message
+          if (error.response.data.message.includes("email")) {
+            setErrors({ email: "This email is already in use" });
+          } else {
+            setErrors({ general: error.response.data.message });
+          }
+        } else {
+          setErrors({ general: "Error creating student. Please try again." });
+        }
+      } else {
+        setErrors({ general: "Error creating student. Please try again." });
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const filteredStudents = students.filter(student => {
-    const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         student.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesGrade = selectedGrade === "all" || student.grade === selectedGrade;
+    const matchesSearch = (student?.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+                         (student?.email?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+    const matchesGrade = selectedGrade === "all" || student?.gradeDisplay === selectedGrade;
     return matchesSearch && matchesGrade;
   });
 
@@ -103,12 +214,12 @@ const StudentsPage = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-4 sm:mb-0">
+        <h1 className="text-3xl font-bold text-teal-700 dark:text-white mb-4 sm:mb-0">
           Student Management
         </h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md"
+          className="flex items-center px-4 py-2 bg-teal-700 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md"
         >
           <UserPlus size={20} className="mr-2" />
           Add New Student
@@ -132,9 +243,15 @@ const StudentsPage = () => {
           className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
           <option value="all">All Grades</option>
-          <option value="12th">12th Grade</option>
-          <option value="11th">11th Grade</option>
-          <option value="10th">10th Grade</option>
+          <option value="2th">2th Grade</option>
+          <option value="3th">3th Grade</option>
+          <option value="4th">4th Grade</option>
+           <option value="5th">5th Grade</option>
+            <option value="6th">6th Grade</option>
+             <option value="7th">7th Grade</option>
+              <option value="8th">8th Grade</option>
+               <option value="9th">9th Grade</option>
+                <option value="10th">10th Grade</option>
         </select>
       </div>
 
@@ -154,11 +271,11 @@ const StudentsPage = () => {
           {filteredStudents.map((student) => (
             <div
               key={student._id}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300"
+              className="bg-teal-700 dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300"
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
+                  <h3 className="text-xl font-semibold text-white dark:text-white">
                     {student.name}
                   </h3>
                   {student.performance && (
@@ -169,23 +286,23 @@ const StudentsPage = () => {
                 </div>
                 
                 <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-gray-600 dark:text-gray-300">
+                  <div className="flex items-center text-black dark:text-gray-300">
                     <Mail size={16} className="mr-2" />
                     <span className="text-sm">{student.email}</span>
                   </div>
-                  <div className="flex items-center text-gray-600 dark:text-gray-300">
+                  <div className="flex items-center text-black dark:text-gray-300">
                     <Phone size={16} className="mr-2" />
                     <span className="text-sm">{student.phoneNumber}</span>
                   </div>
-                  <div className="flex items-center text-gray-600 dark:text-gray-300">
+                  <div className="flex items-center text-black dark:text-gray-300">
                     <MapPin size={16} className="mr-2" />
                     <span className="text-sm">{student.address}</span>
                   </div>
-                  <div className="flex items-center text-gray-600 dark:text-gray-300">
+                  <div className="flex items-center text-black dark:text-gray-300">
                     <GraduationCap size={16} className="mr-2" />
-                    <span className="text-sm">Grade: {student.grade}</span>
+                    <span className="text-sm">Grade: {student.gradeDisplay}</span>
                   </div>
-                  <div className="flex items-center text-gray-600 dark:text-gray-300">
+                  <div className="flex items-center text-black dark:text-gray-300">
                     <Award size={16} className="mr-2" />
                     <span className="text-sm">Certificates: {student.certificates}</span>
                   </div>
@@ -194,7 +311,7 @@ const StudentsPage = () => {
                 <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                   <button
                     onClick={() => navigate(`/students/${student._id}`)}
-                    className="flex items-center text-blue-500 hover:text-blue-600 transition-colors"
+                    className="flex items-center text-white hover:text-blue-600 transition-colors"
                   >
                     <ExternalLink size={16} className="mr-1" />
                     View Details
@@ -227,7 +344,7 @@ const StudentsPage = () => {
       {/* Create Student Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Add New Student</h2>
               <button
@@ -237,6 +354,13 @@ const StudentsPage = () => {
                 <X size={24} />
               </button>
             </div>
+            
+            {errors.general && (
+              <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-start">
+                <AlertCircle size={18} className="mr-2 mt-0.5 flex-shrink-0" />
+                <span>{errors.general}</span>
+              </div>
+            )}
             
             <form onSubmit={handleSubmit} className="p-6">
               <div className="space-y-4">
@@ -249,10 +373,12 @@ const StudentsPage = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`w-full px-3 py-2 border ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     placeholder="Enter student's full name"
                   />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                  )}
                 </div>
 
                 <div>
@@ -264,10 +390,12 @@ const StudentsPage = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`w-full px-3 py-2 border ${errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     placeholder="Enter email address"
                   />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  )}
                 </div>
 
                 <div>
@@ -279,10 +407,12 @@ const StudentsPage = () => {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter password"
+                    className={`w-full px-3 py-2 border ${errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                    placeholder="Enter password (min 6 characters)"
                   />
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -295,10 +425,14 @@ const StudentsPage = () => {
                       name="age"
                       value={formData.age}
                       onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Age"
+                      min="5"
+                      max="18"
+                      className={`w-full px-3 py-2 border ${errors.age ? 'border-red-500 bg-red-50' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      placeholder="Age (5-18)"
                     />
+                    {errors.age && (
+                      <p className="mt-1 text-sm text-red-600">{errors.age}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -308,14 +442,22 @@ const StudentsPage = () => {
                       name="grade"
                       value={formData.grade}
                       onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className={`w-full px-3 py-2 border ${errors.grade ? 'border-red-500 bg-red-50' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     >
                       <option value="">Select Grade</option>
-                      <option value="10th">10th Grade</option>
-                      <option value="11th">11th Grade</option>
-                      <option value="12th">12th Grade</option>
+                      <option value="2th">2th Grade</option>
+          <option value="3th">3th Grade</option>
+          <option value="4th">4th Grade</option>
+           <option value="5th">5th Grade</option>
+            <option value="6th">6th Grade</option>
+             <option value="7th">7th Grade</option>
+              <option value="8th">8th Grade</option>
+               <option value="9th">9th Grade</option>
+                <option value="10th">10th Grade</option>
                     </select>
+                    {errors.grade && (
+                      <p className="mt-1 text-sm text-red-600">{errors.grade}</p>
+                    )}
                   </div>
                 </div>
 
@@ -328,10 +470,12 @@ const StudentsPage = () => {
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`w-full px-3 py-2 border ${errors.phoneNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     placeholder="Enter phone number"
                   />
+                  {errors.phoneNumber && (
+                    <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>
+                  )}
                 </div>
 
                 <div>
@@ -342,11 +486,13 @@ const StudentsPage = () => {
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    required
                     rows="2"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`w-full px-3 py-2 border ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     placeholder="Enter full address"
                   ></textarea>
+                  {errors.address && (
+                    <p className="mt-1 text-sm text-red-600">{errors.address}</p>
+                  )}
                 </div>
 
                 <div>
@@ -358,7 +504,6 @@ const StudentsPage = () => {
                     name="certificates"
                     value={formData.certificates}
                     onChange={handleInputChange}
-                    required
                     min="0"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Number of certificates"
@@ -371,14 +516,26 @@ const StudentsPage = () => {
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  disabled={isSubmitting}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center"
+                  disabled={isSubmitting}
                 >
-                  Add Student
+                  {isSubmitting ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </>
+                  ) : (
+                    "Add Student"
+                  )}
                 </button>
               </div>
             </form>

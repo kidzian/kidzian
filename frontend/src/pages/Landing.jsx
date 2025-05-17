@@ -14,6 +14,7 @@ import Faq from '../components/Faq'
 import Steps from "../components/Steps"
 import Testimonials from '../components/Testimonials'
 import Chatbot from '../components/Chatbot'
+import ParentFeedBack from '../components/parentsfeedback'
 const Landing = () => {
   return (
     <div className="w-[100vw] overflow-x-hidden h-auto">
@@ -21,6 +22,7 @@ const Landing = () => {
       <Hero4/>
      
       <Service/>
+      <ParentFeedBack/>
       <GlobalTech/>
       <Feature1/>
       <Gamified/>

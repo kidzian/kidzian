@@ -20,7 +20,9 @@ const Heading = () => {
     { name: 'LMS', path: '/login/admin' },
     { name: 'Success-Stories', path: '/success-stories' },
     { name: 'Events', path: '/events' },
+    {name:'Blog',path:'/blogs'},
     { name: 'About', path: '/about' },
+    
   ];
 
   return (

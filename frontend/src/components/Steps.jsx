@@ -20,7 +20,7 @@ const steps = [
   },
   {
     id: 2,
-    title: "Experience a STEMonsters Session",
+    title: "Experience Real-Time Sessions ",
     description: "Experience our unique learning approach with zero obligations",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-12 h-12">
@@ -60,11 +60,17 @@ const Steps = () => {
   return (
     <div className="bg-[#2a9c7e] py-16 px-6 md:px-12 lg:px-20 rounded-lg shadow-lg overflow-hidden">
       <div className="max-w-7xl mx-auto relative">
-        <div className="flex flex-col gap-10 md:flex-row items-center justify-between space-y-16 md:space-y-0">
+        <div className="flex justify-center mb-14">
+  <h1 className="inline-block bg-gray-100 rounded-2xl px-4 py-2 font-semibold text-3xl text-center">
+    Begin your Kidzian journey in 3 simple steps
+  </h1>
+</div>
+
+        <div className="flex flex-col gap-10  md:flex-row items-center justify-between space-y-16 md:space-y-0">
           {steps.map((step, index) => (
             <div
               key={step.id}
-              className="flex flex-col items-center text-center bg-white rounded-xl p-8 w-full md:w-1/3 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+              className="flex flex-col items-center text-center mt-6 bg-white rounded-xl p-8 w-full md:w-1/3 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
             >
               <div className="text-4xl font-extrabold text-gray-800 mb-4">{step.id}</div>
               <div className="flex items-center justify-center w-24 h-24 border-2 border-black rounded-full mb-5 bg-gray-100 hover:bg-black hover:text-white transition-all duration-300">
@@ -77,7 +83,7 @@ const Steps = () => {
         </div>
 
         {/* Arrows */}
-        <div className="hidden md:flex absolute w-full justify-between items-center mt-8" style={{ top: '32%', left: '0', pointerEvents: 'none' }}>
+        <div className="hidden md:flex absolute w-full justify-between items-center mt-28" style={{ top: '32%', left: '0', pointerEvents: 'none' }}>
           <div style={{ position: 'absolute', left: '33%', transform: 'translateX(-50%)' }}>
             <span className="text-6xl font-bold text-black animate-pulse">&gt;</span>
           </div>
@@ -91,7 +97,7 @@ const Steps = () => {
       <div className="text-center mt-16">
         <button
           onClick={handleClick}
-          className="bg-white text-black font-bold py-3 px-10 rounded-md hover:bg-gray-100 transition-colors duration-300 shadow-lg"
+          className="bg-white text-black font-bold py-3 px-10 mb-4 rounded-md hover:bg-gray-100 transition-colors duration-300 shadow-lg"
         >
           Start Today
         </button>
