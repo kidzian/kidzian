@@ -157,7 +157,7 @@ const About = () => {
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl max-w-3xl"
+            className="text-xl md:text-2xl max-w-3xl mb-12"
           >
             Where children aged 7-17 discover the joy of coding, robotics, and digital creation
           </motion.p>

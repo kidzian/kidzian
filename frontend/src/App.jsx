@@ -29,6 +29,8 @@ import TeacherLogin from './pages/TeacherLogin'
 import TeacherDashboard from './components/TeacherDashboard'
 import Layout from './components/Layout'
 import SuccessStories from './pages/Success-Stories'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsAndConditions from './pages/TermsandCond'
 
 
 function App() {
@@ -73,6 +75,9 @@ function App() {
       <Route path="/students/:id" element={<StudentDetails />} />
       <Route path="/admin-dashboard/teachers/:teacherId" element={<TeacherDetails />} />
       <Route path="/view-story" element={<ViewStory/>}/>
+      <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
+      <Route path="/terms" element={<TermsAndConditions/>}/>
+
      </Routes>
     </Layout>
     

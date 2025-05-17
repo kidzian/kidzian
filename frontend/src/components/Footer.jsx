@@ -14,9 +14,10 @@ const Footer = () => {
           <div className="md:mt-[30vh] lg:mt-[30vh] xl:mt-[30vh] mt-12">
             <h1 className="text-[18px] text-teal-800 font-bold mb-2">Legal</h1>
             <ul className="text-sm text-[#636363] dark:text-[#d1d5db] flex flex-col gap-3">
-              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'>Privacy Policy</li>
-              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'>Terms & Conditions</li>
-              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'>Refund/Cancellation Policy</li>
+              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'>
+                <Link to={'/privacy-policy'}>  Privacy Policy   </Link> </li>
+              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'><Link to={'/terms'}>Terms & Conditions</Link></li>
+              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'><Link to={'/contact-us'}>Refund/Cancellation Policy</Link></li>
             </ul>
           </div>
         </div>
