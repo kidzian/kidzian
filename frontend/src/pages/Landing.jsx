@@ -12,6 +12,7 @@ import Feature1 from '../components/Feature1'
 import Gamified from '../components/Gamified'
 import Faq from '../components/Faq'
 import Steps from "../components/Steps"
+import ProjectView from "../components/Project_view"
 import Testimonials from '../components/Testimonials'
 import Chatbot from '../components/Chatbot'
 import ParentFeedBack from '../components/parentsfeedback'
@@ -28,6 +29,7 @@ const Landing = () => {
       <Gamified/>
       <Steps/>
       <Testimonials/>
+      <ProjectView/>
       <Faq/>
       <Footer/>
       <Chatbot className="z-40"/>

@@ -31,6 +31,7 @@ import Layout from './components/Layout'
 import SuccessStories from './pages/Success-Stories'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsAndConditions from './pages/TermsandCond'
+import Projects from './pages/Projects'
 
 
 function App() {
@@ -77,6 +78,7 @@ function App() {
       <Route path="/view-story" element={<ViewStory/>}/>
       <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
       <Route path="/terms" element={<TermsAndConditions/>}/>
+      <Route path="/projects" element={<Projects/>}/>
 
      </Routes>
     </Layout>
