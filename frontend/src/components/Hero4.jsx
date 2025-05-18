@@ -2,6 +2,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight, Sparkles, CheckCircle, X } from "lucide-react"
 
+
 export default function Hero4() {
   const [showModal, setShowModal] = useState(false)
   const [selectedGrade, setSelectedGrade] = useState(null)
@@ -40,7 +41,7 @@ export default function Hero4() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row items-center">
           {/* Left Content */}
-          <div className="w-full md:w-1/2 space-y-8 md:pr-8 ml-20">
+          <div className="w-full md:w-1/2 space-y-8 md:pr-8 md:ml-20 ">
             <motion.div
               initial={{ x: -60, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -48,11 +49,11 @@ export default function Hero4() {
               className="space-y-2"
             >
               <h2 className="text-lg font-medium text-gray-700">
-              After-School Coding & STEM Innovation Program
+              After-school program for young coders and innovators.  
               </h2>
               <h1 className="text-4xl md:text-5xl font-bold text-teal-600">
-              Unleashing Potential, <br />
-              Shaping Tomorrow’s Leaders
+              Unlock your child’s potential, <br />
+              With Power Of Coding
 
               </h1>
             </motion.div>
@@ -64,23 +65,26 @@ export default function Hero4() {
               className="text-gray-700 space-y-6"
             >
               <p className="text-lg">
-              At Kidzian, we believe that the future belongs to the creators of technology—not just its users. Our after-school program empowers students from Grade 3 onwards to master the language of the future through immersive coding and STEM experiences.
+              At Kidzian, through our engaging, world-class curriculum built on the latest technology and innovation, we empower young minds to think, create, and lead.
+Prepare them for the future
+with cutting-edge courses that build real-world tech skills from an early age.
+
 
               </p>
 
-              <div className="space-y-2">
-                <p className="text-sm ">Founded by a researcher from IIT Delhi, Kidzian is driven by an unwavering commitment to coding, science, and inspiring the next generation of pioneers and thinkers.</p>
-                <p className="font-medium">For Grade 3 and above</p>
+              <div className="space-y-1">
+                <p className="font-medium -mt-2 ">Founded by Senior Researcher from IIT Delhi</p>
+                <p className="font-medium">For ages 7–17 years</p>
               </div>
 
-              <div className="space-y-3">
-                {["Expert-led interactive classes", "Project-based learning approach"].map((feature, index) => (
+              <div className="space-y-3 ">
+                {["Expert-led interactive classes", "Project-based learning approach","Personalized learning paths for every child"].map((feature, index) => (
                   <motion.div
                     key={index}
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 -mt-2"
                   >
                     <CheckCircle className="text-green-500 h-5 w-5 flex-shrink-0" />
                     <p>{feature}</p>
@@ -94,15 +98,16 @@ export default function Hero4() {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
             >
-            <button
+           <button
   onClick={() => setShowModal(true)}
-  className="bg-[#f4a024] hover:bg-[#e6951f] text-white font-semibold px-6 py-3 rounded-md shadow-md transition duration-300"
+  className="bg-[#f4a024] hover:bg-[#e6951f] -mt-2 text-white font-semibold px-6 py-3 rounded-md shadow-md transition duration-300 animate-blink"
 >
-                <span className="relative z-10 flex items-center gap-2">
-                  Request a Trial Session
-                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </button>
+  <span className="relative z-10 flex items-center gap-2">
+    Request a Trial Session
+    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+  </span>
+</button>
+
             </motion.div>
           </div>
 

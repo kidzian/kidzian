@@ -26,7 +26,7 @@ const Footer = () => {
         <div className="flex flex-col">
       <h1 className="text-[18px] font-bold text-teal-800 mb-2">Company</h1>
       <ul className="flex flex-col gap-3 text-sm text-[#636363] dark:text-[#d1d5db]">
-        {['Home', 'Courses', 'LMS', 'Blog', 'Events', 'About', 'Contact Us'].map((item) => (
+        {['Home', 'Courses', 'LMS', 'Blogs', 'Events', 'About', 'Contact Us'].map((item) => (
           <li key={item} className="hover:text-black dark:hover:text-white cursor-pointer">
             <Link to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}>
               {item}
