@@ -56,7 +56,7 @@ const About = () => {
   ];
 
   const statsData = [
-    { number: "5000+", label: "Students Taught", icon: <Users className="h-8 w-8 text-[#28826a]" /> },
+    { number: "1114+", label: "Students Taught", icon: <Users className="h-8 w-8 text-[#28826a]" /> },
     { number: "25+", label: "Tech Courses", icon: <BookOpen className="h-8 w-8 text-[#28826a]" /> },
     { number: "98%", label: "Satisfaction Rate", icon: <Award className="h-8 w-8 text-[#28826a]" /> },
     { number: "100K+", label: "Lines of Code Written", icon: <Code className="h-8 w-8 text-[#28826a]" /> },
