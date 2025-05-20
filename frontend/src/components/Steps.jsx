@@ -61,8 +61,8 @@ const Steps = () => {
     <div className="bg-[#2a9c7e] py-16 px-6 md:px-12 lg:px-20 rounded-lg shadow-lg overflow-hidden">
       <div className="max-w-7xl mx-auto relative">
         <div className="flex justify-center mb-14">
-  <h1 className="inline-block bg-gray-100 rounded-2xl px-4 py-2 font-semibold text-3xl text-center">
-    Begin your Kidzian journey in 3 simple steps
+  <h1 className=" text-white  px-4 py-2 font-semibold text-3xl text-center">
+    Begin your Kidzian Journey in 3 simple steps
   </h1>
 </div>
 
@@ -97,7 +97,7 @@ const Steps = () => {
       <div className="text-center mt-16">
         <button
           onClick={handleClick}
-          className="bg-white text-black font-bold py-3 px-10 mb-4 rounded-md hover:bg-gray-100 transition-colors duration-300 shadow-lg"
+          className="bg-yellow-600 text-black font-bold py-3 px-10 mb-4 rounded-md hover:bg-gray-100 transition-colors duration-300 shadow-lg"
         >
           Start Today
         </button>

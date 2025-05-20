@@ -298,402 +298,502 @@
 // };
 
 // export default SuccessStories;
-import { Link } from "react-router-dom"
-import { Award, Download, Star, Trophy, ChevronRight, ExternalLink, Code, Brain, Rocket, Heart , BookOpen } from "lucide-react"
+"use client"
 
+import { useState, useRef, useEffect } from "react"
 
-import { motion } from 'framer-motion';
-
-
-// Importing the images
-import award from "../assets/Rashmi Raju.jpg"
-import Manaswin from "../assets/ManaswinL .jpg"
-import Daiwik from "../assets/Daiwik.jpg"
-import Suresh from "../assets/Sunaina suresh.jpg"
+import manaswin from "../assets/ManaswinL .jpg"
+import rashmi from "../assets/Rashmi Raju.jpg"
+import Sunaina from "../assets/Sunaina suresh.jpg"
+import Jaipeet from "../assets/Jaipreet.jpg"
 import Dhyan from "../assets/Dhyan .jpg"
-import jaipreet from "../assets/Jaipreet.jpg"
-import Brisha from "../assets/Brisha.jpg"
+import Dhaiwik from "../assets/Daiwik.jpg"
+import Brish from "../assets/Brisha.jpg"
+import {
+  Award,
+  Download,
+  Star,
+  Trophy,
+  ChevronRight,
+  ExternalLink,
+  Code,
+  Brain,
+  Rocket,
+  Heart,
+  BookOpen,
+  ArrowRight,
+  Users,
+  Sparkles,
+  Lightbulb,
+  ChevronLeft,
+  X,
+} from "lucide-react"
 
 const SuccessStories = () => {
-  const fadeInUp = {
-    initial: { opacity: 0, y: 40 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-  };
-  
-  return (
-    <div className="bg-gray-50 min-h-screen py-8">
-      <div className="container mx-auto px-4">
-        {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-teal-700 mb-4">Success Stories</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Celebrating the achievements of our outstanding students who are making a difference through technology and
-            innovation.
-          </p>
-        </div>
+  const [activeTab, setActiveTab] = useState("all")
+  const [showAllStories, setShowAllStories] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const carouselRef = useRef(null)
 
-        {/* Founder Section */}
-         {/* Founder's Achievement Section */}
-         <motion.section 
-          className="mb-20"
-          {...fadeInUp}
-        >
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-teal-100">
-            <div className="grid md:grid-cols-2 gap-8 p-12">
-              <div className="space-y-8">
-                <div className="flex items-center gap-4">
-                  <div className="bg-teal-100 p-3 rounded-full">
-                    <Award className="w-8 h-8 text-teal-600" />
-                  </div>
-                  <h2 className="text-3xl font-bold text-gray-800">Founder's Achievement</h2>
-                </div>
-                <div className="relative group">
-                  <img 
-                    src={award}
-                    alt="Rashmi Raju - Femmetimes Award" 
-                    className="rounded-2xl shadow-lg w-full h-[400px] object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-              </div>
-              
-              <div className="space-y-8">
+  // Animation classes
+  const fadeIn = "animate-[fadeIn_1s_ease-in-out]"
+  const slideUp = "animate-[slideUp_0.5s_ease-out]"
+  const slideRight = "animate-[slideRight_0.5s_ease-out]"
+  const pulse = "animate-[pulse_2s_infinite]"
+
+  // Student data
+  const students = [
+    {
+      name: "Daiwik",
+      age: 12,
+      category: "coding",
+      icon: <Code className="text-emerald-600 mr-2" size={16} />,
+      title: "Coding Enthusiast",
+      description:
+        "Exceptional academic performance with top grades in Coding Languages and problem-solving. Daiwik's dedication to learning has made him stand out among his peers.",
+      joinedYear: 2023,
+      image: Dhaiwik,
+    },
+    {
+      name: "Sunaina Suresh",
+      age: 14,
+      category: "coding",
+      icon: <Brain className="text-emerald-600 mr-2" size={16} />,
+      title: "Python Programming",
+      description:
+        "Sunaina secured first place in a CodeBlaze Python coding competition, showcasing her exceptional programming skills.",
+      joinedYear: 2022,
+      image: Sunaina,
+    },
+    {
+      name: "Dhyan",
+      age: 13,
+      category: "coding",
+      icon: <Rocket className="text-emerald-600 mr-2" size={16} />,
+      title: "Competitive Programmer",
+      description:
+        "Won multiple coding competitions at national level. Dhyan's algorithmic thinking and problem-solving skills have earned him top positions in several prestigious competitions.",
+      joinedYear: 2023,
+      image: Dhyan,
+    },
+    {
+      name: "Jaipreet",
+      age: 15,
+      category: "science",
+      icon: <Lightbulb className="text-emerald-600 mr-2" size={16} />,
+      title: "Science Enthusiast",
+      description:
+        "Developed an innovative science project that won state-level recognition. Jaipreet's passion for science and innovation led to the creation of a project that addresses real-world problems.",
+      joinedYear: 2022,
+      image: Jaipeet,
+    },
+    {
+      name: "Brisha",
+      age: 14,
+      category: "science",
+      icon: <Heart className="text-emerald-600 mr-2" size={16} />,
+      title: "Creative Designer",
+      description:
+        "Brisha has shown exceptional talent in creative design, combining artistic skills with technical knowledge to create stunning digital art and UI designs.",
+      joinedYear: 2023,
+      image: Brish,
+    },
+  ]
+
+  // Filter students based on active tab
+  const filteredStudents = students.filter((student) => activeTab === "all" || student.category === activeTab)
+
+  // Top 3 students to display prominently
+  const topStudents = filteredStudents.slice(0, 3)
+
+  // Remaining students for carousel
+  const remainingStudents = filteredStudents.slice(3)
+
+  // Handle carousel navigation
+  const nextSlide = () => {
+    if (remainingStudents.length <= 2) return
+    setCurrentSlide((prev) => (prev === remainingStudents.length - 2 ? 0 : prev + 1))
+  }
+
+  const prevSlide = () => {
+    if (remainingStudents.length <= 2) return
+    setCurrentSlide((prev) => (prev === 0 ? remainingStudents.length - 2 : prev - 1))
+  }
+
+  // Auto-advance carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (remainingStudents.length > 2) {
+        nextSlide()
+      }
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [remainingStudents.length])
+
+  // Render student card
+  const renderStudentCard = (student, index, isCarousel = false) => {
+    const animationDelay = `delay-[${index * 150}ms]`
+
+    return (
+      <div
+        key={student.name}
+        className={`${!isCarousel ? slideUp : ""} ${animationDelay} ${
+          activeTab !== "all" && activeTab !== student.category ? "hidden" : ""
+        }`}
+      >
+        <div className="bg-white rounded-lg shadow-md overflow-hidden h-full transition-all duration-300 hover:shadow-lg hover:border-emerald-200 border border-slate-100 group">
+          <div className="aspect-[4/3] overflow-hidden relative">
+            <img
+              src={student.image || "/placeholder.svg"}
+              alt={student.name}
+              className="w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
+          <div className="p-5">
+            <div className="flex items-center justify-between pb-2">
+              <h3 className="text-xl font-bold text-slate-800">{student.name}</h3>
+              <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                Age {student.age}
+              </span>
+            </div>
+            <div className="flex items-center mt-1 mb-3">
+              {student.icon}
+              <p className="text-emerald-600 font-medium">{student.title}</p>
+            </div>
+            <p className="text-slate-600 mb-4">{student.description}</p>
+            <div className="flex justify-between items-center pt-4 border-t border-slate-100">
+              <span className="text-slate-500 text-sm">Joined {student.joinedYear}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-20 pb-16 md:pt-32 md:pb-24">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_40%_at_50%_60%,rgba(20,132,121,0.12),transparent)]" />
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div
+              className={`inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 ${fadeIn}`}
+            >
+              <Sparkles className="mr-1 h-3.5 w-3.5" />
+              <span>Inspiring the next generation</span>
+            </div>
+            <h1
+              className={`text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-600 ${slideUp}`}
+            >
+              Success Stories
+            </h1>
+            <p className={`max-w-[700px] text-slate-600 md:text-xl/relaxed ${slideUp}`}>
+              Celebrating the extraordinary achievements of our students who are shaping the future through technology
+              and innovation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 md:px-6 pb-24">
+        {/* Founder's Achievement Section */}
+        <section className={`mb-24 ${fadeIn}`}>
+          <div className="flex flex-col md:flex-row gap-6 items-center mb-8">
+            <div className={`bg-emerald-100 p-2.5 rounded-full ${pulse}`}>
+              <Award className="w-6 h-6 text-emerald-700" />
+            </div>
+            <h2 className="text-3xl font-bold text-slate-800">Founder's Achievement</h2>
+            <div className="flex-grow hidden md:block">
+              <div className="h-px bg-gradient-to-r from-emerald-200 to-transparent"></div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all duration-500">
+            <div className="grid md:grid-cols-2 gap-8 p-8 md:p-12">
+              <div className="space-y-8 order-2 md:order-1">
                 <div>
-                  <h3 className="text-2xl font-bold text-teal-700 mb-4">Rashmi Raju</h3>
-                  <div className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-xl p-6">
-                    <p className="text-xl font-semibold text-teal-800 mb-2">
+                  <h3 className="text-2xl font-bold text-emerald-700 mb-4">Rashmi Raju</h3>
+                  <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-6 transform transition-transform duration-500 hover:scale-[1.02]">
+                    <p className="text-xl font-semibold text-emerald-800 mb-2">
                       Most Inspiring Young Woman Educationist - 2025
                     </p>
-                    <p className="text-teal-600">Awarded by Femmetimes</p>
+                    <p className="text-emerald-600">Awarded by Femmetimes</p>
                   </div>
                 </div>
-                
-                <p className="text-gray-600 text-lg leading-relaxed">
-                  As the visionary founder of Kidzian, Rashmi Raju has revolutionized tech education for young minds. 
-                  Her innovative approach combines cutting-edge technology with engaging learning methods, creating a 
+
+                <p className="text-slate-600 text-lg leading-relaxed">
+                  As the visionary founder of Kidzian, Rashmi Raju has revolutionized tech education for young minds.
+                  Her innovative approach combines cutting-edge technology with engaging learning methods, creating a
                   new generation of tech-savvy innovators.
                 </p>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white p-4 rounded-xl shadow-md border border-teal-100">
-                    <Star className="w-6 h-6 text-yellow-500 mb-2" />
-                    <h4 className="font-semibold text-gray-800 mb-1">Impact</h4>
-                    <p className="text-gray-600">10,000+ Students Mentored</p>
+                  <div className="bg-white p-4 rounded-xl shadow-md border border-slate-100 hover:border-emerald-200 transition-colors hover:shadow-lg">
+                    <Star className="w-6 h-6 text-amber-500 mb-2" />
+                    <h4 className="font-semibold text-slate-800 mb-1">Impact</h4>
+                    <p className="text-slate-600">10,000+ Students Mentored</p>
                   </div>
-                  <div className="bg-white p-4 rounded-xl shadow-md border border-teal-100">
-                    <Trophy className="w-6 h-6 text-yellow-500 mb-2" />
-                    <h4 className="font-semibold text-gray-800 mb-1">Recognition</h4>
-                    <p className="text-gray-600">15+ International Awards</p>
+                  <div className="bg-white p-4 rounded-xl shadow-md border border-slate-100 hover:border-emerald-200 transition-colors hover:shadow-lg">
+                    <Trophy className="w-6 h-6 text-amber-500 mb-2" />
+                    <h4 className="font-semibold text-slate-800 mb-1">Recognition</h4>
+                    <p className="text-slate-600">15+ International Awards</p>
                   </div>
                 </div>
+              </div>
 
-               
+              <div className="relative group order-1 md:order-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-2xl opacity-20 blur-xl transform -translate-y-4 translate-x-4"></div>
+                <div className="relative overflow-hidden rounded-2xl shadow-lg border-4 border-white">
+                  <img
+                    src={rashmi || "/placeholder.svg"}
+                    alt="Rashmi Raju - Femmetimes Award"
+                    className="w-full h-[500px] object-contain object-center transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
               </div>
             </div>
           </div>
-        </motion.section>
-        
+        </section>
 
-         {/* Featured Success */}
-         <motion.section 
-          className="mb-20"
-          initial="initial"
-          animate="animate"
-          variants={fadeInUp}
-        >
-          <div className="bg-[#28826a] rounded-3xl shadow-xl overflow-hidden text-white">
-            <div className="grid md:grid-cols-2 gap-8 p-12">
-              <div className="space-y-6">
-                <div className="flex items-center gap-4 mb-8">
-                  <Rocket className="w-8 h-8" />
-                  <h2 className="text-3xl font-bold">Featured Success</h2>
-                </div>
-                <img 
-                  src="/src/assets/ManaswinL .jpg"
-                  alt="Manaswin L" 
-                  className="rounded-2xl shadow-lg w-full h-[400px] object-cover"
-                />
-              </div>
-              
+        {/* Featured Success - Manaswin L */}
+        <section className={`mb-24 ${fadeIn}`}>
+          <div className="flex flex-col md:flex-row gap-6 items-center mb-8">
+            <div className={`bg-emerald-100 p-2.5 rounded-full ${pulse}`}>
+              <Rocket className="w-6 h-6 text-emerald-700" />
+            </div>
+            <h2 className="text-3xl font-bold text-slate-800">Featured Success</h2>
+            <div className="flex-grow hidden md:block">
+              <div className="h-px bg-gradient-to-r from-emerald-200 to-transparent"></div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-emerald-700 to-teal-600 rounded-3xl shadow-xl overflow-hidden text-white transform transition-transform duration-500 hover:scale-[1.01]">
+            <div className="grid md:grid-cols-2 gap-8 p-8 md:p-12">
               <div className="space-y-6">
                 <h3 className="text-3xl font-bold">Manaswin L</h3>
-                <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6">
+                <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 hover:bg-white/15 transition-colors duration-300">
                   <div className="flex items-center gap-3 mb-4">
                     <Code className="w-6 h-6" />
                     <span className="text-xl font-semibold">App Development Prodigy</span>
                   </div>
                   <p className="text-lg leading-relaxed">
-                    At just 15, Manaswin has already made his mark in the tech world with his innovative 
-                    "Guess the Number" game, achieving remarkable success on the Google Play Store.
+                    At just 15, Manaswin has already made his mark in the tech world with his innovative "Guess the
+                    Number" game, achieving remarkable success on the Google Play Store.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4">
+                  <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 hover:bg-white/15 transition-colors duration-300">
                     <Download className="w-6 h-6 mb-2" />
                     <h4 className="font-semibold mb-1">Downloads</h4>
                     <p className="text-2xl font-bold">1,000+</p>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4">
+                  <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 hover:bg-white/15 transition-colors duration-300">
                     <Star className="w-6 h-6 mb-2" />
                     <h4 className="font-semibold mb-1">Rating</h4>
                     <p className="text-2xl font-bold">4.8/5</p>
                   </div>
                 </div>
 
-                <div className="flex gap-4">
-                  <a 
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a
                     href="https://play.google.com/store/apps/developer?id=Kidzians"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-white text-[#28826a] px-6 py-3 rounded-lg hover:bg-[#28826a]/10 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 bg-white text-emerald-700 px-6 py-3 rounded-lg hover:bg-white/90 transition-colors font-medium group"
                   >
-                    <ExternalLink className="w-5 h-5" />
+                    <ExternalLink className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                     View on Play Store
                   </a>
-                  <button
-                  
-                    className="inline-flex items-center gap-2 bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg hover:bg-white/10 transition-colors"
+                  <a
+                    href="https://play.google.com/store/apps/developer?id=Kidzians"
+                    className="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium group"
                   >
-                    <BookOpen className="w-5 h-5" />
-                    Read Full Story
-                  </button>
+                   <Download/> Dowanload App
+                  </a>
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-0 bg-white/10 rounded-2xl blur-xl transform translate-y-4 -translate-x-4"></div>
+                <div className="relative overflow-hidden rounded-2xl border-4 border-white/20">
+                  <img
+                    src={manaswin || "/placeholder.svg"}
+                    alt="Manaswin L"
+                    className="w-full h-[500px] object-contain object-center transition-transform duration-700 hover:scale-110"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-emerald-900/80 to-transparent p-6">
+                    <span className="inline-flex items-center rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-white">
+                      App Developer
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </motion.section>
+        </section>
 
-        {/* Other Success Stories - Improved for Large Screens */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center">
-              <Star className="text-teal-700 mr-2" size={24} />
-              <h2 className="text-2xl font-bold text-teal-700">More Success Stories</h2>
+        {/* Student Success Stories */}
+        <section className={`mb-24 ${fadeIn}`}>
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+            <div className="flex items-center gap-4 mb-4 md:mb-0">
+              <div className={`bg-emerald-100 p-2.5 rounded-full ${pulse}`}>
+                <Users className="w-6 h-6 text-emerald-700" />
+              </div>
+              <h2 className="text-3xl font-bold text-slate-800">Student Success Stories</h2>
             </div>
-            <Link to="/all-stories" className="text-teal-700 hover:text-teal-800 flex items-center">
-              View all stories
-              <ChevronRight size={16} className="ml-1" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Daiwik */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row">
-              <div className="md:w-2/5 p-4">
-                <div className="rounded-lg overflow-hidden h-full shadow-sm">
-                  <img
-                    src={Daiwik || "/placeholder.svg"}
-                    alt="Daiwik"
-                    className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
-                  />
-                </div>
-              </div>
-              <div className="md:w-3/5 p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center mb-2">
-                    <h3 className="text-xl font-bold text-gray-800">Daiwik</h3>
-                    <span className="ml-2 bg-teal-100 text-teal-700 text-xs px-2 py-1 rounded-full">Age 12</span>
-                  </div>
-                  <div className="flex items-center mb-3">
-                    <Code className="text-teal-700 mr-2" size={16} />
-                    <p className="text-teal-700 font-medium">Coding Enthusiast </p>
-                  </div>
-                  <p className="text-gray-600 mb-4">
-                    Exceptional academic performance with top grades in Coding Languages and problem-solving. Daiwik's
-                    dedication to learning has made him stand out among his peers.
-                  </p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500 text-sm">Joined 2023</span>
-                  <button className="text-teal-700 hover:text-teal-800 flex items-center text-sm font-medium">
-                    Read more <ChevronRight size={14} className="ml-1" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Sunaina Suresh */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row">
-              <div className="md:w-2/5 p-4">
-                <div className="rounded-lg overflow-hidden h-full shadow-sm">
-                  <img
-                    src={Suresh || "/placeholder.svg"}
-                    alt="Sunaina Suresh"
-                    className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
-                  />
-                </div>
-              </div>
-              <div className="md:w-3/5 p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center mb-2">
-                    <h3 className="text-xl font-bold text-gray-800">Sunaina Suresh</h3>
-                    <span className="ml-2 bg-teal-100 text-teal-700 text-xs px-2 py-1 rounded-full">Age 14</span>
-                  </div>
-                  <div className="flex items-center mb-3">
-                    <Brain className="text-teal-700 mr-2" size={16} />
-                    <p className="text-teal-700 font-medium">Python Programming</p>
-                  </div>
-                  <p className="text-gray-600 mb-4">
-                    Sunaina secured first place in a CodeBlaze Python coding competition, showcasing her exceptional programming skills.
-                  </p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500 text-sm">Joined 2022</span>
-                  <button className="text-teal-700 hover:text-teal-800 flex items-center text-sm font-medium">
-                    Read more <ChevronRight size={14} className="ml-1" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Dhyan */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row">
-              <div className="md:w-2/5 p-4">
-                <div className="rounded-lg overflow-hidden h-full shadow-sm">
-                  <img
-                    src={Dhyan || "/placeholder.svg"}
-                    alt="Dhyan"
-                    className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
-                  />
-                </div>
-              </div>
-              <div className="md:w-3/5 p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center mb-2">
-                    <h3 className="text-xl font-bold text-gray-800">Dhyan</h3>
-                    <span className="ml-2 bg-teal-100 text-teal-700 text-xs px-2 py-1 rounded-full">Age 13</span>
-                  </div>
-                  <div className="flex items-center mb-3">
-                    <Rocket className="text-teal-700 mr-2" size={16} />
-                    <p className="text-teal-700 font-medium">Competitive Programmer</p>
-                  </div>
-                  <p className="text-gray-600 mb-4">
-                    Won multiple coding competitions at national level. Dhyan's algorithmic thinking and problem-solving
-                    skills have earned him top positions in several prestigious competitions.
-                  </p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500 text-sm">Joined 2023</span>
-                  <button className="text-teal-700 hover:text-teal-800 flex items-center text-sm font-medium">
-                    Read more <ChevronRight size={14} className="ml-1" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Jaipreet */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row">
-              <div className="md:w-2/5 p-4">
-                <div className="rounded-lg overflow-hidden h-full shadow-sm">
-                  <img
-                    src={jaipreet || "/placeholder.svg"}
-                    alt="Jaipreet"
-                    className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
-                  />
-                </div>
-              </div>
-              <div className="md:w-3/5 p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center mb-2">
-                    <h3 className="text-xl font-bold text-gray-800">Jaipreet</h3>
-                    <span className="ml-2 bg-teal-100 text-teal-700 text-xs px-2 py-1 rounded-full">Age 15</span>
-                  </div>
-                  <div className="flex items-center mb-3">
-                    <ExternalLink className="text-teal-700 mr-2" size={16} />
-                    <p className="text-teal-700 font-medium">Science Enthusiast</p>
-                  </div>
-                  <p className="text-gray-600 mb-4">
-                    Developed an innovative science project that won state-level recognition. Jaipreet's passion for
-                    science and innovation led to the creation of a project that addresses real-world problems.
-                  </p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500 text-sm">Joined 2022</span>
-                  <button className="text-teal-700 hover:text-teal-800 flex items-center text-sm font-medium">
-                    Read more <ChevronRight size={14} className="ml-1" />
-                  </button>
-                </div>
+            <div className="w-full md:w-auto">
+              <div className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 p-1 text-slate-700">
+                <button
+                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 ${
+                    activeTab === "all" ? "bg-white text-slate-900 shadow-sm" : "text-slate-700 hover:text-slate-900"
+                  }`}
+                  onClick={() => setActiveTab("all")}
+                >
+                  All
+                </button>
+                <button
+                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 ${
+                    activeTab === "coding" ? "bg-white text-slate-900 shadow-sm" : "text-slate-700 hover:text-slate-900"
+                  }`}
+                  onClick={() => setActiveTab("coding")}
+                >
+                  Coding
+                </button>
+                <button
+                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 ${
+                    activeTab === "science"
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-700 hover:text-slate-900"
+                  }`}
+                  onClick={() => setActiveTab("science")}
+                >
+                  Science
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Additional Success Stories - Horizontal Layout */}
-          <div className="mt-8 bg-white rounded-lg shadow-md overflow-hidden p-6 hover:shadow-lg transition-shadow duration-300">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">More Inspiring Students</h3>
+          {/* Top 3 Students */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {topStudents.map((student, index) => renderStudentCard(student, index))}
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Brisha */}
-              <div className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden">
-                  <img
-                    src={Brisha || "/placeholder.svg"}
-                    alt="Brisha"
-                    className="w-full h-full object-cover object-center"
-                  />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Brisha</h4>
-                  <div className="flex items-center">
-                    <Heart className="text-teal-700 mr-1" size={12} />
-                    <p className="text-sm text-teal-700">Creative Designer</p>
-                  </div>
-                </div>
-              </div>
+          {/* Carousel for Remaining Students */}
+          {remainingStudents.length > 0 && (
+            <div className="relative mt-12 overflow-hidden">
+              <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                <Star className="text-emerald-600 mr-2" size={18} />
+                More Success Stories
+              </h3>
 
-              {/* Additional placeholder students */}
-              <div className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden bg-gray-200">
-                  <img src={Manaswin} alt="Student" className="w-full h-full object-cover object-center" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Manswin L</h4>
-                  <div className="flex items-center">
-                    <Code className="text-teal-700 mr-1" size={12} />
-                    <p className="text-sm text-teal-700">App Developer</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden bg-gray-200">
-                  <img src={jaipreet} alt="Student" className="w-full h-full object-cover object-center" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">JaiPreet</h4>
-                  <div className="flex items-center">
-                    <Brain className="text-teal-700 mr-1" size={12} />
-                    <p className="text-sm text-teal-700">Science Enthusiast</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 text-center">
-              <Link
-                to="/about"
-                className="inline-flex items-center text-teal-700 hover:text-teal-800 font-medium"
+              <div
+                ref={carouselRef}
+                className="flex transition-transform duration-500 ease-out"
+                style={{ transform: `translateX(-${currentSlide * (100 / remainingStudents.length)}%)` }}
               >
-                View all students
-                <ChevronRight size={16} className="ml-1" />
-              </Link>
+                {remainingStudents.map((student, index) => (
+                  <div key={student.name} className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-2">
+                    {renderStudentCard(student, index, true)}
+                  </div>
+                ))}
+              </div>
+
+              {remainingStudents.length > 2 && (
+                <div className="flex justify-center mt-6 gap-4">
+                  <button
+                    onClick={prevSlide}
+                    className="p-2 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
+                    aria-label="Previous slide"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <div className="flex gap-2 items-center">
+                    {remainingStudents.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentSlide(index)}
+                        className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                          currentSlide === index ? "bg-emerald-600" : "bg-emerald-200"
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={nextSlide}
+                    className="p-2 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
+                    aria-label="Next slide"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
-        </div>
+          )}
+
+          {/* View All / Show Less Toggle */}
+          {filteredStudents.length > 3 && (
+            <div className="mt-8 text-center">
+              <button
+                onClick={() => setShowAllStories(!showAllStories)}
+                className={`inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 shadow-sm transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 group ${slideRight}`}
+              >
+                {showAllStories ? (
+                  <>
+                    Show Less
+                    <X className="ml-2 h-4 w-4 transition-transform group-hover:rotate-90" />
+                  </>
+                ) : (
+                  <>
+                    View All Success Stories
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* All Stories (Shown when View All is clicked) */}
+          {showAllStories && (
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 ${fadeIn}`}>
+              {filteredStudents.map((student, index) => renderStudentCard(student, index))}
+            </div>
+          )}
+        </section>
 
         {/* Call to Action */}
-        <div className="bg-gradient-to-r from-teal-700 to-teal-600 text-white rounded-lg shadow-md p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">Start Your Success Story Today</h2>
-          <p className="mb-6 max-w-2xl mx-auto">
-            Join our community of young innovators and begin your journey towards becoming the next tech leader.
-          </p>
-          <Link
-            to="/contact-us"
-            className="inline-block bg-white text-teal-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-          >
-            Get Started
-          </Link>
-        </div>
+        <section className={fadeIn}>
+          <div className="relative overflow-hidden rounded-3xl transform transition-transform duration-500 hover:scale-[1.01]">
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-500"></div>
+            <div className="absolute inset-0 bg-[url('/placeholder.svg?height=600&width=1200')] mix-blend-overlay opacity-20"></div>
+            <div className="relative px-6 py-16 md:py-24 text-center text-white">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Start Your Success Story Today</h2>
+              <p className="mb-8 max-w-2xl mx-auto text-white/90 text-lg">
+                Join our community of young innovators and begin your journey towards becoming the next tech leader. Our
+                expert mentors and cutting-edge curriculum will help you unlock your full potential.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="/contact-us"
+                  className="inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-base font-medium text-emerald-700 shadow-sm hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-700 group"
+                >
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </a>
+                <a
+                  href="/courses"
+                  className="inline-flex items-center justify-center rounded-md border-2 border-white bg-transparent px-6 py-3 text-base font-medium text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-700"
+                >
+                  Explore Courses
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   )
