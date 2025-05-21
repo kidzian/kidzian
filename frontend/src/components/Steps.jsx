@@ -97,7 +97,7 @@ const Steps = () => {
       <div className="text-center mt-16">
         <button
           onClick={handleClick}
-          className="bg-yellow-600 text-black font-bold py-3 px-10 mb-4 rounded-md hover:bg-gray-100 transition-colors duration-300 shadow-lg"
+          className="bg-[#c79d27] text-white font-bold py-3 px-10 mb-4 rounded-lg hover:bg-gray-100 transition-colors duration-300 shadow-lg"
         >
           Start Today
         </button>

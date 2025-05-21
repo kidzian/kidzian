@@ -5,3 +5,15 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none; /* For Chrome, Safari, and Opera */
   }
+  @keyframes glowBlink {
+  0%, 100% {
+    box-shadow: 0 0 0px rgba(0, 0, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 18px 4px rgba(244, 160, 36, 0.8);
+  }
+}
+
+.animate-glow-blink {
+  animation: glowBlink 1.2s infinite;
+}
