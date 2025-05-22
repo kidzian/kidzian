@@ -300,6 +300,8 @@
 // export default SuccessStories;
 "use client"
 
+"use client"
+
 import { useState, useRef, useEffect } from "react"
 
 import manaswin from "../assets/ManaswinL .jpg"
@@ -320,7 +322,6 @@ import {
   Brain,
   Rocket,
   Heart,
-  BookOpen,
   ArrowRight,
   Users,
   Sparkles,
@@ -333,7 +334,9 @@ const SuccessStories = () => {
   const [activeTab, setActiveTab] = useState("all")
   const [showAllStories, setShowAllStories] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [topCurrentSlide, setTopCurrentSlide] = useState(0)
   const carouselRef = useRef(null)
+  const topCarouselRef = useRef(null)
 
   // Animation classes
   const fadeIn = "animate-[fadeIn_1s_ease-in-out]"
@@ -409,7 +412,18 @@ const SuccessStories = () => {
   // Remaining students for carousel
   const remainingStudents = filteredStudents.slice(3)
 
-  // Handle carousel navigation
+  // Handle carousel navigation for top students
+  const nextTopSlide = () => {
+    if (topStudents.length <= 1) return
+    setTopCurrentSlide((prev) => (prev === topStudents.length - 1 ? 0 : prev + 1))
+  }
+
+  const prevTopSlide = () => {
+    if (topStudents.length <= 1) return
+    setTopCurrentSlide((prev) => (prev === 0 ? topStudents.length - 1 : prev - 1))
+  }
+
+  // Handle carousel navigation for remaining students
   const nextSlide = () => {
     if (remainingStudents.length <= 2) return
     setCurrentSlide((prev) => (prev === remainingStudents.length - 2 ? 0 : prev + 1))
@@ -420,7 +434,17 @@ const SuccessStories = () => {
     setCurrentSlide((prev) => (prev === 0 ? remainingStudents.length - 2 : prev - 1))
   }
 
-  // Auto-advance carousel
+  // Auto-advance carousel for top students
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (topStudents.length > 1) {
+        nextTopSlide()
+      }
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [topStudents.length])
+
+  // Auto-advance carousel for remaining students
   useEffect(() => {
     const interval = setInterval(() => {
       if (remainingStudents.length > 2) {
@@ -473,7 +497,7 @@ const SuccessStories = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Hero Section */}
+      {/* Hero Section with Backdrop */}
       <section className="relative overflow-hidden pt-20 pb-16 md:pt-32 md:pb-24">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_40%_at_50%_60%,rgba(20,132,121,0.12),transparent)]" />
         <div className="container mx-auto px-4 md:px-6">
@@ -484,11 +508,15 @@ const SuccessStories = () => {
               <Sparkles className="mr-1 h-3.5 w-3.5" />
               <span>Inspiring the next generation</span>
             </div>
-            <h1
-              className={`text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-600 ${slideUp}`}
-            >
-              Success Stories
-            </h1>
+            {/* Title with backdrop */}
+            <div className="relative">
+              <div className="absolute inset-0 -z-10 blur-xl bg-gradient-to-r from-emerald-300/30 via-teal-300/30 to-emerald-300/30 rounded-full transform scale-150"></div>
+              <h1
+                className={`text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-600 ${slideUp} relative z-10`}
+              >
+                Success Stories
+              </h1>
+            </div>
             <p className={`max-w-[700px] text-slate-600 md:text-xl/relaxed ${slideUp}`}>
               Celebrating the extraordinary achievements of our students who are shaping the future through technology
               and innovation.
@@ -612,7 +640,7 @@ const SuccessStories = () => {
                     href="https://play.google.com/store/apps/developer?id=Kidzians"
                     className="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium group"
                   >
-                   <Download/> Dowanload App
+                    <Download /> Dowanload App
                   </a>
                 </div>
               </div>
@@ -677,9 +705,60 @@ const SuccessStories = () => {
             </div>
           </div>
 
-          {/* Top 3 Students */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {topStudents.map((student, index) => renderStudentCard(student, index))}
+          {/* Top Students Single Card Carousel */}
+          <div className="relative mb-12">
+            <div className="max-w-md mx-auto">
+              {/* Single card container with fixed width to maintain card size */}
+              <div className="overflow-hidden">
+                <div
+                  ref={topCarouselRef}
+                  className="transition-transform duration-500 ease-out"
+                  style={{ transform: `translateX(-${topCurrentSlide * 100}%)` }}
+                >
+                  <div className="flex">
+                    {topStudents.map((student, index) => (
+                      <div key={student.name} className="w-full flex-shrink-0">
+                        {renderStudentCard(student, index)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation arrows */}
+              {topStudents.length > 1 && (
+                <div className="flex justify-between items-center mt-4">
+                  <button
+                    onClick={prevTopSlide}
+                    className="p-2 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
+                    aria-label="Previous slide"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+
+                  <div className="flex gap-2 items-center">
+                    {topStudents.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setTopCurrentSlide(index)}
+                        className={`w-3 h-3 rounded-full transition-colors ${
+                          topCurrentSlide === index ? "bg-emerald-600" : "bg-emerald-200"
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={nextTopSlide}
+                    className="p-2 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
+                    aria-label="Next slide"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Carousel for Remaining Students */}
