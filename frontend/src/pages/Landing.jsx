@@ -28,7 +28,7 @@ const Landing = () => {
       <Feature1/>
       <Gamified/>
       <Steps/>
-      <Testimonials/>
+      {/* <Testimonials/> */}
       <ProjectView/>
       <Faq/>
       <Footer/>

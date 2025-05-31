@@ -7,6 +7,9 @@ import GuessNumber from "../assets/GuessNumber.jpg";
 import Akshath from "../assets/QuizAkshat.jpg";
 import shreya from "../assets/shreya.jpg";
 import anaya from "../assets/Anaya.jpg";
+import jaip from "../assets/Jaip.jpg";
+import vihan from "../assets/Vihan.jpg"
+import EmailSend from "../assets/emailsender.jpg"
 
 import { Download } from "lucide-react";
 
@@ -138,9 +141,9 @@ export default function ProjectView() {
                     <img src={shreya} alt="Shreya" />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">Storybook by Shreya</h3>
+                    <h3 className="text-xl font-semibold mb-2">Simple Calculator</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      A creative storytelling app developed by Shreya to encourage reading habits among kids.
+                     A Simple Calculator app devleoped by Shreya to calulate all basic arithmetic operations.
                     </p>
                   </div>
                 </div>
@@ -153,9 +156,48 @@ export default function ProjectView() {
                     <img src={anaya} alt="Anaya" />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">Math Fun with Anaya</h3>
+                    <h3 className="text-xl font-semibold mb-2">Rock Paper Scissor</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      A math learning app created by Anaya to make math fun and easy for beginners.
+                     Rock Paper Scissor is a Fun Game developed by Anaya.
+                    </p>
+                  </div>
+                </div>
+              </SplideSlide>
+              <SplideSlide>
+                <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
+                  <div className="h-48 bg-purple-50 flex items-center justify-center">
+                    <img src={jaip} alt="jaip" />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2">Volume Calculator</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                     A Volume Calculator App using Kotlin. This app can calculate volume Sphere, Cone, Cube and Cuboid. This can be very valuable for Maths Students.
+                    </p>
+                  </div>
+                </div>
+              </SplideSlide>
+              <SplideSlide>
+                <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
+                  <div className="h-48 bg-purple-50 flex items-center justify-center">
+                    <img src={vihan} alt="vihan" />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2">Chameleon</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Chameleon is a simple App developed by 7 year old boy that Changes colors like a Chameleon.
+                    </p>
+                  </div>
+                </div>
+              </SplideSlide>
+              <SplideSlide>
+                <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
+                  <div className="h-48 bg-purple-50 flex items-center justify-center">
+                    <img src={EmailSend} alt="Emailse" />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2">Email-Sender</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                    Simple App Which Make Email Services Easy.
                     </p>
                   </div>
                 </div>
