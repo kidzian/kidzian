@@ -8,7 +8,10 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const nodemailer = require('nodemailer');
 const Batch = require('./models/Batch');
+
 const Teacher = require('./models/Teacher');
+
+
 
 const Admin = require("./models/Admin");
 
@@ -16,7 +19,12 @@ const axios = require('axios');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 require('dotenv').config();
-const SECRET_KEY = "your_secret_key";
+const SECRET_KEY = process.env.SECRET_KEY;
+const authRoutes = require("./routes/auth")
+const adminRoutes = require("./routes/admin")
+const teacherRoutes = require("./routes/teachers")
+const studentRoutes = require("./routes/students")
+const courseRoutes = require('./routes/Courses.js');
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -47,17 +55,37 @@ const transporter = nodemailer.createTransport({
     pass: 'enkb fzsn ocpg akud',
   },
 });
+// Routes
+app.use("/api/auth", authRoutes)
+app.use("/api/admin", adminRoutes)
+app.use("/api/teachers", teacherRoutes)
+app.use("/api/students", studentRoutes)
+app.use('/api', courseRoutes);
+
+
 
 app.get('/api/batch/:batchId', async (req, res) => {
   const { batchId } = req.params;
-  const batchInfo = await Batch.findById(batchId);
 
-  if (batchInfo) {
+  // Validate the ObjectId
+  if (!mongoose.Types.ObjectId.isValid(batchId)) {
+    return res.status(400).json({ error: 'Invalid batch ID format' });
+  }
+
+  try {
+    const batchInfo = await Batch.findById(batchId);
+
+    if (batchInfo) {
       res.json(batchInfo);
-  } else {
-      res.status(404).json({ error: 'Course not found for the given batchId' });
+    } else {
+      res.status(404).json({ error: 'Batch not found' });
+    }
+  } catch (err) {
+    console.error('Error fetching batch:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 
 app.post('/api/submit-form', async (req, res) => {
@@ -180,6 +208,73 @@ app.post("/api/login", async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
+// TEACHER LOGIN
+// app.post("/login/teacher", async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     const teacher = await Teacher.findOne({ email });
+//     if (!teacher) return res.status(404).json({ message: "Teacher not found" });
+
+//     const isPasswordCorrect = await bcrypt.compare(password, teacher.password);
+//     if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" });
+
+//     const token = jwt.sign(
+//       { id: teacher._id, email: teacher.email, role: "teacher" },
+//       SECRET_KEY,
+//       { expiresIn: "1d" }
+//     );
+
+//     res.status(200).json({ token, user: teacher });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
+// // STUDENT LOGIN
+// app.post("/login/student", async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     const student = await User.findOne({ email });
+//     if (!student) return res.status(404).json({ message: "Student not found" });
+
+//     const isPasswordCorrect = await bcrypt.compare(password, student.password);
+//     if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" });
+
+//     const token = jwt.sign(
+//       { id: student._id, email: student.email, role: "student" },
+//       SECRET_KEY,
+//       { expiresIn: "1d" }
+//     );
+
+//     res.status(200).json({ token, user: student });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+// addeed hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+// issue when backend
+// const verifyRole = require("./middleware/verifyRole");
+
+// // ADMIN-ONLY ROUTE EXAMPLE
+// app.get("/admin/students", verifyRole("admin"), async (req, res) => {
+//   const students = await User.find();
+//   res.json(students);
+// });
+
+// // TEACHER DASHBOARD: Assigned Students
+// app.get("/teacher/students", verifyRole("teacher"), async (req, res) => {
+//   const teacherId = req.user.id;
+//   const batches = await Batch.find({ teacher: teacherId }).populate("students");
+//   const students = batches.flatMap(batch => batch.students);
+//   res.json(students);
+// });
+
+// // STUDENT DASHBOARD: Enrolled Courses
+// app.get("/student/courses", verifyRole("student"), async (req, res) => {
+//   const student = await User.findById(req.user.id);
+//   res.json(student.batches);
+// });
+
 
 app.delete('/batch/:batchId', async (req, res) => {
   try {
