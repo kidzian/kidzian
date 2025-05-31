@@ -6,7 +6,7 @@ import AddStudent from "./AddStudent";
 import CreateLecture from "./CreateLecture";
 import Lectures from "./Lectures";
 const BatchDetails = () => {
-s
+
   const{batchId}=useParams();
   const [batch, setBatch] = useState(null);
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);

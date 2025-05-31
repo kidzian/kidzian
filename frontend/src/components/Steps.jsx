@@ -20,7 +20,7 @@ const steps = [
   },
   {
     id: 2,
-    title: "Experience Real-Time Sessions ",
+    title: "Experience Real-Time Sessions",
     description: "Experience our unique learning approach with zero obligations",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-12 h-12">
@@ -39,7 +39,7 @@ const steps = [
     description: "Convenient subscription plans and timings to suit your convenience",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-12 h-12">
-        <rect x="4" y="4" width="16" height="16" rx="2" />
+        <rect x="3" y="3" width="18" height="18" rx="2" />
         <rect x="2" y="6" width="16" height="16" rx="2" transform="translate(2 -2)" />
         <line x1="6" y1="10" x2="10" y2="10" />
         <line x1="6" y1="14" x2="14" y2="14" />
@@ -61,16 +61,16 @@ const Steps = () => {
     <div className="bg-[#2a9c7e] py-16 px-6 md:px-12 lg:px-20 rounded-lg shadow-lg overflow-hidden">
       <div className="max-w-7xl mx-auto relative">
         <div className="flex justify-center mb-14">
-  <h1 className=" text-white  px-4 py-2 font-semibold text-3xl text-center">
-    Begin your Kidzian Journey in 3 simple steps
-  </h1>
-</div>
+          <h1 className="text-white px-4 py-2 font-semibold text-3xl text-center">
+            Begin your Kidzian Journey in 3 simple steps
+          </h1>
+        </div>
 
-        <div className="flex flex-col gap-10  md:flex-row items-center justify-between space-y-16 md:space-y-0">
-          {steps.map((step, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {steps.map((step) => (
             <div
               key={step.id}
-              className="flex flex-col items-center text-center mt-6 bg-white rounded-xl p-8 w-full md:w-1/3 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+              className="flex flex-col items-center text-center bg-white rounded-xl p-8 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
             >
               <div className="text-4xl font-extrabold text-gray-800 mb-4">{step.id}</div>
               <div className="flex items-center justify-center w-24 h-24 border-2 border-black rounded-full mb-5 bg-gray-100 hover:bg-black hover:text-white transition-all duration-300">

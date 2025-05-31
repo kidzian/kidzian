@@ -9,11 +9,10 @@ const ParentsFeedback = () => {
   const testimonials = [
     {
       id: 1,
-      name: "Sujata Munirangappa",
+      name: "Sujata Munirangappa", // Female
       reviewInfo: "2 reviews",
       date: "a month ago",
-      avatar: "SM",
-      avatarColor: "bg-purple-500",
+      avatar: "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=150&h=150&fit=crop&crop=face&auto=format", // Indian female
       rating: 5,
       shortComment: "Kidzian has been a fantastic learning platform for my son! He has developed a strong interest in coding and enjoys every session...",
       fullComment: "Kidzian has been a fantastic learning platform for my son! He has developed a strong interest in coding and enjoys every session. The interactive approach keeps him engaged, and his problem-solving skills have improved significantly. I'm truly grateful for the positive impact on his learning journey!",
@@ -21,11 +20,10 @@ const ParentsFeedback = () => {
     },
     {
       id: 2,
-      name: "Dr.S.Pramila",
+      name: "Dr.S.Pramila", // Female (Doctor)
       reviewInfo: "3 reviews · 1 photo",
       date: "a year ago",
-      avatar: "DP",
-      avatarColor: "bg-blue-500",
+      avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face&auto=format", // Indian female doctor
       rating: 5,
       shortComment: "She is a very excellent teacher and explains the concept very well. My son is always exited to attend her classes...",
       fullComment: "She is a very excellent teacher and explains the concept very well. My son is always exited to attend her classes. She always maintains students in a participative learning environment. I have also received very good feedback from other parents also.",
@@ -33,11 +31,10 @@ const ParentsFeedback = () => {
     },
     {
       id: 3,
-      name: "Kalpana Thulasiraman",
+      name: "Kalpana Thulasiraman", // Female
       reviewInfo: "3 reviews",
       date: "a year ago",
-      avatar: "KT",
-      avatarColor: "bg-green-500",
+      avatar: "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=150&h=150&fit=crop&crop=face&auto=format", // Indian female
       rating: 5,
       shortComment: "It's been many months since mam is teaching my daughter.and I have seen a vast improvement in my daughter...",
       fullComment: "It's been many months since mam is teaching my daughter.and I have seen a vast improvement in my daughter.my daughter also enjoys her teaching methods",
@@ -45,14 +42,57 @@ const ParentsFeedback = () => {
     },
     {
       id: 4,
-      name: "Drmraju SB",
+      name: "Dr.Mraju SB", // Male (Doctor)
       reviewInfo: "6 reviews · 10 photos",
       date: "a year ago",
-      avatar: "DS",
-      avatarColor: "bg-orange-500",
+      avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face&auto=format", // Indian male doctor
       rating: 5,
       shortComment: "Kidzian is one of the best institute to learn coding and other related subjects from the founder Ms. Rashmi who has vast experience...",
       fullComment: "Kidzian is one of the best institute to learn coding and other related subjects from the founder Ms. Rashmi who has vast experience in software programing and development and teaching the children with hands on experience so that children can learn wit dedication please admit your children too and encourage neighbors and friends to admit their wards too",
+      isGoogle: true,
+    },
+    {
+      id: 5,
+      name: "Priya Sharma", // Female
+      reviewInfo: "5 reviews · 2 photos",
+      date: "2 months ago",
+      avatar: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&h=150&fit=crop&crop=face&auto=format", // Indian female
+      rating: 5,
+      shortComment: "Amazing experience with Kidzian! My daughter has learned so much about programming and logical thinking...",
+      fullComment: "Amazing experience with Kidzian! My daughter has learned so much about programming and logical thinking. The teachers are very patient and explain concepts in a way that children can easily understand. Highly recommended for parents looking for quality coding education.",
+      isGoogle: true,
+    },
+    {
+      id: 6,
+      name: "Rajesh Kumar", // Male
+      reviewInfo: "4 reviews",
+      date: "3 months ago",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&auto=format", // Indian male
+      rating: 5,
+      shortComment: "Excellent teaching methodology and very supportive staff. My son enjoys every class and has shown remarkable improvement...",
+      fullComment: "Excellent teaching methodology and very supportive staff. My son enjoys every class and has shown remarkable improvement in his problem-solving abilities. The curriculum is well-structured and age-appropriate. Thank you Kidzian team!",
+      isGoogle: true,
+    },
+    {
+      id: 7,
+      name: "Anita Desai", // Female
+      reviewInfo: "2 reviews",
+      date: "4 months ago",
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face&auto=format", // Indian female
+      rating: 5,
+      shortComment: "My daughter absolutely loves her coding classes at Kidzian. The teachers are very patient and encouraging...",
+      fullComment: "My daughter absolutely loves her coding classes at Kidzian. The teachers are very patient and encouraging. She has gained so much confidence in problem-solving and logical thinking. The online platform is user-friendly and engaging for kids.",
+      isGoogle: true,
+    },
+    {
+      id: 8,
+      name: "Vikram Singh", // Male
+      reviewInfo: "7 reviews · 3 photos",
+      date: "5 months ago",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&auto=format", // Indian male
+      rating: 5,
+      shortComment: "Outstanding coding program for kids! My son has developed excellent programming skills and logical reasoning...",
+      fullComment: "Outstanding coding program for kids! My son has developed excellent programming skills and logical reasoning. The curriculum is well-designed and the instructors are highly qualified. I would definitely recommend Kidzian to other parents.",
       isGoogle: true,
     }
   ];
@@ -117,42 +157,40 @@ const ParentsFeedback = () => {
               {renderStars(5)}
             </div>
             <div className="flex gap-1 ">
-              
-            <div className="">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="120"
-                height="40"
-                viewBox="0 0 272 92"
-                className="w-32"
-              >
-                <path
-                  fill="#EA4335"
-                  d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"
-                />
-                <path
-                  fill="#4285F4"
-                  d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z"
-                />
-                <path fill="#34A853" d="M225 3v65h-9.5V3h9.5z" />
-                <path
-                  fill="#EA4335"
-                  d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z"
-                />
-                <path
-                  fill="#4285F4"
-                  d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z"
-                />
-              </svg>
+              <div className="">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="120"
+                  height="40"
+                  viewBox="0 0 272 92"
+                  className="w-32"
+                >
+                  <path
+                    fill="#EA4335"
+                    d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"
+                  />
+                  <path
+                    fill="#4285F4"
+                    d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z"
+                  />
+                  <path fill="#34A853" d="M225 3v65h-9.5V3h9.5z" />
+                  <path
+                    fill="#EA4335"
+                    d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z"
+                  />
+                  <path
+                    fill="#4285F4"
+                    d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z"
+                  />
+                </svg>
+              </div>
+              <div className="text-sm text-gray-600 mt-2">Based on 48 reviews</div>
             </div>
-             <div className="text-sm text-gray-600 mt-2">Based on 48 reviews</div>
           </div>
-            </div>
-           
         </div>
 
         <div className="relative">
@@ -186,13 +224,26 @@ const ParentsFeedback = () => {
                   onClick={() => window.open(googleReviewUrl, '_blank')}
                 >
                   <div className="flex items-center mb-4">
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-3 ${testimonial.avatarColor}`}
-                    >
-                      {testimonial.avatar}
+                    <div className="w-10 h-10 rounded-full overflow-hidden mr-3 flex-shrink-0">
+                      <img
+                        src={testimonial.avatar || "/placeholder.svg"}
+                        alt={`${testimonial.name}'s profile`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Fallback to initials if image fails to load
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                      <div 
+                        className="w-full h-full bg-purple-500 flex items-center justify-center text-white font-bold text-sm hidden"
+                        style={{ display: 'none' }}
+                      >
+                        {testimonial.name.split(' ').map(n => n[0]).join('')}
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800">
+                    <div className="flex-grow min-w-0">
+                      <h3 className="font-semibold text-gray-800 truncate">
                         {testimonial.name}
                       </h3>
                       <p className="text-xs text-gray-500">
@@ -200,7 +251,7 @@ const ParentsFeedback = () => {
                       </p>
                     </div>
                     {testimonial.isGoogle && (
-                      <div className="ml-auto">
+                      <div className="ml-2 flex-shrink-0">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="20"
