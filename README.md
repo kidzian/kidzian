@@ -32,7 +32,7 @@ A full-featured Learning Management System (LMS) built with **MERN stack** (Mong
 ### ⚙️ Setup
 
 #### 1. Clone the repository
-git clone https://github.com/your-username/LEARN_MS.git
+git clone https://github.com/kidzian/kidzian
 cd LEARN_MS
 ####2. Setup Backend
 cd server
