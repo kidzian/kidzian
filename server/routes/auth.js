@@ -20,16 +20,16 @@ router.post("/login", async (req, res) => {
     const emailNormalized = email.toLowerCase();
     let user;
 
-    // Find user based on role
+    // Find user based on role and explicitly include password
     if (role === "admin") {
-      user = await Admin.findOne({ email: emailNormalized });
       console.log("Looking for admin user");
+      user = await Admin.findOne({ email: emailNormalized }).select("+password");
     } else if (role === "teacher") {
-      user = await Teacher.findOne({ email: emailNormalized });
       console.log("Looking for teacher user");
+      user = await Teacher.findOne({ email: emailNormalized }).select("+password");
     } else {
-      user = await User.findOne({ email: emailNormalized });
       console.log("Looking for regular user");
+      user = await User.findOne({ email: emailNormalized }).select("+password");
     }
 
     if (!user) {
@@ -38,6 +38,11 @@ router.post("/login", async (req, res) => {
     }
 
     // Verify password
+    if (!user.password) {
+      console.log("User exists but password is undefined!");
+      return res.status(500).json({ message: "Server misconfiguration: password missing" });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     console.log("Password match:", isMatch);
 
@@ -48,7 +53,7 @@ router.post("/login", async (req, res) => {
     // Create token payload
     const payload = {
       id: user._id,
-      role: role,
+      role,
     };
 
     // Sign token
