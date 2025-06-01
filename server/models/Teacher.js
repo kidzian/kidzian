@@ -20,7 +20,8 @@ const teacherSchema = new Schema({
   password: {
     type: String,
     required: true,
-    minlength: 6 // Or more for better security
+    minlength: 6,
+   select: false // Or more for better security
   },
   role: {
     type: String,

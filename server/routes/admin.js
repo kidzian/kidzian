@@ -178,8 +178,7 @@ router.post("/add-student", auth(["admin"]), async (req, res) => {
     if (existingStudent) {
       return res.status(400).json({ message: "Student already exists" })
     }
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
+    
     const newStudent = new User({
       name,
       email,
@@ -187,7 +186,7 @@ router.post("/add-student", auth(["admin"]), async (req, res) => {
       age,
       phoneNumber,
       grade,
-      password: hashedPassword,
+      password
     })
     await newStudent.save()
     res.status(201).json({ message: "Student added successfully", student: newStudent })
@@ -205,13 +204,12 @@ router.post("/add-teacher", auth(["admin"]), async (req, res) => {
     if (existingTeacher) {
       return res.status(400).json({ message: "Teacher already exists" })
     }
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
+   
     const newTeacher = new Teacher({
       name,
       email,
       phoneNumber,
-      password: hashedPassword,
+      password
     })
     await newTeacher.save()
     res.status(201).json({ message: "Teacher added successfully", teacher: newTeacher })
