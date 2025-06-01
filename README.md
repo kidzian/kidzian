@@ -33,17 +33,17 @@ A full-featured Learning Management System (LMS) built with **MERN stack** (Mong
 
 #### 1. Clone the repository
 git clone https://github.com/kidzian/kidzian
-cd LEARN_MS
+---
 ####2. Setup Backend
 cd server
 npm install
 node server.js
-
+---
 ####3. Setup Frontend
 cd client
 npm install
 npm run dev
-
+---
 ####Contributors:
 1) raghutimmanagoudar775
 2) 01akhil
