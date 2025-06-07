@@ -66,7 +66,7 @@ export default function LMSLogin() {
                   key={option}
                   onClick={() => setRole(option)}
                   className={`px-3 py-1 rounded border ${
-                    role === option ? "bg-indigo-600 text-white" : "bg-white text-gray-700"
+                    role === option ? "bg-teal-700 text-white" : "bg-white text-gray-700"
                   }`}
                 >
                   {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -122,7 +122,7 @@ export default function LMSLogin() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-700 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
               >
                 {loading ? "Signing in..." : "Sign in"}
               </button>

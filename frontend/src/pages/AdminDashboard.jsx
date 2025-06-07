@@ -969,7 +969,7 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
-    window.location.href = "/login"
+    window.location.href = "/lms"
   }
 
   const filteredStudents = students.filter(
@@ -2764,4 +2764,3 @@ const AdminDashboard = () => {
 }
 
 export default AdminDashboard
-
