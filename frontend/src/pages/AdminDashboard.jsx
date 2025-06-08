@@ -1,376 +1,4 @@
-// "use client"
 
-// import { useState, useEffect } from "react"
-// import { useNavigate } from "react-router-dom"
-// import axios from "axios"
-// import { BookOpenIcon, UserIcon, PlusIcon, GraduationCapIcon, LayoutDashboardIcon } from "lucide-react"
-
-// export default function AdminDashboard() {
-//   const [admin, setAdmin] = useState(null)
-//   const [stats, setStats] = useState({
-//     totalStudents: 0,
-//     totalTeachers: 0,
-//     totalCourses: 0,
-//     activeBatches: 0,
-//   })
-//   const [courses, setCourses] = useState([])
-//   const [recentStudents, setRecentStudents] = useState([])
-//   const [loading, setLoading] = useState(true)
-//   const [error, setError] = useState("")
-//   const navigate = useNavigate()
-
-//   useEffect(() => {
-//     const fetchAdminData = async () => {
-//       try {
-//         const token = localStorage.getItem("token")
-//         if (!token) {
-//           navigate("/lms")
-//           return
-//         }
-
-//         // Fetch admin profile
-//         const profileResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/profile`, {
-//           headers: { Authorization: `Bearer ${token}` },
-//         })
-//         setAdmin(profileResponse.data)
-
-//         // Fetch dashboard stats
-//         const statsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/stats`, {
-//           headers: { Authorization: `Bearer ${token}` },
-//         })
-//         setStats(statsResponse.data)
-
-//         // Fetch courses
-//         const coursesResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/courses`, {
-//           headers: { Authorization: `Bearer ${token}` },
-//         })
-//         setCourses(coursesResponse.data)
-
-//         // Fetch recent students
-//         const studentsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/recent-students`, {
-//           headers: { Authorization: `Bearer ${token}` },
-//         })
-//         setRecentStudents(studentsResponse.data)
-//       } catch (err) {
-//         console.error("Error fetching admin data:", err)
-//         setError("Failed to load dashboard data. Please try again later.")
-//         if (err.response?.status === 401) {
-//           localStorage.removeItem("token")
-//           localStorage.removeItem("user")
-//           navigate("/lms")
-//         }
-//       } finally {
-//         setLoading(false)
-//       }
-//     }
-
-//     fetchAdminData()
-//   }, [navigate])
-
-//   if (loading) {
-//     return (
-//       <div className="min-h-screen flex items-center justify-center">
-//         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-//       </div>
-//     )
-//   }
-
-//   if (error) {
-//     return (
-//       <div className="min-h-screen flex items-center justify-center">
-//         <div className="text-red-500 text-center">
-//           <p className="text-xl font-semibold">{error}</p>
-//           <button
-//             onClick={() => navigate("/lms")}
-//             className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-//           >
-//             Back to Login
-//           </button>
-//         </div>
-//       </div>
-//     )
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-gray-50">
-//       <header className="bg-white shadow">
-//         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-//           <h1 className="text-3xl font-bold text-teal-600">Admin Dashboard</h1>
-//           <div className="flex items-center space-x-4">
-//             <span className="text-gray-700">{admin?.name}</span>
-//             <button
-//               onClick={() => {
-//                 localStorage.removeItem("token")
-//                 localStorage.removeItem("user")
-//                 navigate("/lms")
-//               }}
-//               className="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200"
-//             >
-//               Logout
-//             </button>
-//           </div>
-//         </div>
-//       </header>
-
-//       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-//         {/* Stats Overview */}
-//         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-//           {/* Total Students */}
-//           <div className="bg-white overflow-hidden shadow rounded-lg">
-//             <div className="p-5">
-//               <div className="flex items-center">
-//                 <div className="flex-shrink-0 bg-blue-100 rounded-md p-3">
-//                   <GraduationCapIcon className="h-6 w-6 text-blue-600" />
-//                 </div>
-//                 <div className="ml-5 w-0 flex-1">
-//                   <dl>
-//                     <dt className="text-sm font-medium text-gray-500 truncate">Total Students</dt>
-//                     <dd>
-//                       <div className="text-lg font-medium text-gray-900">{stats.totalStudents}</div>
-//                     </dd>
-//                   </dl>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="bg-gray-50 px-5 py-3">
-//               <div className="text-sm">
-//                 <a
-//                   href="#"
-//                   onClick={() => navigate("/admin-dashboard/students")}
-//                   className="font-medium text-indigo-600 hover:text-indigo-500"
-//                 >
-//                   View all
-//                 </a>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Total Teachers */}
-//           <div className="bg-white overflow-hidden shadow rounded-lg">
-//             <div className="p-5">
-//               <div className="flex items-center">
-//                 <div className="flex-shrink-0 bg-green-100 rounded-md p-3">
-//                   <UserIcon className="h-6 w-6 text-green-600" />
-//                 </div>
-//                 <div className="ml-5 w-0 flex-1">
-//                   <dl>
-//                     <dt className="text-sm font-medium text-gray-500 truncate">Total Teachers</dt>
-//                     <dd>
-//                       <div className="text-lg font-medium text-gray-900">{stats.totalTeachers}</div>
-//                     </dd>
-//                   </dl>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="bg-gray-50 px-5 py-3">
-//               <div className="text-sm">
-//                 <a
-//                   href="#"
-//                   onClick={() => navigate("/admin-dashboard/teachers")}
-//                   className="font-medium text-indigo-600 hover:text-indigo-500"
-//                 >
-//                   View all
-//                 </a>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Total Courses */}
-//           <div className="bg-white overflow-hidden shadow rounded-lg">
-//             <div className="p-5">
-//               <div className="flex items-center">
-//                 <div className="flex-shrink-0 bg-purple-100 rounded-md p-3">
-//                   <BookOpenIcon className="h-6 w-6 text-purple-600" />
-//                 </div>
-//                 <div className="ml-5 w-0 flex-1">
-//                   <dl>
-//                     <dt className="text-sm font-medium text-gray-500 truncate">Total Courses</dt>
-//                     <dd>
-//                       <div className="text-lg font-medium text-gray-900">{stats.totalCourses}</div>
-//                     </dd>
-//                   </dl>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="bg-gray-50 px-5 py-3">
-//               <div className="text-sm">
-//                 <a href="#"     onClick={() => navigate("/admin-dashboard/view-course")} className="font-medium text-indigo-600 hover:text-indigo-500">
-//                   View all
-//                 </a>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Active Batches */}
-//           <div className="bg-white overflow-hidden shadow rounded-lg">
-//             <div className="p-5">
-//               <div className="flex items-center">
-//                 <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
-//                   <LayoutDashboardIcon className="h-6 w-6 text-yellow-600" />
-//                 </div>
-//                 <div className="ml-5 w-0 flex-1">
-//                   <dl>
-//                     <dt className="text-sm font-medium text-gray-500 truncate">Active Batches</dt>
-//                     <dd>
-//                       <div className="text-lg font-medium text-gray-900">{stats.activeBatches}</div>
-//                     </dd>
-//                   </dl>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="bg-gray-50 px-5 py-3">
-//               <div className="text-sm">
-//                 <a href="#"     onClick={() => navigate("/admin-dashboard/view-batch")} className="font-medium text-indigo-600 hover:text-indigo-500">
-//                   View all
-//                 </a>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Quick Actions */}
-//         <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
-//           <div className="px-4 py-5 sm:px-6">
-//             <h3 className="text-lg leading-6 font-medium text-gray-900">Quick Actions</h3>
-//             <p className="mt-1 max-w-2xl text-sm text-gray-500">Manage your LMS system.</p>
-//           </div>
-//           <div className="border-t border-gray-200 px-4 py-5 sm:p-6">
-//             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-//               <button
-//                 onClick={() => navigate("/admin-dashboard/add-student")}
-//                 className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
-//               >
-//                 <PlusIcon className="h-5 w-5 mr-2" />
-//                 Add Student
-//               </button>
-//               <button
-//                 onClick={() => navigate("/admin-dashboard/add-teacher")}
-//                 className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200"
-//               >
-//                 <PlusIcon className="h-5 w-5 mr-2" />
-//                 Add Teacher
-//               </button>
-//               <button
-//                 onClick={() => navigate("/admin-dashboard/add-course")}
-//                 className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200"
-//               >
-//                 <PlusIcon className="h-5 w-5 mr-2" />
-//                 Add Course
-//               </button>
-//               <button
-//                 onClick={() => navigate("/admin-dashboard/add-batch")}
-//                 className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-yellow-700 bg-yellow-100 hover:bg-yellow-200"
-//               >
-//                 <PlusIcon className="h-5 w-5 mr-2" />
-//                 Create Batch
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-//           {/* Courses Section */}
-//           <div id="courses" className="bg-white shadow overflow-hidden sm:rounded-lg">
-//             <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-//               <div>
-//                 <h3 className="text-lg leading-6 font-medium text-gray-900">Courses</h3>
-//                 <p className="mt-1 max-w-2xl text-sm text-gray-500">Available courses in the system.</p>
-//               </div>
-//               <button
-//                 onClick={() => navigate("/admin-dashboard/add-course")}
-//                 className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
-//               >
-//                 <PlusIcon className="h-4 w-4 mr-1" />
-//                 Add
-//               </button>
-//             </div>
-//             <div className="border-t border-gray-200">
-//               {courses.length > 0 ? (
-//                 <ul className="divide-y divide-gray-200 max-h-80 overflow-y-auto">
-//                   {courses.map((course, index) => (
-//                     <li key={index} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
-//                       <div className="flex items-center justify-between">
-//                         <div className="flex items-center">
-//                           <div className="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
-//                             <BookOpenIcon className="h-6 w-6 text-indigo-600" />
-//                           </div>
-//                           <div className="ml-4">
-//                             <div className="text-sm font-medium text-indigo-600">{course.title}</div>
-//                             <div className="text-sm text-gray-500">
-//                               {course.batches?.length || 0} batches • {course.ageGroup}
-//                             </div>
-//                           </div>
-//                         </div>
-//                         <button
-//                           className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200"
-//                           onClick={() => navigate(`/admin-dashboard/view-course`)}
-//                         >
-//                           Manage
-//                         </button>
-//                       </div>
-//                     </li>
-//                   ))}
-//                 </ul>
-//               ) : (
-//                 <div className="px-4 py-5 text-center text-gray-500">No courses available. Add your first course.</div>
-//               )}
-//             </div>
-//           </div>
-
-//           {/* Recent Students */}
-//           <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-//             <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-//               <div>
-//                 <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Students</h3>
-//                 <p className="mt-1 max-w-2xl text-sm text-gray-500">Recently added students.</p>
-//               </div>
-//               <button
-//                 onClick={() => navigate("/admin-dashboard/students")}
-//                 className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
-//               >
-//                 View All
-//               </button>
-//             </div>
-//             <div className="border-t border-gray-200">
-//               {recentStudents.length > 0 ? (
-//                 <ul className="divide-y divide-gray-200 max-h-80 overflow-y-auto">
-//                   {recentStudents.map((student, index) => (
-//                     <li key={index} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
-//                       <div className="flex items-center justify-between">
-//                         <div className="flex items-center">
-//                           <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-//                             <GraduationCapIcon className="h-6 w-6 text-blue-600" />
-//                           </div>
-//                           <div className="ml-4">
-//                             <div className="text-sm font-medium text-gray-900">{student.name}</div>
-//                             <div className="text-sm text-gray-500">
-//                               Grade {student.grade} • {student.email}
-//                             </div>
-//                           </div>
-//                         </div>
-//                         <button
-//                           className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200"
-//                           onClick={() => navigate(`/students/${student._id}`)}
-//                         >
-//                           View
-//                         </button>
-//                       </div>
-//                     </li>
-//                   ))}
-//                 </ul>
-//               ) : (
-//                 <div className="px-4 py-5 text-center text-gray-500">
-//                   No students available. Add your first student.
-//                 </div>
-//               )}
-//             </div>
-//           </div>
-//         </div>
-//       </main>
-//     </div>
-//   )
-// }
-"use client"
 "use client"
 
 import { useState, useEffect } from "react"
@@ -386,6 +14,9 @@ import {
   Eye,
   Trash2,
   X,
+  Upload,
+  FileText,
+  ImageIcon,
 } from "lucide-react"
 
 const AdminDashboard = () => {
@@ -452,10 +83,11 @@ const AdminDashboard = () => {
     phoneNumber: "",
   })
 
+  // Updated course form to handle files
   const [courseForm, setCourseForm] = useState({
     title: "",
-    image: "",
-    pdf: "",
+    imageFile: null,
+    pdfFile: null,
     ageGroup: "",
     about: "",
     learningOutcomes: "",
@@ -488,9 +120,35 @@ const AdminDashboard = () => {
     "Content-Type": "application/json",
   })
 
+  // New header function for FormData requests (no Content-Type)
+  const getFormDataHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  })
+
   useEffect(() => {
     fetchAdminData()
   }, [])
+
+  // Fixed: Separate function to fetch all students for enrollment
+  const fetchAllStudents = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/students`, {
+        headers: getAuthHeaders(),
+      })
+
+      if (response.ok) {
+        const studentsData = await response.json()
+        setStudents(studentsData)
+        return studentsData
+      } else {
+        console.error("Failed to fetch students")
+        return []
+      }
+    } catch (err) {
+      console.error("Error fetching students:", err)
+      return []
+    }
+  }
 
   const fetchAdminData = async () => {
     try {
@@ -540,13 +198,35 @@ const AdminDashboard = () => {
       if (studentsRes.ok) {
         const studentsData = await studentsRes.json()
         setRecentStudents(studentsData)
-        setStudents(studentsData)
+        // Fixed: Also fetch all students for enrollment
+        await fetchAllStudents()
+      } else {
+        // If recent students fails, still try to fetch all students
+        await fetchAllStudents()
       }
     } catch (err) {
       console.error("Error fetching admin data:", err)
       setError("Failed to load dashboard data. Please try again later.")
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Fixed: Function to refresh students when enrollment modal opens
+  const handleOpenEnrollmentModal = async () => {
+    setShowEnrollStudentModal(true)
+    // Refresh students list when opening enrollment modal
+    await fetchAllStudents()
+  }
+
+  // File handling functions
+  const handleFileChange = (e, fileType) => {
+    const file = e.target.files[0]
+    if (file) {
+      setCourseForm((prev) => ({
+        ...prev,
+        [fileType]: file,
+      }))
     }
   }
 
@@ -565,6 +245,8 @@ const AdminDashboard = () => {
         setShowAddStudentModal(false)
         resetStudentForm()
         fetchAdminData()
+        // Refresh students list for enrollment
+        await fetchAllStudents()
       } else {
         const errorData = await response.json()
         alert(errorData.message || "Failed to add student")
@@ -590,6 +272,8 @@ const AdminDashboard = () => {
         resetStudentForm()
         setSelectedStudent(null)
         fetchAdminData()
+        // Refresh students list for enrollment
+        await fetchAllStudents()
       } else {
         const errorData = await response.json()
         alert(errorData.message || "Failed to update student")
@@ -612,6 +296,8 @@ const AdminDashboard = () => {
         setShowDeleteStudentModal(false)
         setSelectedStudent(null)
         fetchAdminData()
+        // Refresh students list for enrollment
+        await fetchAllStudents()
       } else {
         const errorData = await response.json()
         alert(errorData.message || "Failed to delete student")
@@ -694,14 +380,27 @@ const AdminDashboard = () => {
     }
   }
 
-  // CRUD Operations for Courses
+  // Updated CRUD Operations for Courses with file upload
   const handleAddCourse = async (e) => {
     e.preventDefault()
     try {
+      const formData = new FormData()
+      formData.append("title", courseForm.title)
+      formData.append("ageGroup", courseForm.ageGroup)
+      formData.append("about", courseForm.about)
+      formData.append("learningOutcomes", courseForm.learningOutcomes)
+
+      if (courseForm.imageFile) {
+        formData.append("image", courseForm.imageFile)
+      }
+      if (courseForm.pdfFile) {
+        formData.append("pdf", courseForm.pdfFile)
+      }
+
       const response = await fetch(`${API_BASE_URL}/api/admin/add-course`, {
         method: "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(courseForm),
+        headers: getFormDataHeaders(),
+        body: formData,
       })
 
       if (response.ok) {
@@ -722,10 +421,23 @@ const AdminDashboard = () => {
   const handleEditCourse = async (e) => {
     e.preventDefault()
     try {
+      const formData = new FormData()
+      formData.append("title", courseForm.title)
+      formData.append("ageGroup", courseForm.ageGroup)
+      formData.append("about", courseForm.about)
+      formData.append("learningOutcomes", courseForm.learningOutcomes)
+
+      if (courseForm.imageFile) {
+        formData.append("image", courseForm.imageFile)
+      }
+      if (courseForm.pdfFile) {
+        formData.append("pdf", courseForm.pdfFile)
+      }
+
       const response = await fetch(`${API_BASE_URL}/api/admin/courses/${selectedCourse._id}`, {
         method: "PUT",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(courseForm),
+        headers: getFormDataHeaders(),
+        body: formData,
       })
 
       if (response.ok) {
@@ -890,8 +602,8 @@ const AdminDashboard = () => {
   const resetCourseForm = () => {
     setCourseForm({
       title: "",
-      image: "",
-      pdf: "",
+      imageFile: null,
+      pdfFile: null,
       ageGroup: "",
       about: "",
       learningOutcomes: "",
@@ -943,8 +655,8 @@ const AdminDashboard = () => {
     setSelectedCourse(course)
     setCourseForm({
       title: course.title || "",
-      image: course.image || "",
-      pdf: course.pdf || "",
+      imageFile: null,
+      pdfFile: null,
       ageGroup: course.ageGroup || "",
       about: course.about || "",
       learningOutcomes: course.learningOutcomes || "",
@@ -980,23 +692,28 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 to-teal-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-teal-600 mx-auto mb-4"></div>
+          <p className="text-teal-700 font-medium">Loading dashboard...</p>
+        </div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-500 text-center">
-          <p className="text-xl font-semibold">{error}</p>
-          <button
-            onClick={() => (window.location.href = "/login")}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Back to Login
-          </button>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100">
+        <div className="text-center bg-white p-8 rounded-xl shadow-lg">
+          <div className="text-red-500 text-center">
+            <p className="text-xl font-semibold mb-4">{error}</p>
+            <button
+              onClick={() => (window.location.href = "/login")}
+              className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+            >
+              Back to Login
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -1004,9 +721,9 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
+      <header className="bg-white shadow border-b-4 border-teal-700">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-teal-600">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold text-teal-700">Admin Dashboard</h1>
           <div className="flex items-center space-x-4">
             <span className="text-gray-700">{admin?.name}</span>
             <button onClick={handleLogout} className="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200">
@@ -1019,11 +736,11 @@ const AdminDashboard = () => {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {/* Stats Overview */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-teal-700">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0 bg-blue-100 rounded-md p-3">
-                  <GraduationCap className="h-6 w-6 text-blue-600" />
+                <div className="flex-shrink-0 bg-teal-100 rounded-md p-3">
+                  <GraduationCap className="h-6 w-6 text-teal-700" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -1037,7 +754,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-green-500">
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0 bg-green-100 rounded-md p-3">
@@ -1055,11 +772,11 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-teal-700">
             <div className="p-5">
               <div className="flex items-center">
-                <div className="flex-shrink-0 bg-purple-100 rounded-md p-3">
-                  <BookOpen className="h-6 w-6 text-purple-600" />
+                <div className="flex-shrink-0 bg-teal-100 rounded-md p-3">
+                  <BookOpen className="h-6 w-6 text-teal-700" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -1073,7 +790,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-yellow-500">
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
@@ -1102,7 +819,7 @@ const AdminDashboard = () => {
                   onClick={() => setActiveTab(tab)}
                   className={`py-4 px-1 border-b-2 font-medium text-sm capitalize transition-colors ${
                     activeTab === tab
-                      ? "border-blue-500 text-blue-600"
+                      ? "border-teal-700 text-teal-700"
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >
@@ -1122,7 +839,7 @@ const AdminDashboard = () => {
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
                     <button
                       onClick={() => setShowAddStudentModal(true)}
-                      className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200"
+                      className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-teal-700 hover:bg-teal-800"
                     >
                       <Plus className="h-5 w-5 mr-2" />
                       Add Student
@@ -1136,7 +853,7 @@ const AdminDashboard = () => {
                     </button>
                     <button
                       onClick={() => setShowAddCourseModal(true)}
-                      className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200"
+                      className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-teal-700 hover:bg-teal-800"
                     >
                       <Plus className="h-5 w-5 mr-2" />
                       Add Course
@@ -1149,7 +866,7 @@ const AdminDashboard = () => {
                       Create Batch
                     </button>
                     <button
-                      onClick={() => setShowEnrollStudentModal(true)}
+                      onClick={handleOpenEnrollmentModal}
                       className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
                     >
                       <UserPlus className="h-5 w-5 mr-2" />
@@ -1166,7 +883,7 @@ const AdminDashboard = () => {
                       <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Courses</h3>
                       <button
                         onClick={() => setActiveTab("courses")}
-                        className="text-blue-600 hover:text-blue-500 text-sm font-medium"
+                        className="text-teal-700 hover:text-teal-600 text-sm font-medium"
                       >
                         View All
                       </button>
@@ -1177,8 +894,8 @@ const AdminDashboard = () => {
                         className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0"
                       >
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <BookOpen className="h-4 w-4 text-blue-600" />
+                          <div className="flex-shrink-0 h-8 w-8 bg-teal-100 rounded-full flex items-center justify-center">
+                            <BookOpen className="h-4 w-4 text-teal-700" />
                           </div>
                           <div className="ml-3">
                             <div className="text-sm font-medium text-gray-900">{course.title}</div>
@@ -1195,7 +912,7 @@ const AdminDashboard = () => {
                       <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Students</h3>
                       <button
                         onClick={() => setActiveTab("students")}
-                        className="text-blue-600 hover:text-blue-500 text-sm font-medium"
+                        className="text-teal-700 hover:text-teal-600 text-sm font-medium"
                       >
                         View All
                       </button>
@@ -1234,18 +951,18 @@ const AdminDashboard = () => {
                         placeholder="Search students..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-700 focus:border-transparent"
                       />
                     </div>
                     <button
                       onClick={() => setShowAddStudentModal(true)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center"
+                      className="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded-lg flex items-center"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Student
                     </button>
                     <button
-                      onClick={() => setShowEnrollStudentModal(true)}
+                      onClick={handleOpenEnrollmentModal}
                       className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center"
                     >
                       <UserPlus className="h-4 w-4 mr-2" />
@@ -1314,7 +1031,7 @@ const AdminDashboard = () => {
                     <p>No students found. Add your first student to get started.</p>
                     <button
                       onClick={() => setShowAddStudentModal(true)}
-                      className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                      className="mt-4 bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded-lg"
                     >
                       Add Student
                     </button>
@@ -1408,7 +1125,7 @@ const AdminDashboard = () => {
                   <h3 className="text-lg font-medium text-gray-900">Courses Management</h3>
                   <button
                     onClick={() => setShowAddCourseModal(true)}
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center"
+                    className="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded-lg flex items-center"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Course
@@ -1423,8 +1140,8 @@ const AdminDashboard = () => {
                         className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
                       >
                         <div className="flex items-center mb-4">
-                          <div className="p-2 bg-purple-100 rounded-lg">
-                            <BookOpen className="h-6 w-6 text-purple-600" />
+                          <div className="p-2 bg-teal-100 rounded-lg">
+                            <BookOpen className="h-6 w-6 text-teal-700" />
                           </div>
                           <div className="ml-3">
                             <h4 className="text-lg font-medium text-gray-900">{course.title}</h4>
@@ -1441,7 +1158,7 @@ const AdminDashboard = () => {
                               setSelectedCourse(course)
                               setShowViewCourseModal(true)
                             }}
-                            className="flex-1 bg-purple-50 text-purple-600 py-2 px-4 rounded-lg hover:bg-purple-100 transition-colors"
+                            className="flex-1 bg-teal-50 text-teal-700 py-2 px-4 rounded-lg hover:bg-teal-100 transition-colors"
                           >
                             View Details
                           </button>
@@ -1470,7 +1187,7 @@ const AdminDashboard = () => {
                     <p>No courses found. Add your first course to get started.</p>
                     <button
                       onClick={() => setShowAddCourseModal(true)}
-                      className="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg"
+                      className="mt-4 bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded-lg"
                     >
                       Add Course
                     </button>
@@ -1576,7 +1293,7 @@ const AdminDashboard = () => {
                   required
                   value={studentForm.name}
                   onChange={(e) => setStudentForm({ ...studentForm, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1586,7 +1303,7 @@ const AdminDashboard = () => {
                   required
                   value={studentForm.email}
                   onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1596,7 +1313,7 @@ const AdminDashboard = () => {
                   required
                   value={studentForm.password}
                   onChange={(e) => setStudentForm({ ...studentForm, password: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1605,7 +1322,7 @@ const AdminDashboard = () => {
                   type="tel"
                   value={studentForm.phoneNumber}
                   onChange={(e) => setStudentForm({ ...studentForm, phoneNumber: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1614,7 +1331,7 @@ const AdminDashboard = () => {
                   type="text"
                   value={studentForm.grade}
                   onChange={(e) => setStudentForm({ ...studentForm, grade: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1623,7 +1340,7 @@ const AdminDashboard = () => {
                   type="number"
                   value={studentForm.age}
                   onChange={(e) => setStudentForm({ ...studentForm, age: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1632,13 +1349,13 @@ const AdminDashboard = () => {
                   value={studentForm.address}
                   onChange={(e) => setStudentForm({ ...studentForm, address: e.target.value })}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div className="flex gap-4 pt-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors"
+                  className="flex-1 bg-teal-700 hover:bg-teal-800 text-white py-2 px-4 rounded-md transition-colors"
                 >
                   Add Student
                 </button>
@@ -1647,6 +1364,319 @@ const AdminDashboard = () => {
                   onClick={() => {
                     setShowAddStudentModal(false)
                     resetStudentForm()
+                  }}
+                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-md transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Updated Add Course Modal with File Upload */}
+      {showAddCourseModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b bg-teal-600 text-white rounded-t-xl">
+              <h2 className="text-2xl font-bold">Add New Course</h2>
+              <p className="text-teal-100">Create a new course for your platform</p>
+            </div>
+            <form onSubmit={handleAddCourse} className="p-6 space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Course Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={courseForm.title}
+                  onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+                  placeholder="Enter course title"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Age Group</label>
+                <input
+                  type="text"
+                  value={courseForm.ageGroup}
+                  onChange={(e) => setCourseForm({ ...courseForm, ageGroup: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+                  placeholder="e.g., 8-12 years"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">About Course</label>
+                <textarea
+                  value={courseForm.about}
+                  onChange={(e) => setCourseForm({ ...courseForm, about: e.target.value })}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+                  placeholder="Describe the course..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Learning Outcomes</label>
+                <textarea
+                  value={courseForm.learningOutcomes}
+                  onChange={(e) => setCourseForm({ ...courseForm, learningOutcomes: e.target.value })}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+                  placeholder="What will students learn..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Image Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Course Image</label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e, "imageFile")}
+                      className="hidden"
+                      id="imageUpload"
+                    />
+                    <label
+                      htmlFor="imageUpload"
+                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-teal-300 rounded-lg cursor-pointer bg-teal-50 hover:bg-teal-100 transition-colors"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <ImageIcon className="w-8 h-8 mb-2 text-teal-700" />
+                        <p className="mb-2 text-sm text-teal-700">
+                          <span className="font-semibold">Click to upload</span> course image
+                        </p>
+                        <p className="text-xs text-teal-600">PNG, JPG or JPEG (MAX. 5MB)</p>
+                      </div>
+                    </label>
+                    {courseForm.imageFile && (
+                      <div className="mt-2 text-sm text-green-600 flex items-center">
+                        <Upload className="h-4 w-4 mr-1" />
+                        {courseForm.imageFile.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* PDF Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Course PDF</label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={(e) => handleFileChange(e, "pdfFile")}
+                      className="hidden"
+                      id="pdfUpload"
+                    />
+                    <label
+                      htmlFor="pdfUpload"
+                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-purple-300 rounded-lg cursor-pointer bg-purple-50 hover:bg-purple-100 transition-colors"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <FileText className="w-8 h-8 mb-2 text-purple-500" />
+                        <p className="mb-2 text-sm text-purple-600">
+                          <span className="font-semibold">Click to upload</span> course PDF
+                        </p>
+                        <p className="text-xs text-purple-500">PDF files only (MAX. 10MB)</p>
+                      </div>
+                    </label>
+                    {courseForm.pdfFile && (
+                      <div className="mt-2 text-sm text-green-600 flex items-center">
+                        <Upload className="h-4 w-4 mr-1" />
+                        {courseForm.pdfFile.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="submit"
+                  className="flex-1 bg-teal-700 hover:bg-teal-800 text-white py-2 px-4 rounded-md transition-colors"
+                >
+                  Add Course
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddCourseModal(false)
+                    resetCourseForm()
+                  }}
+                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-md transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Updated Edit Course Modal with File Upload */}
+      {showEditCourseModal && selectedCourse && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b bg-teal-600 text-white rounded-t-xl">
+              <h2 className="text-2xl font-bold">Edit Course</h2>
+              <p className="text-teal-100">Update course information</p>
+            </div>
+            <form onSubmit={handleEditCourse} className="p-6 space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Course Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={courseForm.title}
+                  onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+                  placeholder="Enter course title"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Age Group</label>
+                <input
+                  type="text"
+                  value={courseForm.ageGroup}
+                  onChange={(e) => setCourseForm({ ...courseForm, ageGroup: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+                  placeholder="e.g., 8-12 years"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">About Course</label>
+                <textarea
+                  value={courseForm.about}
+                  onChange={(e) => setCourseForm({ ...courseForm, about: e.target.value })}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+                  placeholder="Describe the course..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Learning Outcomes</label>
+                <textarea
+                  value={courseForm.learningOutcomes}
+                  onChange={(e) => setCourseForm({ ...courseForm, learningOutcomes: e.target.value })}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
+                  placeholder="What will students learn..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Image Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Course Image</label>
+                  {selectedCourse.image && (
+                    <div className="mb-2 text-sm text-gray-600">
+                      Current:{" "}
+                      <a
+                        href={selectedCourse.image}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-teal-700 hover:underline"
+                      >
+                        View current image
+                      </a>
+                    </div>
+                  )}
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e, "imageFile")}
+                      className="hidden"
+                      id="editImageUpload"
+                    />
+                    <label
+                      htmlFor="editImageUpload"
+                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-teal-300 rounded-lg cursor-pointer bg-teal-50 hover:bg-teal-100 transition-colors"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <ImageIcon className="w-8 h-8 mb-2 text-teal-700" />
+                        <p className="mb-2 text-sm text-teal-700">
+                          <span className="font-semibold">Click to upload</span> new image
+                        </p>
+                        <p className="text-xs text-teal-600">PNG, JPG or JPEG (MAX. 5MB)</p>
+                      </div>
+                    </label>
+                    {courseForm.imageFile && (
+                      <div className="mt-2 text-sm text-green-600 flex items-center">
+                        <Upload className="h-4 w-4 mr-1" />
+                        {courseForm.imageFile.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* PDF Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Course PDF</label>
+                  {selectedCourse.pdf && (
+                    <div className="mb-2 text-sm text-gray-600">
+                      Current:{" "}
+                      <a
+                        href={selectedCourse.pdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-purple-600 hover:underline"
+                      >
+                        View current PDF
+                      </a>
+                    </div>
+                  )}
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={(e) => handleFileChange(e, "pdfFile")}
+                      className="hidden"
+                      id="editPdfUpload"
+                    />
+                    <label
+                      htmlFor="editPdfUpload"
+                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-purple-300 rounded-lg cursor-pointer bg-purple-50 hover:bg-purple-100 transition-colors"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <FileText className="w-8 h-8 mb-2 text-purple-500" />
+                        <p className="mb-2 text-sm text-purple-600">
+                          <span className="font-semibold">Click to upload</span> new PDF
+                        </p>
+                        <p className="text-xs text-purple-500">PDF files only (MAX. 10MB)</p>
+                      </div>
+                    </label>
+                    {courseForm.pdfFile && (
+                      <div className="mt-2 text-sm text-green-600 flex items-center">
+                        <Upload className="h-4 w-4 mr-1" />
+                        {courseForm.pdfFile.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="submit"
+                  className="flex-1 bg-teal-700 hover:bg-teal-800 text-white py-2 px-4 rounded-md transition-colors"
+                >
+                  Update Course
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditCourseModal(false)
+                    setSelectedCourse(null)
+                    resetCourseForm()
                   }}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-md transition-colors"
                 >
@@ -1673,7 +1703,7 @@ const AdminDashboard = () => {
                   required
                   value={studentForm.name}
                   onChange={(e) => setStudentForm({ ...studentForm, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1683,7 +1713,7 @@ const AdminDashboard = () => {
                   required
                   value={studentForm.email}
                   onChange={(e) => setStudentForm({ ...studentForm, email: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1694,7 +1724,7 @@ const AdminDashboard = () => {
                   type="password"
                   value={studentForm.password}
                   onChange={(e) => setStudentForm({ ...studentForm, password: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1703,7 +1733,7 @@ const AdminDashboard = () => {
                   type="tel"
                   value={studentForm.phoneNumber}
                   onChange={(e) => setStudentForm({ ...studentForm, phoneNumber: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1712,7 +1742,7 @@ const AdminDashboard = () => {
                   type="text"
                   value={studentForm.grade}
                   onChange={(e) => setStudentForm({ ...studentForm, grade: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1721,7 +1751,7 @@ const AdminDashboard = () => {
                   type="number"
                   value={studentForm.age}
                   onChange={(e) => setStudentForm({ ...studentForm, age: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div>
@@ -1730,13 +1760,13 @@ const AdminDashboard = () => {
                   value={studentForm.address}
                   onChange={(e) => setStudentForm({ ...studentForm, address: e.target.value })}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-700"
                 />
               </div>
               <div className="flex gap-4 pt-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors"
+                  className="flex-1 bg-teal-700 hover:bg-teal-800 text-white py-2 px-4 rounded-md transition-colors"
                 >
                   Update Student
                 </button>
@@ -2100,181 +2130,6 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Add Course Modal */}
-      {showAddCourseModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">Add New Course</h2>
-            </div>
-            <form onSubmit={handleAddCourse} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
-                <input
-                  type="text"
-                  required
-                  value={courseForm.title}
-                  onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Age Group</label>
-                <input
-                  type="text"
-                  value={courseForm.ageGroup}
-                  onChange={(e) => setCourseForm({ ...courseForm, ageGroup: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="e.g., 8-12 years"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">About</label>
-                <textarea
-                  value={courseForm.about}
-                  onChange={(e) => setCourseForm({ ...courseForm, about: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Learning Outcomes</label>
-                <textarea
-                  value={courseForm.learningOutcomes}
-                  onChange={(e) => setCourseForm({ ...courseForm, learningOutcomes: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-                <input
-                  type="url"
-                  value={courseForm.image}
-                  onChange={(e) => setCourseForm({ ...courseForm, image: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">PDF URL</label>
-                <input
-                  type="url"
-                  value={courseForm.pdf}
-                  onChange={(e) => setCourseForm({ ...courseForm, pdf: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <div className="flex gap-4 pt-4">
-                <button
-                  type="submit"
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md transition-colors"
-                >
-                  Add Course
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowAddCourseModal(false)
-                    resetCourseForm()
-                  }}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-md transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Course Modal */}
-      {showEditCourseModal && selectedCourse && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">Edit Course</h2>
-            </div>
-            <form onSubmit={handleEditCourse} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
-                <input
-                  type="text"
-                  required
-                  value={courseForm.title}
-                  onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Age Group</label>
-                <input
-                  type="text"
-                  value={courseForm.ageGroup}
-                  onChange={(e) => setCourseForm({ ...courseForm, ageGroup: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="e.g., 8-12 years"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">About</label>
-                <textarea
-                  value={courseForm.about}
-                  onChange={(e) => setCourseForm({ ...courseForm, about: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Learning Outcomes</label>
-                <textarea
-                  value={courseForm.learningOutcomes}
-                  onChange={(e) => setCourseForm({ ...courseForm, learningOutcomes: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-                <input
-                  type="url"
-                  value={courseForm.image}
-                  onChange={(e) => setCourseForm({ ...courseForm, image: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">PDF URL</label>
-                <input
-                  type="url"
-                  value={courseForm.pdf}
-                  onChange={(e) => setCourseForm({ ...courseForm, pdf: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-              <div className="flex gap-4 pt-4">
-                <button
-                  type="submit"
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md transition-colors"
-                >
-                  Update Course
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowEditCourseModal(false)
-                    setSelectedCourse(null)
-                    resetCourseForm()
-                  }}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-md transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
       {/* View Course Modal */}
       {showViewCourseModal && selectedCourse && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -2319,7 +2174,7 @@ const AdminDashboard = () => {
                           href={selectedCourse.image}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="ml-2 text-blue-600 hover:text-blue-800"
+                          className="ml-2 text-teal-700 hover:text-teal-600"
                         >
                           View Image
                         </a>
@@ -2332,7 +2187,7 @@ const AdminDashboard = () => {
                           href={selectedCourse.pdf}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="ml-2 text-blue-600 hover:text-blue-800"
+                          className="ml-2 text-teal-700 hover:text-teal-600"
                         >
                           View PDF
                         </a>
@@ -2697,12 +2552,15 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Enroll Student Modal */}
+      {/* Enroll Student Modal - Fixed with better student loading */}
       {showEnrollStudentModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b">
               <h2 className="text-2xl font-bold text-gray-900">Enroll Student in Batch</h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Available Students: {students.length} | Available Batches: {batches.length}
+              </p>
             </div>
             <form onSubmit={handleEnrollStudent} className="p-6 space-y-4">
               <div>
@@ -2720,6 +2578,9 @@ const AdminDashboard = () => {
                     </option>
                   ))}
                 </select>
+                {students.length === 0 && (
+                  <p className="text-sm text-red-600 mt-1">No students available. Please add students first.</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Batch *</label>
@@ -2736,11 +2597,15 @@ const AdminDashboard = () => {
                     </option>
                   ))}
                 </select>
+                {batches.length === 0 && (
+                  <p className="text-sm text-red-600 mt-1">No batches available. Please create batches first.</p>
+                )}
               </div>
               <div className="flex gap-4 pt-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md transition-colors"
+                  disabled={students.length === 0 || batches.length === 0}
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-2 px-4 rounded-md transition-colors"
                 >
                   Enroll Student
                 </button>

@@ -48,6 +48,9 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
+
+
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -61,6 +64,7 @@ app.use("/api/admin", adminRoutes)
 app.use("/api/teachers", teacherRoutes)
 app.use("/api/students", studentRoutes)
 app.use('/api', courseRoutes);
+
 
 
 

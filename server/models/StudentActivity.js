@@ -22,7 +22,7 @@ const studentActivitySchema = new Schema({
   activitiesCompleted: [{
     type: {
       type: String,
-      enum: ['assignment', 'assessment', 'project', 'attendance']
+      enum: ['assignment', 'assessment', 'project', 'attendance','login']
     },
     id: Schema.Types.ObjectId,
     points: Number,

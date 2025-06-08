@@ -2,6 +2,9 @@ const express = require("express")
 const mongoose = require("mongoose")
 const router = express.Router()
 const bcrypt = require("bcryptjs")
+const multer = require("multer")
+const path = require("path")
+const fs = require("fs")
 const Admin = require("../models/Admin")
 const User = require("../models/User")
 const Teacher = require("../models/Teacher")
@@ -9,16 +12,96 @@ const Course = require("../models/Course")
 const Batch = require("../models/Batch")
 const auth = require("../middleware/auth")
 
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, "../uploads")
+const coursesDir = path.join(uploadsDir, "courses")
+const imagesDir = path.join(coursesDir, "images")
+const pdfsDir = path.join(coursesDir, "pdfs")
+;[uploadsDir, coursesDir, imagesDir, pdfsDir].forEach((dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true })
+  }
+})
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    if (file.fieldname === "image") {
+      cb(null, imagesDir)
+    } else if (file.fieldname === "pdf") {
+      cb(null, pdfsDir)
+    } else {
+      cb(new Error("Invalid field name"), null)
+    }
+  },
+  filename: (req, file, cb) => {
+    // Generate unique filename with timestamp
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+    const ext = path.extname(file.originalname)
+    const name = file.fieldname + "-" + uniqueSuffix + ext
+    cb(null, name)
+  },
+})
+
+// File filter for security
+const fileFilter = (req, file, cb) => {
+  if (file.fieldname === "image") {
+    // Accept only image files
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true)
+    } else {
+      cb(new Error("Only image files are allowed for course images"), false)
+    }
+  } else if (file.fieldname === "pdf") {
+    // Accept only PDF files
+    if (file.mimetype === "application/pdf") {
+      cb(null, true)
+    } else {
+      cb(new Error("Only PDF files are allowed for course materials"), false)
+    }
+  } else {
+    cb(new Error("Invalid field name"), false)
+  }
+}
+
+// Configure multer with limits and file filter
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+    files: 2, // Maximum 2 files (image + pdf)
+  },
+  fileFilter: fileFilter,
+})
+
+// Helper function to delete files
+const deleteFile = (filePath) => {
+  if (filePath && fs.existsSync(filePath)) {
+    try {
+      fs.unlinkSync(filePath)
+    } catch (error) {
+      console.error("Error deleting file:", error)
+    }
+  }
+}
+
+// Helper function to get file URL
+const getFileUrl = (filename, type) => {
+  if (!filename) return null
+  return `/uploads/courses/${type}s/${filename}`
+}
+
 // Get admin profile
 router.get("/profile", auth(["admin"]), async (req, res) => {
   try {
+    // Assuming admin info is stored in the token or database
     const admin = await Admin.findById(req.user.id).select("-password")
     if (!admin) {
       return res.status(404).json({ message: "Admin not found" })
     }
     res.json(admin)
-  } catch (err) {
-    console.error("Error fetching admin profile:", err)
+  } catch (error) {
+    console.error("Error fetching stats:", error)
     res.status(500).json({ message: "Server error" })
   }
 })
@@ -26,20 +109,21 @@ router.get("/profile", auth(["admin"]), async (req, res) => {
 // Get dashboard stats
 router.get("/stats", auth(["admin"]), async (req, res) => {
   try {
-    const totalStudents = await User.countDocuments()
-    const totalTeachers = await Teacher.countDocuments()
-    const totalCourses = await Course.countDocuments()
-    const activeBatches = await Batch.countDocuments({
-      endDate: { $gte: new Date() },
-    })
+    const [totalStudents, totalTeachers, totalCourses, activeBatches] = await Promise.all([
+      User.countDocuments(),
+      Teacher.countDocuments(),
+      Course.countDocuments(),
+      Batch.countDocuments({ endDate: { $gte: new Date() } }),
+    ])
+
     res.json({
       totalStudents,
       totalTeachers,
       totalCourses,
       activeBatches,
     })
-  } catch (err) {
-    console.error("Error fetching admin stats:", err)
+  } catch (error) {
+    console.error("Error fetching stats:", error)
     res.status(500).json({ message: "Server error" })
   }
 })
@@ -49,8 +133,8 @@ router.get("/courses", auth(["admin"]), async (req, res) => {
   try {
     const courses = await Course.find().populate("batches")
     res.json(courses)
-  } catch (err) {
-    console.error("Error fetching courses:", err)
+  } catch (error) {
+    console.error("Error fetching courses:", error)
     res.status(500).json({ message: "Server error" })
   }
 })
@@ -59,24 +143,9 @@ router.get("/courses", auth(["admin"]), async (req, res) => {
 router.get("/batches", auth(["admin"]), async (req, res) => {
   try {
     const batches = await Batch.find().populate("students", "name email")
-    console.log("batches", batches)
     res.json(batches)
   } catch (err) {
     console.error("Error fetching Batches:", err)
-    res.status(500).json({ message: "Server error" })
-  }
-})
-
-// Update a batch
-router.put("/batches/:id", auth(["admin"]), async (req, res) => {
-  try {
-    const updatedBatch = await Batch.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
-    if (!updatedBatch) {
-      return res.status(404).json({ message: "Batch not found" })
-    }
-    res.status(200).json(updatedBatch)
-  } catch (err) {
-    console.error("Error updating batch:", err)
     res.status(500).json({ message: "Server error" })
   }
 })
@@ -92,23 +161,63 @@ router.get("/teachers", auth(["admin"]), async (req, res) => {
   }
 })
 
-// Delete a batch
-router.delete("/batches/:id", auth(["admin"]), async (req, res) => {
+// Get all students
+router.get("/students", auth(["admin"]), async (req, res) => {
   try {
-    await Batch.findByIdAndDelete(req.params.id)
-    res.status(200).json({ message: "Batch deleted successfully" })
+    const students = await User.find()
+      .select("-password")
+      .populate("batches.batch", "name courseName")
+      .sort({ createdAt: -1 })
+    res.json(students)
   } catch (err) {
-    res.status(500).json({ error: "Failed to delete batch" })
+    console.error("Error fetching students:", err)
+    res.status(500).json({ message: "Server error" })
   }
 })
 
-// Get recent students
-router.get("/recent-students", auth(["admin"]), async (req, res) => {
+// Add a new student
+router.post("/add-student", auth(["admin"]), async (req, res) => {
   try {
-    const recentStudents = await User.find().sort({ createdAt: -1 }).limit(10).select("-password")
-    res.json(recentStudents)
+    const { name, email, password, address, age, phoneNumber, grade } = req.body
+    const existingStudent = await User.findOne({ email })
+    if (existingStudent) {
+      return res.status(400).json({ message: "Student already exists" })
+    }
+
+    const newStudent = new User({
+      name,
+      email,
+      address,
+      age,
+      phoneNumber,
+      grade,
+      password,
+    })
+    await newStudent.save()
+    res.status(201).json({ message: "Student added successfully", student: newStudent })
   } catch (err) {
-    console.error("Error fetching recent students:", err)
+    console.error("Error adding student:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Update a student
+router.put("/students/:id", auth(["admin"]), async (req, res) => {
+  try {
+    const { name, email, password, address, age, phoneNumber, grade } = req.body
+    const updateData = { name, email, address, age, phoneNumber, grade }
+
+    if (password && password.trim() !== "") {
+      updateData.password = password
+    }
+
+    const updatedStudent = await User.findByIdAndUpdate(req.params.id, updateData, { new: true })
+    if (!updatedStudent) {
+      return res.status(404).json({ message: "Student not found" })
+    }
+    res.status(200).json({ message: "Student updated successfully", student: updatedStudent })
+  } catch (err) {
+    console.error("Error updating student:", err)
     res.status(500).json({ message: "Server error" })
   }
 })
@@ -127,27 +236,51 @@ router.delete("/students/:id", auth(["admin"]), async (req, res) => {
   }
 })
 
-router.delete("/courses/:id", auth(["admin"]), async (req, res) => {
+// Add a new teacher
+router.post("/add-teacher", auth(["admin"]), async (req, res) => {
   try {
-    const { id } = req.params
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid course ID" })
+    const { name, email, password, phoneNumber } = req.body
+    const existingTeacher = await Teacher.findOne({ email })
+    if (existingTeacher) {
+      return res.status(400).json({ message: "Teacher already exists" })
     }
 
-    const course = await Course.findById(id)
-    if (!course) {
-      return res.status(404).json({ message: "Course not found" })
-    }
-
-    await Course.findByIdAndDelete(id)
-    res.status(200).json({ message: "Course deleted successfully" })
-  } catch (error) {
-    console.error("Error deleting course:", error)
-    res.status(500).json({ message: "Server error while deleting course" })
+    const newTeacher = new Teacher({
+      name,
+      email,
+      phoneNumber,
+      password,
+    })
+    await newTeacher.save()
+    res.status(201).json({ message: "Teacher added successfully", teacher: newTeacher })
+  } catch (err) {
+    console.error("Error adding teacher:", err)
+    res.status(500).json({ message: "Server error" })
   }
 })
 
+// Update a teacher
+router.put("/teachers/:id", auth(["admin"]), async (req, res) => {
+  try {
+    const { name, email, password, phoneNumber } = req.body
+    const updateData = { name, email, phoneNumber }
+
+    if (password && password.trim() !== "") {
+      updateData.password = password
+    }
+
+    const updatedTeacher = await Teacher.findByIdAndUpdate(req.params.id, updateData, { new: true })
+    if (!updatedTeacher) {
+      return res.status(404).json({ message: "Teacher not found" })
+    }
+    res.status(200).json({ message: "Teacher updated successfully", teacher: updatedTeacher })
+  } catch (err) {
+    console.error("Error updating teacher:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Delete teacher
 router.delete("/teachers/:id", auth(["admin"]), async (req, res) => {
   try {
     const { id } = req.params
@@ -170,72 +303,154 @@ router.delete("/teachers/:id", auth(["admin"]), async (req, res) => {
   }
 })
 
-// Add a new student
-router.post("/add-student", auth(["admin"]), async (req, res) => {
-  try {
-    const { name, email, password, address, age, phoneNumber, grade } = req.body
-    const existingStudent = await User.findOne({ email })
-    if (existingStudent) {
-      return res.status(400).json({ message: "Student already exists" })
-    }
-    
-    const newStudent = new User({
-      name,
-      email,
-      address,
-      age,
-      phoneNumber,
-      grade,
-      password
-    })
-    await newStudent.save()
-    res.status(201).json({ message: "Student added successfully", student: newStudent })
-  } catch (err) {
-    console.error("Error adding student:", err)
-    res.status(500).json({ message: "Server error" })
-  }
-})
+// Add new course with file upload
+router.post(
+  "/add-course",
+  auth(["admin"]),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "pdf", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const { title, ageGroup, about, learningOutcomes } = req.body
 
-// Add a new teacher
-router.post("/add-teacher", auth(["admin"]), async (req, res) => {
-  try {
-    const { name, email, password, phoneNumber } = req.body
-    const existingTeacher = await Teacher.findOne({ email })
-    if (existingTeacher) {
-      return res.status(400).json({ message: "Teacher already exists" })
-    }
-   
-    const newTeacher = new Teacher({
-      name,
-      email,
-      phoneNumber,
-      password
-    })
-    await newTeacher.save()
-    res.status(201).json({ message: "Teacher added successfully", teacher: newTeacher })
-  } catch (err) {
-    console.error("Error adding teacher:", err)
-    res.status(500).json({ message: "Server error" })
-  }
-})
+      // Validate required fields
+      if (!title) {
+        return res.status(400).json({ message: "Course title is required" })
+      }
 
-// Add a new course
-router.post("/add-course", auth(["admin"]), async (req, res) => {
+      // Get uploaded file paths
+      const imageFile = req.files?.image?.[0]
+      const pdfFile = req.files?.pdf?.[0]
+
+      const courseData = {
+        title,
+        ageGroup,
+        about,
+        learningOutcomes,
+        image: imageFile ? getFileUrl(imageFile.filename, "image") : null,
+        pdf: pdfFile ? getFileUrl(pdfFile.filename, "pdf") : null,
+      }
+
+      const course = new Course(courseData)
+      await course.save()
+
+      res.status(201).json({ message: "Course created successfully", course })
+    } catch (error) {
+      console.error("Error creating course:", error)
+
+      // Clean up uploaded files if course creation fails
+      if (req.files?.image?.[0]) {
+        deleteFile(req.files.image[0].path)
+      }
+      if (req.files?.pdf?.[0]) {
+        deleteFile(req.files.pdf[0].path)
+      }
+
+      res.status(500).json({ message: "Server error" })
+    }
+  },
+)
+
+// Update course with file upload
+router.put(
+  "/courses/:id",
+  auth(["admin"]),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "pdf", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const { title, ageGroup, about, learningOutcomes } = req.body
+      const courseId = req.params.id
+
+      // Find existing course
+      const existingCourse = await Course.findById(courseId)
+      if (!existingCourse) {
+        return res.status(404).json({ message: "Course not found" })
+      }
+
+      // Get uploaded file paths
+      const imageFile = req.files?.image?.[0]
+      const pdfFile = req.files?.pdf?.[0]
+
+      const updateData = {
+        title,
+        ageGroup,
+        about,
+        learningOutcomes,
+      }
+
+      // Handle image update
+      if (imageFile) {
+        // Delete old image if exists
+        if (existingCourse.image) {
+          const oldImagePath = path.join(__dirname, "../uploads/courses/images", path.basename(existingCourse.image))
+          deleteFile(oldImagePath)
+        }
+        updateData.image = getFileUrl(imageFile.filename, "image")
+      }
+
+      // Handle PDF update
+      if (pdfFile) {
+        // Delete old PDF if exists
+        if (existingCourse.pdf) {
+          const oldPdfPath = path.join(__dirname, "../uploads/courses/pdfs", path.basename(existingCourse.pdf))
+          deleteFile(oldPdfPath)
+        }
+        updateData.pdf = getFileUrl(pdfFile.filename, "pdf")
+      }
+
+      const course = await Course.findByIdAndUpdate(courseId, updateData, { new: true })
+      res.json({ message: "Course updated successfully", course })
+    } catch (error) {
+      console.error("Error updating course:", error)
+
+      // Clean up uploaded files if update fails
+      if (req.files?.image?.[0]) {
+        deleteFile(req.files.image[0].path)
+      }
+      if (req.files?.pdf?.[0]) {
+        deleteFile(req.files.pdf[0].path)
+      }
+
+      res.status(500).json({ message: "Server error" })
+    }
+  },
+)
+
+// Delete course
+router.delete("/courses/:id", auth(["admin"]), async (req, res) => {
   try {
-    const { title, image, pdf, ageGroup, about, learningOutcomes } = req.body
-    const course = new Course({
-      title,
-      image,
-      pdf,
-      ageGroup,
-      about,
-      learningOutcomes,
-      batches: [],
-    })
-    await course.save()
-    res.status(201).json({ message: "Course added successfully", course })
-  } catch (err) {
-    console.error("Error adding course:", err)
+    const courseId = req.params.id
+    const course = await Course.findById(courseId)
+
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" })
+    }
+
+    // Delete associated files
+    if (course.image) {
+      const imagePath = path.join(__dirname, "../uploads/courses/images", path.basename(course.image))
+      deleteFile(imagePath)
+    }
+
+    if (course.pdf) {
+      const pdfPath = path.join(__dirname, "../uploads/courses/pdfs", path.basename(course.pdf))
+      deleteFile(pdfPath)
+    }
+
+    // Delete course from database
+    await Course.findByIdAndDelete(courseId)
+
+    // Update any batches that reference this course
+    await Batch.updateMany({ course: courseId }, { $unset: { course: 1 } })
+
+    res.json({ message: "Course deleted successfully" })
+  } catch (error) {
+    console.error("Error deleting course:", error)
     res.status(500).json({ message: "Server error" })
   }
 })
@@ -265,7 +480,7 @@ router.post("/add-batch", auth(["admin"]), async (req, res) => {
       schedule,
       maxStudents,
       currentStudents: 0,
-      students: [], // Initialize empty students array
+      students: [],
       lectures: lectures || [],
     })
 
@@ -281,7 +496,31 @@ router.post("/add-batch", auth(["admin"]), async (req, res) => {
   }
 })
 
-// FIXED: Enroll student in a batch
+// Update a batch
+router.put("/batches/:id", auth(["admin"]), async (req, res) => {
+  try {
+    const updatedBatch = await Batch.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
+    if (!updatedBatch) {
+      return res.status(404).json({ message: "Batch not found" })
+    }
+    res.status(200).json(updatedBatch)
+  } catch (err) {
+    console.error("Error updating batch:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Delete a batch
+router.delete("/batches/:id", auth(["admin"]), async (req, res) => {
+  try {
+    await Batch.findByIdAndDelete(req.params.id)
+    res.status(200).json({ message: "Batch deleted successfully" })
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete batch" })
+  }
+})
+
+// Enroll student in a batch
 router.post("/enroll-student", auth(["admin"]), async (req, res) => {
   try {
     const { studentId, batchId } = req.body
@@ -346,9 +585,6 @@ router.post("/enroll-student", auth(["admin"]), async (req, res) => {
     batch.currentStudents = batch.students.length
     await batch.save()
 
-    console.log(`Student ${student.name} enrolled in batch ${batch.name}`)
-    console.log(`Batch now has ${batch.currentStudents} students`)
-
     res.json({
       message: "Student enrolled successfully",
       batchStudentCount: batch.currentStudents,
@@ -360,21 +596,7 @@ router.post("/enroll-student", auth(["admin"]), async (req, res) => {
   }
 })
 
-// NEW: Get all students (for admin dashboard)
-router.get("/students", auth(["admin"]), async (req, res) => {
-  try {
-    const students = await User.find()
-      .select("-password")
-      .populate("batches.batch", "name courseName")
-      .sort({ createdAt: -1 })
-    res.json(students)
-  } catch (err) {
-    console.error("Error fetching students:", err)
-    res.status(500).json({ message: "Server error" })
-  }
-})
-
-// NEW: Remove student from batch
+// Remove student from batch
 router.post("/remove-student-from-batch", auth(["admin"]), async (req, res) => {
   try {
     const { studentId, batchId } = req.body
@@ -412,5 +634,8 @@ router.post("/remove-student-from-batch", auth(["admin"]), async (req, res) => {
     res.status(500).json({ message: "Server error" })
   }
 })
+
+// Serve uploaded files
+router.use("/uploads", express.static(path.join(__dirname, "../uploads")))
 
 module.exports = router
