@@ -18,6 +18,13 @@ const StudentActivity = require("../models/StudentActivity")
 
 const auth = require("../middleware/auth")
 
+// Import email notification middleware
+const {
+  notifyAssignmentSubmitted,
+  notifyAssessmentSubmitted,
+  notifyProjectSubmitted,
+} = require("../middleware/email-notifications")
+
 // Ensure upload directory exists
 const uploadDir = "uploads/assignments"
 if (!fs.existsSync(uploadDir)) {
@@ -270,6 +277,9 @@ router.post("/submit-assignment", auth(["student"]), upload.single("file"), asyn
 
     await submission.save()
 
+    // Send email notification to teacher
+    await notifyAssignmentSubmitted(submission)
+
     // Award points for assignment submission
     const today = new Date()
     today.setHours(0, 0, 0, 0)
@@ -376,6 +386,9 @@ router.post("/submit-assessment", auth(["student"]), async (req, res) => {
 
     await submission.save()
 
+    // Send email notification to teacher
+    await notifyAssessmentSubmitted(submission)
+
     // Award points for assessment completion
     const points = Math.max(10, Math.round(percentage / 5)) // 10-20 points based on performance
     const today = new Date()
@@ -469,6 +482,9 @@ router.post("/submit-project", auth(["student"]), upload.single("file"), async (
     })
 
     await submission.save()
+
+    // Send email notification to teacher
+    await notifyProjectSubmitted(submission)
 
     // Award points for project submission
     const today = new Date()

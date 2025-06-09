@@ -14,6 +14,13 @@ const Attendance = require("../models/Attendence")
 const StudentActivity = require("../models/StudentActivity")
 const auth = require("../middleware/auth")
 
+// Import email notification middleware
+const {
+  notifyAssignmentCreated,
+  notifyAssessmentCreated,
+  notifyProjectCreated,
+} = require("../middleware/email-notifications")
+
 // Get teacher profile
 router.get("/profile", auth(["teacher"]), async (req, res) => {
   try {
@@ -153,6 +160,9 @@ router.post("/assignments", auth(["teacher"]), async (req, res) => {
     await assignment.populate("course", "title")
     await assignment.populate("batch", "name")
 
+    // Send email notifications to students
+    await notifyAssignmentCreated(assignment)
+
     res.status(201).json(assignment)
   } catch (err) {
     console.error("Error creating assignment:", err)
@@ -284,6 +294,9 @@ router.post("/assessments", auth(["teacher"]), async (req, res) => {
     await assessment.populate("course", "title")
     await assessment.populate("batch", "name")
 
+    // Send email notifications to students
+    await notifyAssessmentCreated(assessment)
+
     res.status(201).json(assessment)
   } catch (err) {
     console.error("Error creating assessment:", err)
@@ -383,6 +396,9 @@ router.post("/projects", auth(["teacher"]), async (req, res) => {
     await project.save()
     await project.populate("course", "title")
     await project.populate("batch", "name")
+
+    // Send email notifications to students
+    await notifyProjectCreated(project)
 
     res.status(201).json(project)
   } catch (err) {
