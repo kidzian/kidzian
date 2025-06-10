@@ -38,7 +38,8 @@ export default function ProjectView() {
                     alt="Guess the Number App"
                     className="w-full h-auto object-cover rounded-2xl"
                   />
-                 <div className="absolute top-4 right-4 bg-white -mt-4 font-extrabold text-sm text-black rounded-lg -px-4 py-2 text-sm font-bold shadow-lg flex items-center animate-blink gap-2 px-2">
+                  
+                 <div className="absolute top-4 right-4 bg-white -mt-4 text-2xl font-bold text-green-700 font-extrabold text-sm text-black rounded-lg -px-4 py-2 text-sm font-bold shadow-lg flex items-center animate-blink gap-2 px-2">
   <Download className="w-4 h-4 " />  1000+
 </div>
 

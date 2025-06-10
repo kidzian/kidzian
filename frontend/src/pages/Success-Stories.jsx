@@ -300,49 +300,38 @@
 // export default SuccessStories;
 "use client"
 
-"use client"
-
-import { useState, useRef, useEffect } from "react"
-
-import manaswin from "../assets/ManaswinL .jpg"
-import rashmi from "../assets/Rashmi Raju.jpg"
-import Sunaina from "../assets/Sunaina suresh.jpg"
-import Jaipeet from "../assets/Jaipreet.jpg"
-import Dhyan from "../assets/Dhyan .jpg"
-import Dhaiwik from "../assets/Daiwik.jpg"
-import Brish from "../assets/Brisha.jpg"
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
 import {
   Award,
   Download,
   Star,
   Trophy,
-  ChevronRight,
   ExternalLink,
   Code,
-  Brain,
   Rocket,
-  Heart,
   ArrowRight,
   Users,
   Sparkles,
-  Lightbulb,
   ChevronLeft,
-  X,
+  ChevronRight,
+  BookOpen,
+  Target,
+  Zap,
 } from "lucide-react"
 
-const SuccessStories = () => {
-  const [activeTab, setActiveTab] = useState("all")
-  const [showAllStories, setShowAllStories] = useState(false)
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [topCurrentSlide, setTopCurrentSlide] = useState(0)
-  const carouselRef = useRef(null)
-  const topCarouselRef = useRef(null)
+// Import images (you'll need to add these to your assets folder)
+import manaswin from "../assets/ManaswinL .jpg"
+import rashmi from "../assets/Rashmi Raju.jpg"
+import sunaina from "../assets/Sunaina suresh.jpg"
+import jaipeet from "../assets/Jaipreet.jpg"
+import dhyan from "../assets/Dhyan .jpg"
+import dhaiwik from "../assets/Daiwik.jpg"
+import brish from "../assets/Brisha.jpg"
 
-  // Animation classes
-  const fadeIn = "animate-[fadeIn_1s_ease-in-out]"
-  const slideUp = "animate-[slideUp_0.5s_ease-out]"
-  const slideRight = "animate-[slideRight_0.5s_ease-out]"
-  const pulse = "animate-[pulse_2s_infinite]"
+const SuccessStories = () => {
+  const [activeCategory, setActiveCategory] = useState("all")
+  const [currentSlide, setCurrentSlide] = useState(0)
 
   // Student data
   const students = [
@@ -350,280 +339,290 @@ const SuccessStories = () => {
       name: "Daiwik",
       age: 12,
       category: "coding",
-      icon: <Code className="text-emerald-600 mr-2" size={16} />,
       title: "Coding Enthusiast",
       description:
         "Exceptional academic performance with top grades in Coding Languages and problem-solving. Daiwik's dedication to learning has made him stand out among his peers.",
+      achievement: "Top performer in Python fundamentals",
       joinedYear: 2023,
-      image: Dhaiwik,
+      image: dhaiwik,
+      skills: ["Python", "Problem Solving", "Algorithms"],
     },
     {
       name: "Sunaina Suresh",
       age: 14,
       category: "coding",
-      icon: <Brain className="text-emerald-600 mr-2" size={16} />,
-      title: "Python Programming",
+      title: "Python Programming Champion",
       description:
-        "Sunaina secured first place in a CodeBlaze Python coding competition, showcasing her exceptional programming skills.",
+        "Sunaina secured first place in a CodeBlaze Python coding competition, showcasing her exceptional programming skills and innovative thinking.",
+      achievement: "1st Place - CodeBlaze Python Competition",
       joinedYear: 2022,
-      image: Sunaina,
+      image: sunaina,
+      skills: ["Python", "Competitive Programming", "Data Structures"],
     },
     {
       name: "Dhyan",
       age: 13,
       category: "coding",
-      icon: <Rocket className="text-emerald-600 mr-2" size={16} />,
       title: "Competitive Programmer",
       description:
-        "Won multiple coding competitions at national level. Dhyan's algorithmic thinking and problem-solving skills have earned him top positions in several prestigious competitions.",
+        "Won multiple coding competitions at national level. Dhyan's algorithmic thinking and problem-solving skills have earned him top positions.",
+      achievement: "National Level Coding Competition Winner",
       joinedYear: 2023,
-      image: Dhyan,
+      image: dhyan,
+      skills: ["Algorithms", "Data Structures", "Competitive Programming"],
     },
     {
       name: "Jaipreet",
       age: 15,
       category: "science",
-      icon: <Lightbulb className="text-emerald-600 mr-2" size={16} />,
-      title: "Science Enthusiast",
+      title: "Science Innovator",
       description:
-        "Developed an innovative science project that won state-level recognition. Jaipreet's passion for science and innovation led to the creation of a project that addresses real-world problems.",
+        "Developed an innovative science project that won state-level recognition. Jaipreet's passion for science led to creating solutions for real-world problems.",
+      achievement: "State Level Science Fair Winner",
       joinedYear: 2022,
-      image: Jaipeet,
+      image: jaipeet,
+      skills: ["Research", "Innovation", "Scientific Method"],
     },
     {
       name: "Brisha",
       age: 14,
-      category: "science",
-      icon: <Heart className="text-emerald-600 mr-2" size={16} />,
+      category: "design",
       title: "Creative Designer",
       description:
         "Brisha has shown exceptional talent in creative design, combining artistic skills with technical knowledge to create stunning digital art and UI designs.",
+      achievement: "Best UI Design - Youth Competition",
       joinedYear: 2023,
-      image: Brish,
+      image: brish,
+      skills: ["UI/UX Design", "Digital Art", "Creative Thinking"],
     },
   ]
 
-  // Filter students based on active tab
-  const filteredStudents = students.filter((student) => activeTab === "all" || student.category === activeTab)
+  // Filter students based on category
+  const filteredStudents = students.filter((student) => activeCategory === "all" || student.category === activeCategory)
 
-  // Top 3 students to display prominently
-  const topStudents = filteredStudents.slice(0, 3)
+  // Auto-advance carousel (update the useEffect)
+  useEffect(() => {
+    const maxSlides = Math.ceil(filteredStudents.length / 3)
+    if (maxSlides <= 1) return
 
-  // Remaining students for carousel
-  const remainingStudents = filteredStudents.slice(3)
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev === maxSlides - 1 ? 0 : prev + 1))
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [filteredStudents.length])
 
-  // Handle carousel navigation for top students
-  const nextTopSlide = () => {
-    if (topStudents.length <= 1) return
-    setTopCurrentSlide((prev) => (prev === topStudents.length - 1 ? 0 : prev + 1))
-  }
-
-  const prevTopSlide = () => {
-    if (topStudents.length <= 1) return
-    setTopCurrentSlide((prev) => (prev === 0 ? topStudents.length - 1 : prev - 1))
-  }
-
-  // Handle carousel navigation for remaining students
   const nextSlide = () => {
-    if (remainingStudents.length <= 2) return
-    setCurrentSlide((prev) => (prev === remainingStudents.length - 2 ? 0 : prev + 1))
+    const maxSlides = Math.ceil(filteredStudents.length / 3)
+    setCurrentSlide((prev) => (prev === maxSlides - 1 ? 0 : prev + 1))
   }
 
   const prevSlide = () => {
-    if (remainingStudents.length <= 2) return
-    setCurrentSlide((prev) => (prev === 0 ? remainingStudents.length - 2 : prev - 1))
-  }
-
-  // Auto-advance carousel for top students
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (topStudents.length > 1) {
-        nextTopSlide()
-      }
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [topStudents.length])
-
-  // Auto-advance carousel for remaining students
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (remainingStudents.length > 2) {
-        nextSlide()
-      }
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [remainingStudents.length])
-
-  // Render student card
-  const renderStudentCard = (student, index, isCarousel = false) => {
-    const animationDelay = `delay-[${index * 150}ms]`
-
-    return (
-      <div
-        key={student.name}
-        className={`${!isCarousel ? slideUp : ""} ${animationDelay} ${
-          activeTab !== "all" && activeTab !== student.category ? "hidden" : ""
-        }`}
-      >
-        <div className="bg-white rounded-lg shadow-md overflow-hidden h-full transition-all duration-300 hover:shadow-lg hover:border-emerald-200 border border-slate-100 group">
-          <div className="aspect-[4/3] overflow-hidden relative">
-            <img
-              src={student.image || "/placeholder.svg"}
-              alt={student.name}
-              className="w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-          <div className="p-5">
-            <div className="flex items-center justify-between pb-2">
-              <h3 className="text-xl font-bold text-slate-800">{student.name}</h3>
-              <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-                Age {student.age}
-              </span>
-            </div>
-            <div className="flex items-center mt-1 mb-3">
-              {student.icon}
-              <p className="text-emerald-600 font-medium">{student.title}</p>
-            </div>
-            <p className="text-slate-600 mb-4">{student.description}</p>
-            <div className="flex justify-between items-center pt-4 border-t border-slate-100">
-              <span className="text-slate-500 text-sm">Joined {student.joinedYear}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+    const maxSlides = Math.ceil(filteredStudents.length / 3)
+    setCurrentSlide((prev) => (prev === 0 ? maxSlides - 1 : prev - 1))
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Hero Section with Backdrop */}
-      <section className="relative overflow-hidden pt-20 pb-16 md:pt-32 md:pb-24">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_40%_at_50%_60%,rgba(20,132,121,0.12),transparent)]" />
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div
-              className={`inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 ${fadeIn}`}
-            >
-              <Sparkles className="mr-1 h-3.5 w-3.5" />
-              <span>Inspiring the next generation</span>
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-teal-700 via-teal-800 to-teal-900 text-white py-20">
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+        <div className="container mx-auto px-6 relative z-10">
+          <motion.div
+            className="text-center max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="inline-flex items-center bg-white bg-opacity-20 rounded-full px-4 py-2 mb-6">
+              <Sparkles className="w-5 h-5 mr-2" />
+              <span className="text-sm font-medium">Inspiring Success Stories</span>
             </div>
-            {/* Title with backdrop */}
-            <div className="relative">
-              <div className="absolute inset-0 -z-10 blur-xl bg-gradient-to-r from-emerald-300/30 via-teal-300/30 to-emerald-300/30 rounded-full transform scale-150"></div>
-              <h1
-                className={`text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-600 ${slideUp} relative z-10`}
-              >
-                Success Stories
-              </h1>
-            </div>
-            <p className={`max-w-[700px] text-slate-600 md:text-xl/relaxed ${slideUp}`}>
-              Celebrating the extraordinary achievements of our students who are shaping the future through technology
-              and innovation.
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+              Celebrating Our
+              <span className="block text-yellow-300">Champions</span>
+            </h1>
+            <p className="text-xl text-teal-100 max-w-2xl mx-auto">
+              Discover how our students and founders are shaping the future through innovation, dedication, and
+              excellence in technology and education.
             </p>
-          </div>
+          </motion.div>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-50 to-transparent"></div>
       </section>
 
-      <div className="container mx-auto px-4 md:px-6 pb-24">
-        {/* Founder's Achievement Section */}
-        <section className={`mb-24 ${fadeIn}`}>
-          <div className="flex flex-col md:flex-row gap-6 items-center mb-8">
-            <div className={`bg-emerald-100 p-2.5 rounded-full ${pulse}`}>
-              <Award className="w-6 h-6 text-emerald-700" />
+      {/* Founder Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="inline-flex items-center bg-teal-100 text-teal-700 rounded-full px-4 py-2 mb-4">
+              <Award className="w-5 h-5 mr-2" />
+              <span className="font-medium">Founder's Achievement</span>
             </div>
-            <h2 className="text-3xl font-bold text-slate-800">Founder's Achievement</h2>
-            <div className="flex-grow hidden md:block">
-              <div className="h-px bg-gradient-to-r from-emerald-200 to-transparent"></div>
-            </div>
-          </div>
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Visionary Leadership</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Meet the inspiring founder who is revolutionizing education and empowering the next generation of
+              innovators.
+            </p>
+          </motion.div>
 
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all duration-500">
+          <motion.div
+            className="max-w-6xl mx-auto bg-gradient-to-r from-teal-700 to-teal-600 rounded-3xl overflow-hidden shadow-2xl"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
             <div className="grid md:grid-cols-2 gap-8 p-8 md:p-12">
-              <div className="space-y-8 order-2 md:order-1">
+              <div className="text-white space-y-6">
                 <div>
-                  <h3 className="text-2xl font-bold text-emerald-700 mb-4">Rashmi Raju</h3>
-                  <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-6 transform transition-transform duration-500 hover:scale-[1.02]">
-                    <p className="text-xl font-semibold text-emerald-800 mb-2">
-                      Most Inspiring Young Woman Educationist - 2025
-                    </p>
-                    <p className="text-emerald-600">Awarded by Femmetimes</p>
-                  </div>
+                  <h3 className="text-3xl font-bold mb-2">Rashmi Raju</h3>
+                  <p className="text-teal-100 text-lg">Founder & CEO, Kidzian</p>
                 </div>
 
-                <p className="text-slate-600 text-lg leading-relaxed">
-                  As the visionary founder of Kidzian, Rashmi Raju has revolutionized tech education for young minds.
-                  Her innovative approach combines cutting-edge technology with engaging learning methods, creating a
-                  new generation of tech-savvy innovators.
-                </p>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white p-4 rounded-xl shadow-md border border-slate-100 hover:border-emerald-200 transition-colors hover:shadow-lg">
-                    <Star className="w-6 h-6 text-amber-500 mb-2" />
-                    <h4 className="font-semibold text-slate-800 mb-1">Impact</h4>
-                    <p className="text-slate-600">10,000+ Students Mentored</p>
+                <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-6">
+                  <div className="flex items-center mb-4">
+                    <Trophy className="w-8 h-8 text-yellow-300 mr-3" />
+                    <div>
+                      <h4 className="text-xl font-bold">Most Inspiring Young Woman Educationist</h4>
+                      <p className="text-teal-100">Femmetimes Award 2025</p>
+                    </div>
                   </div>
-                  <div className="bg-white p-4 rounded-xl shadow-md border border-slate-100 hover:border-emerald-200 transition-colors hover:shadow-lg">
-                    <Trophy className="w-6 h-6 text-amber-500 mb-2" />
-                    <h4 className="font-semibold text-slate-800 mb-1">Recognition</h4>
-                    <p className="text-slate-600">15+ International Awards</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative group order-1 md:order-2">
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-2xl opacity-20 blur-xl transform -translate-y-4 translate-x-4"></div>
-                <div className="relative overflow-hidden rounded-2xl shadow-lg border-4 border-white">
-                  <img
-                    src={rashmi || "/placeholder.svg"}
-                    alt="Rashmi Raju - Femmetimes Award"
-                    className="w-full h-[500px] object-contain object-center transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Featured Success - Manaswin L */}
-        <section className={`mb-24 ${fadeIn}`}>
-          <div className="flex flex-col md:flex-row gap-6 items-center mb-8">
-            <div className={`bg-emerald-100 p-2.5 rounded-full ${pulse}`}>
-              <Rocket className="w-6 h-6 text-emerald-700" />
-            </div>
-            <h2 className="text-3xl font-bold text-slate-800">Featured Success</h2>
-            <div className="flex-grow hidden md:block">
-              <div className="h-px bg-gradient-to-r from-emerald-200 to-transparent"></div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-emerald-700 to-teal-600 rounded-3xl shadow-xl overflow-hidden text-white transform transition-transform duration-500 hover:scale-[1.01]">
-            <div className="grid md:grid-cols-2 gap-8 p-8 md:p-12">
-              <div className="space-y-6">
-                <h3 className="text-3xl font-bold">Manaswin L</h3>
-                <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 hover:bg-white/15 transition-colors duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Code className="w-6 h-6" />
-                    <span className="text-xl font-semibold">App Development Prodigy</span>
-                  </div>
-                  <p className="text-lg leading-relaxed">
-                    At just 15, Manaswin has already made his mark in the tech world with his innovative "Guess the
-                    Number" game, achieving remarkable success on the Google Play Store.
+                  <p className="text-white text-opacity-90">
+                    Recognized for revolutionary contributions to tech education and empowering young minds through
+                    innovative learning methodologies.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 hover:bg-white/15 transition-colors duration-300">
-                    <Download className="w-6 h-6 mb-2" />
-                    <h4 className="font-semibold mb-1">Downloads</h4>
-                    <p className="text-2xl font-bold">1,000+</p>
+                  <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
+                    <Users className="w-8 h-8 mx-auto mb-2 text-yellow-300" />
+                    <div className="text-2xl font-bold">10,000+</div>
+                    <div className="text-teal-100 text-sm">Students Mentored</div>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-lg rounded-xl p-4 hover:bg-white/15 transition-colors duration-300">
-                    <Star className="w-6 h-6 mb-2" />
-                    <h4 className="font-semibold mb-1">Rating</h4>
-                    <p className="text-2xl font-bold">4.8/5</p>
+                  <div className="bg-white bg-opacity-10 rounded-xl p-4 text-center">
+                    <Award className="w-8 h-8 mx-auto mb-2 text-yellow-300" />
+                    <div className="text-2xl font-bold">15+</div>
+                    <div className="text-teal-100 text-sm">Awards Received</div>
                   </div>
+                </div>
+
+                <p className="text-white text-opacity-90 leading-relaxed">
+                  "Education is not just about teaching; it's about inspiring young minds to dream big and providing
+                  them with the tools to turn those dreams into reality. Every child has the potential to be
+                  extraordinary."
+                </p>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl opacity-20 blur-xl transform rotate-3"></div>
+                <div className="relative">
+                  <img
+                    src={rashmi || "/placeholder.svg"}
+                    alt="Rashmi Raju"
+                    className="w-full h-96 object-cover object-center rounded-2xl shadow-xl border-4 border-white border-opacity-20"
+                  />
+                  <div className="absolute bottom-4 left-4 right-4 bg-black bg-opacity-50 backdrop-blur-sm rounded-lg p-3">
+                    <p className="text-white text-sm font-medium">Femmetimes Award Ceremony 2025</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Manaswin L Featured Story */}
+      <section className="py-20 bg-gray-100">
+        <div className="container mx-auto px-6">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="inline-flex items-center bg-blue-100 text-blue-700 rounded-full px-4 py-2 mb-4">
+              <Rocket className="w-5 h-5 mr-2" />
+              <span className="font-medium">Featured Success Story</span>
+            </div>
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Rising Star Developer</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Discover how a young innovator turned passion into success with groundbreaking app development.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="max-w-6xl mx-auto bg-white rounded-3xl overflow-hidden shadow-2xl"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-blue-500/10"></div>
+                <img
+                  src={manaswin || "/placeholder.svg"}
+                  alt="Manaswin L"
+                  className="w-full h-96 object-contain object-center p-4 transition-transform duration-500 hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+                    <h3 className="text-xl font-bold text-gray-800">Manaswin L</h3>
+                    <p className="text-gray-600">Age 15 • App Developer</p>
+                    <div className="flex items-center mt-2">
+                      <Star className="w-4 h-4 text-yellow-500 fill-current mr-1" />
+                      <span className="text-sm text-gray-600">Rising Tech Star</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8 md:p-12 space-y-6">
+                <div>
+                  <h3 className="text-3xl font-bold text-gray-800 mb-4">App Development Prodigy</h3>
+                  <p className="text-gray-600 text-lg leading-relaxed">
+                    At just 15 years old, Manaswin has already made his mark in the tech world with his innovative
+                    "Guess the Number" game, achieving remarkable success on the Google Play Store.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-green-50 rounded-xl p-4 text-center border border-green-200">
+                    <Download className="w-8 h-8 mx-auto mb-2 text-green-600" />
+                    <div className="text-2xl font-bold text-green-700">1,000+</div>
+                    <div className="text-green-600 text-sm">Downloads</div>
+                  </div>
+                  <div className="bg-yellow-50 rounded-xl p-4 text-center border border-yellow-200">
+                    <Star className="w-8 h-8 mx-auto mb-2 text-yellow-600" />
+                    <div className="text-2xl font-bold text-yellow-700">4.8/5</div>
+                    <div className="text-yellow-600 text-sm">Rating</div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <h4 className="font-bold text-gray-800 mb-3">Key Achievements</h4>
+                  <ul className="space-y-2">
+                    <li className="flex items-center text-gray-600">
+                      <Code className="w-4 h-4 mr-2 text-teal-600" />
+                      Published app on Google Play Store
+                    </li>
+                    <li className="flex items-center text-gray-600">
+                      <Target className="w-4 h-4 mr-2 text-teal-600" />
+                      1000+ active users within first month
+                    </li>
+                    <li className="flex items-center text-gray-600">
+                      <Zap className="w-4 h-4 mr-2 text-teal-600" />
+                      Featured in local tech community
+                    </li>
+                  </ul>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -631,249 +630,217 @@ const SuccessStories = () => {
                     href="https://play.google.com/store/apps/developer?id=Kidzians"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-emerald-700 px-6 py-3 rounded-lg hover:bg-white/90 transition-colors font-medium group"
+                    className="inline-flex items-center justify-center bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition-colors font-medium"
                   >
-                    <ExternalLink className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                    <ExternalLink className="w-4 h-4 mr-2" />
                     View on Play Store
                   </a>
                   <a
                     href="https://play.google.com/store/apps/developer?id=Kidzians"
-                    className="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium group"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center border-2 border-teal-700 text-teal-700 px-6 py-3 rounded-lg hover:bg-teal-50 transition-colors font-medium"
                   >
-                    <Download /> Dowanload App
+                    <Download className="w-4 h-4 mr-2" />
+                    Download App
                   </a>
                 </div>
               </div>
-
-              <div className="relative">
-                <div className="absolute inset-0 bg-white/10 rounded-2xl blur-xl transform translate-y-4 -translate-x-4"></div>
-                <div className="relative overflow-hidden rounded-2xl border-4 border-white/20">
-                  <img
-                    src={manaswin || "/placeholder.svg"}
-                    alt="Manaswin L"
-                    className="w-full h-[500px] object-contain object-center transition-transform duration-700 hover:scale-110"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-emerald-900/80 to-transparent p-6">
-                    <span className="inline-flex items-center rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-white">
-                      App Developer
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-        </section>
+          </motion.div>
+        </div>
+      </section>
 
-        {/* Student Success Stories */}
-        <section className={`mb-24 ${fadeIn}`}>
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-            <div className="flex items-center gap-4 mb-4 md:mb-0">
-              <div className={`bg-emerald-100 p-2.5 rounded-full ${pulse}`}>
-                <Users className="w-6 h-6 text-emerald-700" />
-              </div>
-              <h2 className="text-3xl font-bold text-slate-800">Student Success Stories</h2>
+      {/* Student Success Stories */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="inline-flex items-center bg-purple-100 text-purple-700 rounded-full px-4 py-2 mb-4">
+              <Users className="w-5 h-5 mr-2" />
+              <span className="font-medium">Student Achievements</span>
             </div>
-            <div className="w-full md:w-auto">
-              <div className="inline-flex h-10 items-center justify-center rounded-md bg-slate-100 p-1 text-slate-700">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Our Amazing Students</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Meet the brilliant minds who are excelling in coding, science, and design, setting new standards of
+              excellence.
+            </p>
+          </motion.div>
+
+          {/* Category Filter */}
+          <div className="flex justify-center mb-12">
+            <div className="bg-gray-100 rounded-lg p-1 inline-flex">
+              {["all", "coding", "science", "design"].map((category) => (
                 <button
-                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 ${
-                    activeTab === "all" ? "bg-white text-slate-900 shadow-sm" : "text-slate-700 hover:text-slate-900"
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  className={`px-6 py-2 rounded-md font-medium transition-all ${
+                    activeCategory === category
+                      ? "bg-teal-700 text-white shadow-md"
+                      : "text-gray-600 hover:text-gray-800"
                   }`}
-                  onClick={() => setActiveTab("all")}
                 >
-                  All
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
                 </button>
-                <button
-                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 ${
-                    activeTab === "coding" ? "bg-white text-slate-900 shadow-sm" : "text-slate-700 hover:text-slate-900"
-                  }`}
-                  onClick={() => setActiveTab("coding")}
-                >
-                  Coding
-                </button>
-                <button
-                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 ${
-                    activeTab === "science"
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-700 hover:text-slate-900"
-                  }`}
-                  onClick={() => setActiveTab("science")}
-                >
-                  Science
-                </button>
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* Top Students Single Card Carousel */}
-          <div className="relative mb-12">
-            <div className="max-w-md mx-auto">
-              {/* Single card container with fixed width to maintain card size */}
-              <div className="overflow-hidden">
-                <div
-                  ref={topCarouselRef}
-                  className="transition-transform duration-500 ease-out"
-                  style={{ transform: `translateX(-${topCurrentSlide * 100}%)` }}
-                >
-                  <div className="flex">
-                    {topStudents.map((student, index) => (
-                      <div key={student.name} className="w-full flex-shrink-0">
-                        {renderStudentCard(student, index)}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Navigation arrows */}
-              {topStudents.length > 1 && (
-                <div className="flex justify-between items-center mt-4">
-                  <button
-                    onClick={prevTopSlide}
-                    className="p-2 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
-                    aria-label="Previous slide"
-                  >
-                    <ChevronLeft size={24} />
-                  </button>
-
-                  <div className="flex gap-2 items-center">
-                    {topStudents.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setTopCurrentSlide(index)}
-                        className={`w-3 h-3 rounded-full transition-colors ${
-                          topCurrentSlide === index ? "bg-emerald-600" : "bg-emerald-200"
-                        }`}
-                        aria-label={`Go to slide ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={nextTopSlide}
-                    className="p-2 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
-                    aria-label="Next slide"
-                  >
-                    <ChevronRight size={24} />
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Carousel for Remaining Students */}
-          {remainingStudents.length > 0 && (
-            <div className="relative mt-12 overflow-hidden">
-              <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-                <Star className="text-emerald-600 mr-2" size={18} />
-                More Success Stories
-              </h3>
-
-              <div
-                ref={carouselRef}
+          {/* Students Carousel - 3 Cards at a Time */}
+          <div className="relative max-w-7xl mx-auto">
+            <div className="overflow-hidden">
+              <motion.div
                 className="flex transition-transform duration-500 ease-out"
-                style={{ transform: `translateX(-${currentSlide * (100 / remainingStudents.length)}%)` }}
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
               >
-                {remainingStudents.map((student, index) => (
-                  <div key={student.name} className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-2">
-                    {renderStudentCard(student, index, true)}
+                {Array.from({ length: Math.ceil(filteredStudents.length / 3) }).map((_, slideIndex) => (
+                  <div key={slideIndex} className="w-full flex-shrink-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
+                      {filteredStudents.slice(slideIndex * 3, slideIndex * 3 + 3).map((student, index) => (
+                        <motion.div
+                          key={student.name}
+                          className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                          viewport={{ once: true }}
+                        >
+                          <div className="grid md:grid-cols-1 gap-6">
+                            <div className="relative">
+                              <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-4">
+                                <img
+                                  src={student.image || "/placeholder.svg"}
+                                  alt={student.name}
+                                  className="w-full h-80 object-contain object-center rounded-lg transition-transform duration-300 hover:scale-105"
+                                />
+                              </div>
+                              <div className="absolute top-6 right-6 bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-3 py-1 shadow-md">
+                                <span className="text-sm font-medium text-gray-800">Age {student.age}</span>
+                              </div>
+                            </div>
+
+                            <div className="p-6 space-y-6">
+                              <div>
+                                <h3 className="text-2xl font-bold text-gray-800 mb-2">{student.name}</h3>
+                                <p className="text-teal-700 font-medium text-lg">{student.title}</p>
+                              </div>
+
+                              <p className="text-gray-600 leading-relaxed">{student.description}</p>
+
+                              <div className="bg-teal-50 rounded-xl p-4 border border-teal-200">
+                                <div className="flex items-center mb-2">
+                                  <Trophy className="w-5 h-5 text-teal-600 mr-2" />
+                                  <span className="font-medium text-teal-800">Key Achievement</span>
+                                </div>
+                                <p className="text-teal-700">{student.achievement}</p>
+                              </div>
+
+                              <div>
+                                <h4 className="font-medium text-gray-800 mb-3">Skills & Expertise</h4>
+                                <div className="flex flex-wrap gap-2">
+                                  {student.skills.map((skill, skillIndex) => (
+                                    <span
+                                      key={skillIndex}
+                                      className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium"
+                                    >
+                                      {skill}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+
+                              <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                                <span className="text-gray-500 text-sm">Joined {student.joinedYear}</span>
+                                <div className="flex items-center text-yellow-500">
+                                  <Star className="w-4 h-4 mr-1 fill-current" />
+                                  <span className="text-sm font-medium">Top Performer</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
                 ))}
-              </div>
+              </motion.div>
+            </div>
 
-              {remainingStudents.length > 2 && (
-                <div className="flex justify-center mt-6 gap-4">
-                  <button
-                    onClick={prevSlide}
-                    className="p-2 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
-                    aria-label="Previous slide"
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  <div className="flex gap-2 items-center">
-                    {remainingStudents.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentSlide(index)}
-                        className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                          currentSlide === index ? "bg-emerald-600" : "bg-emerald-200"
-                        }`}
-                        aria-label={`Go to slide ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                  <button
-                    onClick={nextSlide}
-                    className="p-2 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
-                    aria-label="Next slide"
-                  >
-                    <ChevronRight size={20} />
-                  </button>
+            {/* Navigation for 3-card carousel */}
+            {filteredStudents.length > 3 && (
+              <div className="flex justify-between items-center mt-8">
+                <button
+                  onClick={prevSlide}
+                  className="bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  disabled={currentSlide === 0}
+                >
+                  <ChevronLeft className="w-6 h-6 text-gray-600" />
+                </button>
+
+                <div className="flex space-x-2">
+                  {Array.from({ length: Math.ceil(filteredStudents.length / 3) }).map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`w-3 h-3 rounded-full transition-colors ${
+                        currentSlide === index ? "bg-teal-700" : "bg-gray-300"
+                      }`}
+                    />
+                  ))}
                 </div>
-              )}
-            </div>
-          )}
 
-          {/* View All / Show Less Toggle */}
-          {filteredStudents.length > 3 && (
-            <div className="mt-8 text-center">
-              <button
-                onClick={() => setShowAllStories(!showAllStories)}
-                className={`inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 shadow-sm transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 group ${slideRight}`}
-              >
-                {showAllStories ? (
-                  <>
-                    Show Less
-                    <X className="ml-2 h-4 w-4 transition-transform group-hover:rotate-90" />
-                  </>
-                ) : (
-                  <>
-                    View All Success Stories
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-
-          {/* All Stories (Shown when View All is clicked) */}
-          {showAllStories && (
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 ${fadeIn}`}>
-              {filteredStudents.map((student, index) => renderStudentCard(student, index))}
-            </div>
-          )}
-        </section>
-
-        {/* Call to Action */}
-        <section className={fadeIn}>
-          <div className="relative overflow-hidden rounded-3xl transform transition-transform duration-500 hover:scale-[1.01]">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-500"></div>
-            <div className="absolute inset-0 bg-[url('/placeholder.svg?height=600&width=1200')] mix-blend-overlay opacity-20"></div>
-            <div className="relative px-6 py-16 md:py-24 text-center text-white">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Start Your Success Story Today</h2>
-              <p className="mb-8 max-w-2xl mx-auto text-white/90 text-lg">
-                Join our community of young innovators and begin your journey towards becoming the next tech leader. Our
-                expert mentors and cutting-edge curriculum will help you unlock your full potential.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="/contact-us"
-                  className="inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-base font-medium text-emerald-700 shadow-sm hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-700 group"
+                <button
+                  onClick={nextSlide}
+                  className="bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  disabled={currentSlide >= Math.ceil(filteredStudents.length / 3) - 1}
                 >
-                  Get Started
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </a>
-                <a
-                  href="/courses"
-                  className="inline-flex items-center justify-center rounded-md border-2 border-white bg-transparent px-6 py-3 text-base font-medium text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-700"
-                >
-                  Explore Courses
-                </a>
+                  <ChevronRight className="w-6 h-6 text-gray-600" />
+                </button>
               </div>
-            </div>
+            )}
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-teal-700 to-teal-600">
+        <div className="container mx-auto px-6 text-center">
+          <motion.div
+            className="max-w-3xl mx-auto text-white"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-bold mb-6">Ready to Write Your Success Story?</h2>
+            <p className="text-xl text-teal-100 mb-8">
+              Join our community of young innovators and start your journey towards becoming the next tech leader. Our
+              expert mentors and cutting-edge curriculum will help you unlock your full potential.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="/contact-us"
+                className="inline-flex items-center justify-center bg-white text-teal-700 px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium text-lg"
+              >
+                Start Your Journey
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </a>
+              <a
+                href="/courses"
+                className="inline-flex items-center justify-center border-2 border-white text-white px-8 py-4 rounded-lg hover:bg-white hover:text-teal-700 transition-colors font-medium text-lg"
+              >
+                <BookOpen className="w-5 h-5 mr-2" />
+                Explore Courses
+              </a>
+            </div>
+          </motion.div>
+        </div>
+      </section>
     </div>
   )
 }

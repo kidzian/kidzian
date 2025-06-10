@@ -584,15 +584,22 @@ const StudentDashboard = () => {
       <header className="bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-600 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <div className="flex items-center space-x-4">
-              <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-white">Kidzian Learning Platform</h1>
-                <p className="text-teal-100 mt-1">Welcome back, {student?.name || "Student"} • Founded by Rashmi</p>
-              </div>
-            </div>
+           <div className="flex items-center space-x-4">
+  <div className="bg-white/20 backdrop-blur-sm rounded-full p-1">
+    <img
+   src={student?.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+
+      alt="Profile"
+      className="w-12 h-12 rounded-full object-cover"
+    />
+  </div>
+  <div>
+    <h1 className="text-3xl font-bold text-white">Kidzian Learning Platform</h1>
+    <p className="text-teal-100 mt-1">Welcome back, {student?.name || "Student"} </p>
+  </div>
+</div>
+
+
             <div className="flex items-center gap-6">
               <div className="text-sm text-white text-right bg-white/10 backdrop-blur-sm rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-1">

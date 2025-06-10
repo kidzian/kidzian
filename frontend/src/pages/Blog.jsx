@@ -1098,7 +1098,7 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-teal-700 bg-clip-text text-transparent">
                 Tech Blog
               </h1>
               <p className="text-gray-600 mt-2">Insights, tutorials, and trends in technology</p>

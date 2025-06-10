@@ -723,7 +723,21 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow border-b-4 border-teal-700">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-teal-700">Admin Dashboard</h1>
+          <div className="flex items-center space-x-4">
+
+           <div className="bg-white/20 backdrop-blur-sm rounded-full p-1">
+    <img
+    src={admin?.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+
+      alt="Profile"
+      className="w-12 h-12 rounded-full object-cover"
+    />
+    
+  </div>
+  <h1 className="text-3xl font-bold text-teal-700">Admin Dashboard</h1>
+  <div></div>
+          </div>
+          
           <div className="flex items-center space-x-4">
             <span className="text-gray-700">{admin?.name}</span>
             <button onClick={handleLogout} className="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200">

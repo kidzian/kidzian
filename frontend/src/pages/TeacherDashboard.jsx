@@ -697,15 +697,20 @@ const TeacherDashboard = () => {
       <header className="bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-600 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <div className="flex items-center space-x-4">
-              <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-white">Kidzian Teacher Dashboard</h1>
-                <p className="text-teal-100 mt-1">Welcome back, {teacher?.name || "Teacher"} • Founded by Rashmi</p>
-              </div>
-            </div>
+               <div className="flex items-center space-x-4">
+  <div className="bg-white/20 backdrop-blur-sm rounded-full p-1">
+    <img
+   src={teacher?.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+
+      alt="Profile"
+      className="w-12 h-12 rounded-full object-cover"
+    />
+  </div>
+  <div>
+    <h1 className="text-3xl font-bold text-white">Kidzian Learning Platform</h1>
+    <p className="text-teal-100 mt-1">Welcome back, {teacher?.name || "teacher"} </p>
+  </div>
+</div>
             <div className="flex items-center gap-6">
               <button
                 onClick={() => setShowAttendanceModal(true)}
