@@ -1295,7 +1295,7 @@ const AdminDashboard = () => {
       {/* Add Student Modal */}
       {showAddStudentModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b">
               <h2 className="text-2xl font-bold text-gray-900">Add New Student</h2>
             </div>
@@ -1392,7 +1392,7 @@ const AdminDashboard = () => {
       {/* Updated Add Course Modal with File Upload */}
       {showAddCourseModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b bg-teal-600 text-white rounded-t-xl">
               <h2 className="text-2xl font-bold">Add New Course</h2>
               <p className="text-teal-100">Create a new course for your platform</p>
@@ -1535,7 +1535,7 @@ const AdminDashboard = () => {
       {/* Updated Edit Course Modal with File Upload */}
       {showEditCourseModal && selectedCourse && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b bg-teal-600 text-white rounded-t-xl">
               <h2 className="text-2xl font-bold">Edit Course</h2>
               <p className="text-teal-100">Update course information</p>
@@ -1705,7 +1705,7 @@ const AdminDashboard = () => {
       {/* Edit Student Modal */}
       {showEditStudentModal && selectedStudent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b">
               <h2 className="text-2xl font-bold text-gray-900">Edit Student</h2>
             </div>
@@ -1804,7 +1804,7 @@ const AdminDashboard = () => {
       {/* View Student Modal */}
       {showViewStudentModal && selectedStudent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-900">Student Details</h2>
               <button onClick={() => setShowViewStudentModal(false)} className="text-gray-400 hover:text-gray-600">
@@ -1912,7 +1912,7 @@ const AdminDashboard = () => {
       {/* Add Teacher Modal */}
       {showAddTeacherModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b">
               <h2 className="text-2xl font-bold text-gray-900">Add New Teacher</h2>
             </div>
@@ -1982,7 +1982,7 @@ const AdminDashboard = () => {
       {/* Edit Teacher Modal */}
       {showEditTeacherModal && selectedTeacher && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b">
               <h2 className="text-2xl font-bold text-gray-900">Edit Teacher</h2>
             </div>
@@ -2054,7 +2054,7 @@ const AdminDashboard = () => {
       {/* View Teacher Modal */}
       {showViewTeacherModal && selectedTeacher && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-900">Teacher Details</h2>
               <button onClick={() => setShowViewTeacherModal(false)} className="text-gray-400 hover:text-gray-600">
@@ -2147,7 +2147,7 @@ const AdminDashboard = () => {
       {/* View Course Modal */}
       {showViewCourseModal && selectedCourse && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-900">Course Details</h2>
               <button onClick={() => setShowViewCourseModal(false)} className="text-gray-400 hover:text-gray-600">
@@ -2252,7 +2252,7 @@ const AdminDashboard = () => {
       {/* Add Batch Modal */}
       {showAddBatchModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b">
               <h2 className="text-2xl font-bold text-gray-900">Create New Batch</h2>
             </div>
@@ -2355,7 +2355,7 @@ const AdminDashboard = () => {
       {/* Edit Batch Modal */}
       {showEditBatchModal && selectedBatch && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b">
               <h2 className="text-2xl font-bold text-gray-900">Edit Batch</h2>
             </div>
@@ -2459,7 +2459,7 @@ const AdminDashboard = () => {
       {/* View Batch Modal */}
       {showViewBatchModal && selectedBatch && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-900">Batch Details</h2>
               <button onClick={() => setShowViewBatchModal(false)} className="text-gray-400 hover:text-gray-600">
@@ -2569,7 +2569,7 @@ const AdminDashboard = () => {
       {/* Enroll Student Modal - Fixed with better student loading */}
       {showEnrollStudentModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[70vh] overflow-y-auto">
             <div className="p-6 border-b">
               <h2 className="text-2xl font-bold text-gray-900">Enroll Student in Batch</h2>
               <p className="text-sm text-gray-600 mt-1">

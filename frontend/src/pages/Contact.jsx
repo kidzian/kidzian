@@ -12,22 +12,89 @@ const Contact = () => {
     lastName: "",
     email: "",
     phone: "",
-  
     message: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState({})
+
+  // Validation functions
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^\d{10}$/
+    return phoneRegex.test(phone)
+  }
+
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required"
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required"
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required"
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    if (!formData.phone) {
+      newErrors.phone = "Phone number is required"
+    } else if (!validatePhone(formData.phone)) {
+      newErrors.phone = "Phone number must be exactly 10 digits"
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData((prevData) => ({ ...prevData, [name]: value }))
+
+    // For phone number, only allow digits and limit to 10
+    if (name === "phone") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 10)
+      setFormData((prevData) => ({ ...prevData, [name]: numericValue }))
+
+      // Clear phone error when user starts typing
+      if (errors.phone) {
+        setErrors((prev) => ({ ...prev, phone: "" }))
+      }
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }))
+
+      // Clear specific field error when user starts typing
+      if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: "" }))
+      }
+    }
+
+    // Real-time email validation
+    if (name === "email" && value) {
+      if (!validateEmail(value)) {
+        setErrors((prev) => ({ ...prev, email: "Please enter a valid email address" }))
+      } else {
+        setErrors((prev) => ({ ...prev, email: "" }))
+      }
+    }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const { firstName, lastName, email, phone, message } = formData
 
-    if (!firstName || !lastName || !email || !phone || !message) {
-      toast.error("Please fill in all fields!")
+    if (!validateForm()) {
+      toast.error("Please fix the errors below!")
       return
     }
 
@@ -44,7 +111,8 @@ const Contact = () => {
 
       if (response.ok) {
         toast.success("Message sent successfully!")
-        setFormData({ firstName: "", lastName: "", email: "", phone: "",  message: "" })
+        setFormData({ firstName: "", lastName: "", email: "", phone: "", message: "" })
+        setErrors({})
       } else {
         toast.error("Failed to send message. Please try again.")
       }
@@ -171,9 +239,11 @@ const Contact = () => {
                     placeholder="Enter your first name"
                     onChange={handleChange}
                     value={formData.firstName}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
-                    required
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white outline-none ${
+                      errors.firstName ? "border-red-500 bg-red-50" : "border-gray-300"
+                    }`}
                   />
+                  {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Last Name *</label>
@@ -183,9 +253,11 @@ const Contact = () => {
                     placeholder="Enter your last name"
                     onChange={handleChange}
                     value={formData.lastName}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
-                    required
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white outline-none ${
+                      errors.lastName ? "border-red-500 bg-red-50" : "border-gray-300"
+                    }`}
                   />
+                  {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
                 </div>
               </div>
 
@@ -197,9 +269,11 @@ const Contact = () => {
                   placeholder="Enter your email address"
                   onChange={handleChange}
                   value={formData.email}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
-                  required
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white outline-none ${
+                    errors.email ? "border-red-500 bg-red-50" : "border-gray-300"
+                  }`}
                 />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
 
               <div className="space-y-2">
@@ -207,31 +281,19 @@ const Contact = () => {
                 <input
                   type="tel"
                   name="phone"
-                  placeholder="Enter your phone number"
+                  placeholder="Enter 10-digit phone number"
                   onChange={handleChange}
                   value={formData.phone}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
-                  required
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white outline-none ${
+                    errors.phone ? "border-red-500 bg-red-50" : "border-gray-300"
+                  }`}
+                  maxLength="10"
                 />
+                {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                {formData.phone && formData.phone.length < 10 && !errors.phone && (
+                  <p className="text-gray-500 text-xs mt-1">{formData.phone.length}/10 digits</p>
+                )}
               </div>
-
-              {/* <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Category</label>
-                <select
-                  name="category"
-                  onChange={handleChange}
-                  value={formData.category}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
-                >
-                  <option value="">Select a category</option>
-                  <option value="trial-session">Trial Session</option>
-                  <option value="course-inquiry">Course Inquiry</option>
-                  <option value="technical-support">Technical Support</option>
-                  <option value="billing">Billing</option>
-                  <option value="partnership">Partnership</option>
-                  <option value="other">Other</option>
-                </select>
-              </div> */}
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Message *</label>
@@ -241,9 +303,11 @@ const Contact = () => {
                   rows="5"
                   onChange={handleChange}
                   value={formData.message}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white resize-none"
-                  required
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white resize-none outline-none ${
+                    errors.message ? "border-red-500 bg-red-50" : "border-gray-300"
+                  }`}
                 />
+                {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
               </div>
 
               <button

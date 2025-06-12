@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Heading from '../components/Heading';
-import Footer from '../components/Footer';
-import { FiSearch, FiDownload, FiX, FiChevronRight, FiStar, FiUsers, FiClock, FiAward } from 'react-icons/fi';
+"use client"
+
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import Heading from "../components/Heading"
+import Footer from "../components/Footer"
+import { FiSearch, FiX, FiChevronRight, FiStar, FiUsers, FiClock, FiAward, FiLock } from "react-icons/fi"
 
 const Courses = () => {
-  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null)
   const [courseData] = useState([
     {
       id: 1,
@@ -18,20 +20,26 @@ const Courses = () => {
       rating: 4.8,
       reviews: 127,
       isBestseller: true,
-      
       description: "Learn Python programming through fun game development projects",
       about: [
         "Build 5 exciting games from scratch",
         "Learn fundamental programming concepts",
         "No prior experience needed",
-        "Interactive learning with live support"
+        "Interactive learning with live support",
       ],
       learningOutcomes: [
         "Master Python basics",
         "Understand game development logic",
         "Create custom games independently",
-        "Problem-solving skills development"
-      ]
+        "Problem-solving skills development",
+      ],
+      overviewPoints: [
+        "Python Basics",
+        "Game Logic",
+        "Graphics & Animation",
+        "User Input Handling",
+        "Project Building",
+      ],
     },
     {
       id: 2,
@@ -44,20 +52,20 @@ const Courses = () => {
       rating: 4.6,
       reviews: 89,
       isBestseller: false,
-     
       description: "Start your journey in web development with HTML, CSS, and JavaScript",
       about: [
         "Create responsive websites",
         "Learn modern web technologies",
         "Build portfolio projects",
-        "Industry-standard practices"
+        "Industry-standard practices",
       ],
       learningOutcomes: [
         "Build responsive websites",
         "Understand web development basics",
         "Create interactive web applications",
-        "Deploy websites live"
-      ]
+        "Deploy websites live",
+      ],
+      overviewPoints: ["HTML Structure", "CSS Styling", "JavaScript Basics", "Responsive Design", "Web Deployment"],
     },
     {
       id: 3,
@@ -70,20 +78,26 @@ const Courses = () => {
       rating: 4.9,
       reviews: 76,
       isBestseller: true,
-     
       description: "Master modern JavaScript and React development",
       about: [
         "Build complex React applications",
         "State management with Redux",
         "Modern JavaScript features",
-        "Real-world projects"
+        "Real-world projects",
       ],
       learningOutcomes: [
         "Create full-stack applications",
         "Master React ecosystem",
         "Implement advanced JS patterns",
-        "Build production-ready apps"
-      ]
+        "Build production-ready apps",
+      ],
+      overviewPoints: [
+        "ES6+ Features",
+        "React Components",
+        "State Management",
+        "API Integration",
+        "Testing & Deployment",
+      ],
     },
     {
       id: 4,
@@ -96,20 +110,26 @@ const Courses = () => {
       rating: 4.7,
       reviews: 94,
       isBestseller: true,
- 
       description: "Explore data science and analytics with Python",
       about: [
         "Data analysis fundamentals",
         "Scientific computing with NumPy",
         "Data visualization",
-        "Basic machine learning"
+        "Basic machine learning",
       ],
       learningOutcomes: [
         "Analyze real-world data",
         "Create data visualizations",
         "Build predictive models",
-        "Handle large datasets"
-      ]
+        "Handle large datasets",
+      ],
+      overviewPoints: [
+        "Data Analysis",
+        "NumPy & Pandas",
+        "Data Visualization",
+        "Machine Learning",
+        "Statistical Methods",
+      ],
     },
     {
       id: 5,
@@ -122,20 +142,15 @@ const Courses = () => {
       rating: 4.5,
       reviews: 63,
       isBestseller: false,
-      
       description: "Create mobile apps with React Native",
-      about: [
-        "Cross-platform development",
-        "UI/UX design principles",
-        "App deployment",
-        "State management"
-      ],
+      about: ["Cross-platform development", "UI/UX design principles", "App deployment", "State management"],
       learningOutcomes: [
         "Build native mobile apps",
         "Implement responsive designs",
         "Handle user authentication",
-        "Deploy to app stores"
-      ]
+        "Deploy to app stores",
+      ],
+      overviewPoints: ["React Native", "Mobile UI Design", "Navigation", "Device Features", "App Store Deployment"],
     },
     {
       id: 6,
@@ -148,48 +163,39 @@ const Courses = () => {
       rating: 4.8,
       reviews: 42,
       isBestseller: false,
-   
       description: "Introduction to AI and machine learning concepts",
-      about: [
-        "Basic AI concepts",
-        "Machine learning fundamentals",
-        "Neural networks intro",
-        "Practical AI projects"
-      ],
+      about: ["Basic AI concepts", "Machine learning fundamentals", "Neural networks intro", "Practical AI projects"],
       learningOutcomes: [
         "Understand AI basics",
         "Build ML models",
         "Process and analyze data",
-        "Create AI applications"
-      ]
-    }
-  ]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState('all');
+        "Create AI applications",
+      ],
+      overviewPoints: ["AI Fundamentals", "Machine Learning", "Neural Networks", "Data Processing", "AI Applications"],
+    },
+  ])
+  const [searchQuery, setSearchQuery] = useState("")
+  const [activeFilter, setActiveFilter] = useState("all")
 
   const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
+    setSearchQuery(event.target.value)
+  }
 
-  const filteredCourses = courseData.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = activeFilter === 'all' || course.category === activeFilter;
-    return matchesSearch && matchesFilter;
-  });
+  const filteredCourses = courseData.filter((course) => {
+    const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesFilter = activeFilter === "all" || course.category === activeFilter
+    return matchesSearch && matchesFilter
+  })
 
   const handleCardClick = (course) => {
-    setSelectedCourse(course);
-  };
-
-  const handleDownload = (pdfUrl) => {
-    window.open(pdfUrl, '_blank');
-  };
+    setSelectedCourse(course)
+  }
 
   const heroImages = {
     backgroundImage: "url('https://images.pexels.com/photos/3769981/pexels-photo-3769981.jpeg')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  };
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  }
 
   return (
     <div className="w-full bg-gradient-to-b from-white to-gray-50">
@@ -241,13 +247,11 @@ const Courses = () => {
         {/* Course Categories */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="flex flex-wrap gap-4 justify-center mb-12">
-            {['all', 'beginner', 'intermediate', 'advanced'].map((filter) => (
+            {["all", "beginner", "intermediate", "advanced"].map((filter) => (
               <button
                 key={filter}
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                  activeFilter === filter
-                    ? 'bg-teal-700 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  activeFilter === filter ? "bg-teal-700 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
                 onClick={() => setActiveFilter(filter)}
               >
@@ -257,10 +261,7 @@ const Courses = () => {
           </div>
 
           {/* Courses Grid */}
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            layout
-          >
+          <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" layout>
             <AnimatePresence>
               {filteredCourses.map((course, index) => (
                 <motion.div
@@ -274,7 +275,7 @@ const Courses = () => {
                 >
                   <div className="relative h-48">
                     <img
-                      src={course.image}
+                      src={course.image || "/placeholder.svg"}
                       alt={course.title}
                       className="w-full h-full object-cover"
                     />
@@ -299,30 +300,23 @@ const Courses = () => {
                         {[...Array(5)].map((_, i) => (
                           <FiStar
                             key={i}
-                            className={`${
-                              i < Math.floor(course.rating) ? 'text-yellow-400' : 'text-gray-300'
-                            } w-5 h-5`}
+                            className={`${i < Math.floor(course.rating) ? "text-yellow-400" : "text-gray-300"} w-5 h-5`}
                           />
                         ))}
                         <span className="text-sm text-gray-600 ml-2">({course.reviews} reviews)</span>
                       </div>
-                      <span className="text-teal-700 font-bold">{course.price}</span>
                     </div>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {course.description}
-                    </p>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{course.description}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-teal-700 font-semibold">
-                        Age: {course.ageGroup}
-                      </span>
+                      <span className="text-teal-700 font-semibold">Age: {course.ageGroup}</span>
                       <button
                         className="flex items-center gap-2 text-white bg-teal-700 px-4 py-2 rounded-lg hover:bg-teal-800 transition-colors duration-300"
                         onClick={(e) => {
-                          e.stopPropagation();
-                          handleDownload(course.pdf);
+                          e.stopPropagation()
+                          handleCardClick(course)
                         }}
                       >
-                        <FiDownload /> Curriculum
+                        Curriculum
                       </button>
                     </div>
                   </div>
@@ -332,7 +326,7 @@ const Courses = () => {
           </motion.div>
         </div>
 
-        {/* Course Details Modal */}
+        {/* Course Details Modal - Smaller and More Beautiful */}
         <AnimatePresence>
           {selectedCourse && (
             <motion.div
@@ -343,102 +337,145 @@ const Courses = () => {
               onClick={() => setSelectedCourse(null)}
             >
               <motion.div
-                className="bg-white rounded-3xl w-full max-w-5xl max-h-[85vh] overflow-hidden shadow-2xl"
-                initial={{ scale: 0.95, y: 20, opacity: 0 }}
+                className="bg-white rounded-3xl w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl"
+                initial={{ scale: 0.9, y: 30, opacity: 0 }}
                 animate={{ scale: 1, y: 0, opacity: 1 }}
-                exit={{ scale: 0.95, y: 20, opacity: 0 }}
+                exit={{ scale: 0.9, y: 30, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 400 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="relative h-80">
-                  <img
-                    src={selectedCourse.image}
-                    alt={selectedCourse.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                {/* Compact Header */}
+                <div className="relative h-48 bg-gradient-to-br from-teal-600 to-cyan-600">
+                  <div className="absolute inset-0 bg-black/20" />
                   <button
-                    className="absolute top-6 right-6 text-white/90 hover:text-white p-2 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm transition-all duration-300 transform hover:scale-110"
+                    className="absolute top-4 right-4 text-white/90 hover:text-white p-2 rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-sm transition-all duration-300"
                     onClick={() => setSelectedCourse(null)}
                   >
-                    <FiX size={24} />
+                    <FiX size={20} />
                   </button>
-                  <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                    <div className="flex flex-wrap gap-3 mb-4">
+                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                    <div className="flex flex-wrap gap-2 mb-3">
                       {selectedCourse.isBestseller && (
-                        <span className="px-4 py-1.5 bg-yellow-400 text-black rounded-full font-semibold flex items-center gap-2 text-sm">
-                          <FiAward className="w-4 h-4" />
+                        <span className="px-3 py-1 bg-yellow-400 text-black rounded-full font-semibold text-xs flex items-center gap-1">
+                          <FiAward className="w-3 h-3" />
                           Bestseller
                         </span>
                       )}
-                      <span className="px-4 py-1.5 bg-white/20 backdrop-blur-sm rounded-full text-sm">
+                      <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
                         {selectedCourse.category.charAt(0).toUpperCase() + selectedCourse.category.slice(1)}
                       </span>
-                      <span className="px-4 py-1.5 bg-white/20 backdrop-blur-sm rounded-full text-sm">
+                      <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
                         {selectedCourse.ageGroup}
                       </span>
                     </div>
-                    <h2 className="text-4xl font-bold mb-2">{selectedCourse.title}</h2>
-                    <div className="flex items-center gap-6 text-white/90 text-sm">
-                      <div className="flex items-center gap-2">
-                        <FiUsers />
-                        <span>{selectedCourse.studentsEnrolled.toLocaleString()} enrolled</span>
+                    <h2 className="text-2xl font-bold mb-2">{selectedCourse.title}</h2>
+                    <div className="flex items-center gap-4 text-white/90 text-xs">
+                      <div className="flex items-center gap-1">
+                        <FiUsers className="w-3 h-3" />
+                        <span>{selectedCourse.studentsEnrolled.toLocaleString()}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <FiClock />
+                      <div className="flex items-center gap-1">
+                        <FiClock className="w-3 h-3" />
                         <span>{selectedCourse.duration}</span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                         <div className="flex">
                           {[...Array(5)].map((_, i) => (
                             <FiStar
                               key={i}
-                              className={`w-4 h-4 ${i < Math.floor(selectedCourse.rating) ? 'text-yellow-400' : 'text-white/40'}`}
+                              className={`w-3 h-3 ${i < Math.floor(selectedCourse.rating) ? "text-yellow-400" : "text-white/40"}`}
                             />
                           ))}
                         </div>
-                        <span>({selectedCourse.reviews} reviews)</span>
+                        <span>({selectedCourse.reviews})</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-8 overflow-y-auto max-h-[calc(85vh-20rem)]">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <div className="space-y-8">
-                      <div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4">About the Course</h3>
-                        <p className="text-gray-600 mb-6">{selectedCourse.description}</p>
-                        <ul className="space-y-3">
-                          {selectedCourse.about.map((item, idx) => (
-                            <li key={idx} className="flex items-start gap-3 text-gray-700">
-                              <FiChevronRight className="mt-1 flex-shrink-0 text-teal-700 w-5 h-5" />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
+                <div className="p-6 overflow-y-auto max-h-[calc(80vh-12rem)]">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Course Overview - Smaller Circular Design */}
+                    <div className="flex flex-col items-center">
+                      <h3 className="text-xl font-bold text-gray-900 mb-4">Course Overview</h3>
+                      <div className="relative w-48 h-48 mb-4">
+                        {/* Center circle */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-16 h-16 bg-gradient-to-br from-teal-600 to-teal-800 rounded-full flex items-center justify-center shadow-lg">
+                            <span className="text-white font-bold text-xs text-center leading-tight">
+                              {selectedCourse.category.charAt(0).toUpperCase() + selectedCourse.category.slice(1)}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Circular points - Smaller */}
+                        {selectedCourse.overviewPoints.map((point, index) => {
+                          const angle = (index * 360) / selectedCourse.overviewPoints.length
+                          const radius = 75
+                          const x = Math.cos((angle - 90) * (Math.PI / 180)) * radius
+                          const y = Math.sin((angle - 90) * (Math.PI / 180)) * radius
+
+                          return (
+                            <motion.div
+                              key={index}
+                              className="absolute w-12 h-12 bg-white border-2 border-teal-500 rounded-full flex items-center justify-center shadow-md"
+                              style={{
+                                left: `calc(50% + ${x}px - 1.5rem)`,
+                                top: `calc(50% + ${y}px - 1.5rem)`,
+                              }}
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ delay: index * 0.1 + 0.3 }}
+                            >
+                              <span className="text-teal-700 font-semibold text-[10px] text-center leading-tight px-1">
+                                {point}
+                              </span>
+                            </motion.div>
+                          )
+                        })}
+                      </div>
+
+                      {/* Compact Enrollment CTA */}
+                      <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-4 border border-teal-200 w-full">
+                        <div className="text-center">
+                          <FiLock className="w-6 h-6 text-teal-600 mx-auto mb-2" />
+                          <h4 className="font-bold text-gray-900 mb-1 text-sm">Want Full Syllabus?</h4>
+                          <p className="text-xs text-gray-600 mb-3">
+                            Get detailed curriculum, assignments, and project details by joining the course.
+                          </p>
+                          <button className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white py-2 rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 font-semibold text-sm">
+                            Join Course
+                          </button>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="space-y-8">
+                    {/* Course Details - Compact */}
+                    <div className="space-y-6">
                       <div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4">Learning Outcomes</h3>
-                        <ul className="space-y-3">
-                          {selectedCourse.learningOutcomes.map((item, idx) => (
-                            <li key={idx} className="flex items-start gap-3 text-gray-700">
-                              <FiChevronRight className="mt-1 flex-shrink-0 text-teal-700 w-5 h-5" />
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">About the Course</h3>
+                        <p className="text-gray-600 mb-4 text-sm">{selectedCourse.description}</p>
+                        <ul className="space-y-2">
+                          {selectedCourse.about.slice(0, 3).map((item, idx) => (
+                            <li key={idx} className="flex items-start gap-2 text-gray-700 text-sm">
+                              <FiChevronRight className="mt-0.5 flex-shrink-0 text-teal-700 w-4 h-4" />
                               <span>{item}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
 
-                      <button
-                        className="w-full bg-teal-700 text-white py-4 rounded-2xl hover:bg-teal-800 transition-all duration-300 flex items-center justify-center gap-3 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                        onClick={() => handleDownload(selectedCourse.pdf)}
-                      >
-                        <FiDownload className="w-5 h-5" /> Download Curriculum
-                      </button>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">Learning Outcomes</h3>
+                        <ul className="space-y-2">
+                          {selectedCourse.learningOutcomes.slice(0, 3).map((item, idx) => (
+                            <li key={idx} className="flex items-start gap-2 text-gray-700 text-sm">
+                              <FiChevronRight className="mt-0.5 flex-shrink-0 text-teal-700 w-4 h-4" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -446,11 +483,10 @@ const Courses = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
       </motion.div>
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default Courses;
+export default Courses

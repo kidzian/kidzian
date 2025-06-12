@@ -371,30 +371,7 @@ const SuccessStories = () => {
       image: dhyan,
       skills: ["Algorithms", "Data Structures", "Competitive Programming"],
     },
-    {
-      name: "Jaipreet",
-      age: 15,
-      category: "science",
-      title: "Science Innovator",
-      description:
-        "Developed an innovative science project that won state-level recognition. Jaipreet's passion for science led to creating solutions for real-world problems.",
-      achievement: "State Level Science Fair Winner",
-      joinedYear: 2022,
-      image: jaipeet,
-      skills: ["Research", "Innovation", "Scientific Method"],
-    },
-    {
-      name: "Brisha",
-      age: 14,
-      category: "design",
-      title: "Creative Designer",
-      description:
-        "Brisha has shown exceptional talent in creative design, combining artistic skills with technical knowledge to create stunning digital art and UI designs.",
-      achievement: "Best UI Design - Youth Competition",
-      joinedYear: 2023,
-      image: brish,
-      skills: ["UI/UX Design", "Digital Art", "Creative Thinking"],
-    },
+   
   ]
 
   // Filter students based on category
