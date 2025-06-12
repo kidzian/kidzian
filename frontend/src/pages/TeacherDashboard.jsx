@@ -732,7 +732,7 @@ const TeacherDashboard = () => {
               </button>
               <button
                 onClick={() => setShowProjectModal(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-all duration-300 font-medium shadow-lg"
+                className="bg-slate-400 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-all duration-300 font-medium shadow-lg"
               >
                 Create Project
               </button>

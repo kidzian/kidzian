@@ -1,10 +1,23 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import axios from "axios"
-import { BookOpen, Calendar, FileText, Upload, Eye, Award, Clock, Brain, Code, Trophy, Download, Gem, Sparkles } from 'lucide-react'
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
+import {
+  BookOpen,
+  Calendar,
+  FileText,
+  Upload,
+  Eye,
+  Award,
+  Clock,
+  Brain,
+  Code,
+  Trophy,
+  Download,
+  Gem,
+} from "lucide-react"
+import jsPDF from "jspdf"
+import html2canvas from "html2canvas"
 import {
   BarChart,
   Bar,
@@ -26,7 +39,6 @@ import {
   Radar,
   ComposedChart,
   Area,
-  AreaChart,
 } from "recharts"
 
 const StudentDashboard = () => {
@@ -39,9 +51,16 @@ const StudentDashboard = () => {
   const [submissions, setSubmissions] = useState({})
   const [analytics, setAnalytics] = useState(null)
   const [monthlyReport, setMonthlyReport] = useState(null)
+  const [courseLearnings, setCourseLearnings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [activeTab, setActiveTab] = useState("overview")
+  const [generatingPDF, setGeneratingPDF] = useState(false)
+
+  // Chart refs for PDF generation
+  const performanceChartRef = useRef(null)
+  const activityChartRef = useRef(null)
+  const pieChartRef = useRef(null)
 
   // Modal states
   const [showAssignmentModal, setShowAssignmentModal] = useState(false)
@@ -84,9 +103,27 @@ const StudentDashboard = () => {
     "Content-Type": "application/json",
   })
 
+  // Fetch course learnings with actual course data
+  const fetchCourseLearnings = async () => {
+    try {
+      const headers = getHeaders()
+      const response = await axios.get(`${API_BASE_URL}/api/students/course-learnings`, { headers })
+      setCourseLearnings(response.data || [])
+    } catch (err) {
+      console.error("Error fetching course learnings:", err)
+    }
+  }
+
+  // Calculate attendance days from attendance records
+  const calculateAttendanceDays = () => {
+    if (!attendance || !Array.isArray(attendance)) return 0
+    return attendance.filter((record) => record.status === "present").length
+  }
+
   // Fetch all student data - ENHANCED VERSION
   useEffect(() => {
     fetchStudentData()
+    fetchCourseLearnings()
     // Set up interval to refresh data every 30 seconds to catch point updates
     const interval = setInterval(() => {
       fetchStudentProfile() // Only refresh profile for points update
@@ -392,15 +429,21 @@ const StudentDashboard = () => {
     }
   }
 
-  // NEW: Enhanced PDF Report Generation with Charts and Branding
+  // ENHANCED: PDF Report Generation with Charts and Course Learnings - FIXED CHART RENDERING
   const downloadPDFReport = async (month, year) => {
     if (!monthlyReport) return
 
     try {
-      const pdf = new jsPDF('p', 'mm', 'a4')
+      setGeneratingPDF(true)
+
+      // Wait for charts to render properly
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      // Create a PDF document
+      const pdf = new jsPDF("p", "mm", "a4")
       const pageWidth = pdf.internal.pageSize.getWidth()
       const pageHeight = pdf.internal.pageSize.getHeight()
-      
+
       // Colors
       const tealColor = [20, 184, 166]
       const darkTeal = [15, 118, 110]
@@ -408,145 +451,314 @@ const StudentDashboard = () => {
 
       // Header with Logo and Branding
       pdf.setFillColor(...tealColor)
-      pdf.rect(0, 0, pageWidth, 40, 'F')
-      
-      // Logo placeholder (you can replace with actual logo)
+      pdf.rect(0, 0, pageWidth, 40, "F")
+
+      // Logo placeholder
       pdf.setFillColor(255, 255, 255)
-      pdf.circle(25, 20, 12, 'F')
+      pdf.circle(25, 20, 12, "F")
       pdf.setTextColor(20, 184, 166)
       pdf.setFontSize(16)
-      pdf.setFont('helvetica', 'bold')
-      pdf.text('K', 22, 24)
-      
+      pdf.setFont("helvetica", "bold")
+      pdf.text("K", 22, 24)
+
       // Title
       pdf.setTextColor(255, 255, 255)
       pdf.setFontSize(24)
-      pdf.setFont('helvetica', 'bold')
-      pdf.text('KIDZIAN LEARNING PLATFORM', 45, 20)
-      
+      pdf.setFont("helvetica", "bold")
+      pdf.text("KIDZIAN LEARNING PLATFORM", 45, 20)
+
       pdf.setFontSize(12)
-      pdf.setFont('helvetica', 'normal')
-      pdf.text('Founded by Rashmi', 45, 28)
-      
+      pdf.setFont("helvetica", "normal")
+      pdf.text("Founded by Rashmi", 45, 28)
+
       // Report Title
       pdf.setTextColor(0, 0, 0)
       pdf.setFontSize(18)
-      pdf.setFont('helvetica', 'bold')
+      pdf.setFont("helvetica", "bold")
       const monthName = new Date(year, month - 1).toLocaleString("default", { month: "long" })
       pdf.text(`STUDENT PERFORMANCE REPORT - ${monthName} ${year}`, 20, 55)
-      
+
       // Student Information Section
       pdf.setFillColor(...lightTeal)
-      pdf.rect(15, 65, pageWidth - 30, 35, 'F')
-      
+      pdf.rect(15, 65, pageWidth - 30, 35, "F")
+
       pdf.setTextColor(...darkTeal)
       pdf.setFontSize(14)
-      pdf.setFont('helvetica', 'bold')
-      pdf.text('STUDENT INFORMATION', 20, 75)
-      
+      pdf.setFont("helvetica", "bold")
+      pdf.text("STUDENT INFORMATION", 20, 75)
+
       pdf.setFontSize(11)
-      pdf.setFont('helvetica', 'normal')
+      pdf.setFont("helvetica", "normal")
       pdf.setTextColor(0, 0, 0)
       pdf.text(`Name: ${student?.name || "N/A"}`, 20, 85)
       pdf.text(`Email: ${student?.email || "N/A"}`, 20, 92)
-      pdf.text(`Total Points: ${student?.totalPoints || 0}`, 120, 85)
+      pdf.text(`Total Points: ${analytics?.student?.totalPoints || 0}`, 120, 85)
       pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 120, 92)
-      
+
       // Performance Summary Section
       let yPos = 115
       pdf.setFillColor(...tealColor)
-      pdf.rect(15, yPos, pageWidth - 30, 8, 'F')
-      
+      pdf.rect(15, yPos, pageWidth - 30, 8, "F")
+
       pdf.setTextColor(255, 255, 255)
       pdf.setFontSize(12)
-      pdf.setFont('helvetica', 'bold')
-      pdf.text('PERFORMANCE SUMMARY', 20, yPos + 6)
-      
+      pdf.setFont("helvetica", "bold")
+      pdf.text("PERFORMANCE SUMMARY", 20, yPos + 6)
+
       yPos += 15
       pdf.setTextColor(0, 0, 0)
       pdf.setFontSize(10)
-      pdf.setFont('helvetica', 'normal')
-      
+      pdf.setFont("helvetica", "normal")
+
       const stats = [
-        [`Total Days Active: ${monthlyReport.stats.totalDays}`, `Total Points Earned: ${monthlyReport.stats.totalPoints}`],
-        [`Activities Completed: ${monthlyReport.stats.totalActivities}`, `Average Points/Day: ${monthlyReport.stats.averagePointsPerDay}`]
+        [
+          `Total Days Active: ${monthlyReport.stats.totalDays}`,
+          `Total Points Earned: ${monthlyReport.stats.totalPoints}`,
+        ],
+        [
+          `Activities Completed: ${monthlyReport.stats.totalActivities}`,
+          `Average Points/Day: ${monthlyReport.stats.averagePointsPerDay}`,
+        ],
       ]
-      
+
       stats.forEach(([left, right]) => {
         pdf.text(left, 20, yPos)
         pdf.text(right, 120, yPos)
         yPos += 7
       })
-      
+
       // Activities Breakdown
       yPos += 10
       pdf.setFillColor(...tealColor)
-      pdf.rect(15, yPos, pageWidth - 30, 8, 'F')
-      
+      pdf.rect(15, yPos, pageWidth - 30, 8, "F")
+
       pdf.setTextColor(255, 255, 255)
       pdf.setFontSize(12)
-      pdf.setFont('helvetica', 'bold')
-      pdf.text('ACTIVITIES BREAKDOWN', 20, yPos + 6)
-      
+      pdf.setFont("helvetica", "bold")
+      pdf.text("ACTIVITIES BREAKDOWN", 20, yPos + 6)
+
       yPos += 15
       pdf.setTextColor(0, 0, 0)
       pdf.setFontSize(10)
-      
+
+      // FIXED: Get attendance days count
+      const attendanceDays = calculateAttendanceDays()
+
       const activities = [
-        [`Assignments: ${monthlyReport.stats.activitiesByType.assignment || 0}`, `Assessments: ${monthlyReport.stats.activitiesByType.assessment || 0}`],
-        [`Projects: ${monthlyReport.stats.activitiesByType.project || 0}`, `Attendance Days: ${monthlyReport.stats.activitiesByType.attendance || 0}`]
+        [
+          `Assignments: ${monthlyReport.stats.activitiesByType.assignment || 0}`,
+          `Assessments: ${monthlyReport.stats.activitiesByType.assessment || 0}`,
+        ],
+        [
+          `Projects: ${monthlyReport.stats.activitiesByType.project || 0}`,
+          `Attendance Days: ${monthlyReport.stats.activitiesByType.attendance || attendanceDays || 0}`,
+        ],
       ]
-      
+
       activities.forEach(([left, right]) => {
         pdf.text(left, 20, yPos)
         pdf.text(right, 120, yPos)
         yPos += 7
       })
 
-      // Capture and add charts if analytics exist
+      // Course Learnings Section - ENHANCED WITH ACTUAL COURSE DATA
+      yPos += 15
+      pdf.setFillColor(...tealColor)
+      pdf.rect(15, yPos, pageWidth - 30, 8, "F")
+
+      pdf.setTextColor(255, 255, 255)
+      pdf.setFontSize(12)
+      pdf.setFont("helvetica", "bold")
+      pdf.text("WHAT YOU HAVE LEARNED IN YOUR COURSES", 20, yPos + 6)
+
+      yPos += 15
+      pdf.setTextColor(0, 0, 0)
+      pdf.setFontSize(10)
+
+      if (courseLearnings.length > 0) {
+        courseLearnings.forEach((course) => {
+          // Check if we need a new page
+          if (yPos > pageHeight - 60) {
+            pdf.addPage()
+            yPos = 20
+          }
+
+          // Course title
+          pdf.setFont("helvetica", "bold")
+          pdf.text(`${course.title}:`, 20, yPos)
+          yPos += 7
+
+          // Age Group
+          if (course.ageGroup) {
+            pdf.setFont("helvetica", "normal")
+            pdf.text(`Age Group: ${course.ageGroup}`, 25, yPos)
+            yPos += 5
+          }
+
+          // About section
+          if (course.about && course.about.length > 0) {
+            pdf.setFont("helvetica", "bold")
+            pdf.text("About this course:", 25, yPos)
+            yPos += 5
+            pdf.setFont("helvetica", "normal")
+            course.about.forEach((aboutItem) => {
+              const lines = pdf.splitTextToSize(`• ${aboutItem}`, pageWidth - 50)
+              lines.forEach((line) => {
+                if (yPos > pageHeight - 20) {
+                  pdf.addPage()
+                  yPos = 20
+                }
+                pdf.text(line, 30, yPos)
+                yPos += 5
+              })
+            })
+            yPos += 3
+          }
+
+          // Learning outcomes
+          if (course.learningOutcomes && course.learningOutcomes.length > 0) {
+            pdf.setFont("helvetica", "bold")
+            pdf.text("Learning Outcomes:", 25, yPos)
+            yPos += 5
+            pdf.setFont("helvetica", "normal")
+            course.learningOutcomes.forEach((outcome) => {
+              const lines = pdf.splitTextToSize(`• ${outcome}`, pageWidth - 50)
+              lines.forEach((line) => {
+                if (yPos > pageHeight - 20) {
+                  pdf.addPage()
+                  yPos = 20
+                }
+                pdf.text(line, 30, yPos)
+                yPos += 5
+              })
+            })
+          }
+
+          yPos += 8 // Space between courses
+        })
+      } else {
+        pdf.text("No course learning data available", 20, yPos)
+        yPos += 10
+      }
+
+      // Performance Charts Section - FIXED CHART RENDERING
+      yPos += 10
+      if (yPos > pageHeight - 100) {
+        pdf.addPage()
+        yPos = 20
+      }
+
+      pdf.setFillColor(...tealColor)
+      pdf.rect(15, yPos, pageWidth - 30, 8, "F")
+
+      pdf.setTextColor(255, 255, 255)
+      pdf.setFontSize(12)
+      pdf.setFont("helvetica", "bold")
+      pdf.text("PERFORMANCE ANALYTICS", 20, yPos + 6)
+      yPos += 15
+
+      // Capture and add charts with improved rendering
       if (analytics) {
         try {
-          // Create a temporary div for chart rendering
-          const chartDiv = document.createElement('div')
-          chartDiv.style.width = '400px'
-          chartDiv.style.height = '300px'
-          chartDiv.style.position = 'absolute'
-          chartDiv.style.left = '-9999px'
-          document.body.appendChild(chartDiv)
+          // Performance Comparison Chart
+          if (performanceChartRef.current) {
+            const performanceCanvas = await html2canvas(performanceChartRef.current, {
+              scale: 1.5,
+              backgroundColor: "#ffffff",
+              logging: false,
+              useCORS: true,
+              allowTaint: true,
+              width: performanceChartRef.current.offsetWidth,
+              height: performanceChartRef.current.offsetHeight,
+            })
+            const performanceImgData = performanceCanvas.toDataURL("image/png", 1.0)
+            pdf.addImage(performanceImgData, "PNG", 15, yPos, pageWidth - 30, 60)
+            yPos += 65
+          }
 
-          // You would render your chart here and capture it
-          // For now, we'll add a placeholder for charts
-          yPos += 20
-          pdf.setFillColor(240, 240, 240)
-          pdf.rect(15, yPos, pageWidth - 30, 40, 'F')
-          
-          pdf.setTextColor(100, 100, 100)
-          pdf.setFontSize(10)
-          pdf.text('Performance Analytics Chart', 20, yPos + 10)
-          pdf.text('(Chart visualization would appear here)', 20, yPos + 20)
-          
-          document.body.removeChild(chartDiv)
+          // Check if we need a new page
+          if (yPos > pageHeight - 80) {
+            pdf.addPage()
+            yPos = 20
+          }
+
+          // Activity Trend Chart
+          if (activityChartRef.current) {
+            const activityCanvas = await html2canvas(activityChartRef.current, {
+              scale: 1.5,
+              backgroundColor: "#ffffff",
+              logging: false,
+              useCORS: true,
+              allowTaint: true,
+              width: activityChartRef.current.offsetWidth,
+              height: activityChartRef.current.offsetHeight,
+            })
+            const activityImgData = activityCanvas.toDataURL("image/png", 1.0)
+            pdf.addImage(activityImgData, "PNG", 15, yPos, pageWidth - 30, 60)
+            yPos += 65
+          }
+
+          // Check if we need a new page
+          if (yPos > pageHeight - 80) {
+            pdf.addPage()
+            yPos = 20
+          }
+
+          // Performance Distribution Chart
+          if (pieChartRef.current) {
+            const pieCanvas = await html2canvas(pieChartRef.current, {
+              scale: 1.5,
+              backgroundColor: "#ffffff",
+              logging: false,
+              useCORS: true,
+              allowTaint: true,
+              width: pieChartRef.current.offsetWidth,
+              height: pieChartRef.current.offsetHeight,
+            })
+            const pieImgData = pieCanvas.toDataURL("image/png", 1.0)
+            pdf.addImage(pieImgData, "PNG", 15, yPos, pageWidth - 30, 60)
+          }
         } catch (error) {
-          console.error('Error adding charts to PDF:', error)
+          console.error("Error adding charts to PDF:", error)
+
+          // Fallback to text-based analytics if chart capture fails
+          pdf.setTextColor(0, 0, 0)
+          pdf.setFontSize(10)
+          pdf.text("Performance Analytics (Text Summary):", 20, yPos)
+          yPos += 10
+
+          const performanceData = [
+            `Assignment Completion: ${analytics.student?.assignmentCompletion || 0}%`,
+            `Assessment Completion: ${analytics.student?.assessmentCompletion || 0}%`,
+            `Project Completion: ${analytics.student?.projectCompletion || 0}%`,
+            `Attendance Rate: ${analytics.student?.attendance || 0}%`,
+            `Average Assessment Score: ${analytics.student?.avgAssessmentScore || 0}%`,
+          ]
+
+          performanceData.forEach((text) => {
+            pdf.text(text, 25, yPos)
+            yPos += 7
+          })
         }
       }
 
       // Footer
       pdf.setFillColor(...tealColor)
-      pdf.rect(0, pageHeight - 20, pageWidth, 20, 'F')
-      
+      pdf.rect(0, pageHeight - 20, pageWidth, 20, "F")
+
       pdf.setTextColor(255, 255, 255)
       pdf.setFontSize(8)
-      pdf.setFont('helvetica', 'normal')
-      pdf.text('© 2024 Kidzian Learning Platform - Founded by Rashmi', 20, pageHeight - 10)
-      pdf.text('Empowering Students Through Technology', 20, pageHeight - 5)
+      pdf.setFont("helvetica", "normal")
+      pdf.text("© 2024 Kidzian Learning Platform - Founded by Rashmi", 20, pageHeight - 10)
+      pdf.text("Empowering Students Through Technology", 20, pageHeight - 5)
 
       // Save the PDF
       pdf.save(`Kidzian_Report_${student?.name?.replace(/\s+/g, "_")}_${monthName}_${year}.pdf`)
-      
     } catch (error) {
-      console.error('Error generating PDF:', error)
-      alert('Error generating PDF report. Please try again.')
+      console.error("Error generating PDF:", error)
+      alert("Error generating PDF report. Please try again.")
+    } finally {
+      setGeneratingPDF(false)
     }
   }
 
@@ -584,21 +796,19 @@ const StudentDashboard = () => {
       <header className="bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-600 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-           <div className="flex items-center space-x-4">
-  <div className="bg-white/20 backdrop-blur-sm rounded-full p-1">
-    <img
-   src={student?.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-
-      alt="Profile"
-      className="w-12 h-12 rounded-full object-cover"
-    />
-  </div>
-  <div>
-    <h1 className="text-3xl font-bold text-white">Kidzian Learning Platform</h1>
-    <p className="text-teal-100 mt-1">Welcome back, {student?.name || "Student"} </p>
-  </div>
-</div>
-
+            <div className="flex items-center space-x-4">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full p-1">
+                <img
+                  src={student?.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white">Kidzian Learning Platform</h1>
+                <p className="text-teal-100 mt-1">Welcome back, {student?.name || "Student"} </p>
+              </div>
+            </div>
 
             <div className="flex items-center gap-6">
               <div className="text-sm text-white text-right bg-white/10 backdrop-blur-sm rounded-xl p-4">
@@ -682,8 +892,8 @@ const StudentDashboard = () => {
                 <Trophy className="w-6 h-6 text-white" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Points</p>
-                <p className="text-2xl font-bold text-amber-700">{analytics?.student?.totalPoints || 0}</p>
+                <p className="text-sm font-medium text-gray-600">Attendance Days</p>
+                <p className="text-2xl font-bold text-amber-700">{calculateAttendanceDays()}</p>
               </div>
             </div>
           </div>
@@ -693,19 +903,21 @@ const StudentDashboard = () => {
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 mb-8">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6 overflow-x-auto">
-              {["overview", "assignments", "assessments", "projects", "analytics", "reports"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm capitalize transition-all duration-300 whitespace-nowrap ${
-                    activeTab === tab
-                      ? "border-teal-500 text-teal-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+              {["overview", "assignments", "assessments", "projects", "analytics", "learnings", "reports"].map(
+                (tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`py-4 px-1 border-b-2 font-medium text-sm capitalize transition-all duration-300 whitespace-nowrap ${
+                      activeTab === tab
+                        ? "border-teal-500 text-teal-600"
+                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    }`}
+                  >
+                    {tab === "learnings" ? "Course Learnings" : tab}
+                  </button>
+                ),
+              )}
             </nav>
           </div>
 
@@ -723,7 +935,7 @@ const StudentDashboard = () => {
                     {/* Performance Radar Chart */}
                     <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 shadow-lg">
                       <h4 className="text-lg font-semibold text-teal-700 mb-4">Performance vs Average</h4>
-                      <div className="h-64">
+                      <div className="h-64" ref={performanceChartRef}>
                         <ResponsiveContainer width="100%" height="100%">
                           <RadarChart data={generateComparisonData()}>
                             <PolarGrid />
@@ -740,7 +952,7 @@ const StudentDashboard = () => {
                     {/* Performance Distribution */}
                     <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 shadow-lg">
                       <h4 className="text-lg font-semibold text-teal-700 mb-4">Performance Distribution</h4>
-                      <div className="h-64">
+                      <div className="h-64" ref={pieChartRef}>
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
                             <Pie
@@ -772,7 +984,7 @@ const StudentDashboard = () => {
                     Activity Trend (Last 30 Days)
                   </h3>
                   <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                    <div className="h-64">
+                    <div className="h-64" ref={activityChartRef}>
                       <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart data={generateActivityTrendData()}>
                           <CartesianGrid strokeDasharray="3 3" />
@@ -796,6 +1008,78 @@ const StudentDashboard = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Course Learnings Tab - ENHANCED WITH ACTUAL COURSE DATA */}
+            {activeTab === "learnings" && (
+              <div>
+                <h3 className="text-xl font-bold text-teal-700 mb-6 flex items-center">
+                  <BookOpen className="w-6 h-6 mr-2" />
+                  What You've Learned in Your Courses
+                </h3>
+                {courseLearnings.length > 0 ? (
+                  <div className="space-y-6">
+                    {courseLearnings.map((course) => (
+                      <div
+                        key={course._id}
+                        className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                      >
+                        <div className="flex items-center mb-4">
+                          <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
+                            <BookOpen className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="ml-4">
+                            <h4 className="text-xl font-semibold text-gray-900">{course.title}</h4>
+                            <p className="text-sm text-gray-500">Age Group: {course.ageGroup}</p>
+                          </div>
+                        </div>
+
+                        {course.about && course.about.length > 0 && (
+                          <div className="mb-6">
+                            <h5 className="text-lg font-medium text-gray-700 mb-3">About This Course:</h5>
+                            <ul className="list-disc list-inside text-gray-600 space-y-2">
+                              {course.about.map((item, index) => (
+                                <li key={index} className="text-sm">
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {course.learningOutcomes && course.learningOutcomes.length > 0 && (
+                          <div className="mb-6">
+                            <h5 className="text-lg font-medium text-gray-700 mb-3">Learning Outcomes:</h5>
+                            <ul className="list-disc list-inside text-gray-600 space-y-2">
+                              {course.learningOutcomes.map((outcome, index) => (
+                                <li key={index} className="text-sm">
+                                  {outcome}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-4 border border-teal-200">
+                          <div className="flex items-center gap-2 text-teal-700">
+                            <Award className="w-5 h-5" />
+                            <span className="font-medium">Course Progress</span>
+                          </div>
+                          <div className="mt-2 text-sm text-teal-600">
+                            You're actively learning and growing in this course!
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-gray-500 bg-white rounded-2xl shadow-lg">
+                    <BookOpen className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                    <p className="text-lg">No course learning data available yet.</p>
+                    <p className="text-sm mt-2">Complete some courses to see your learning outcomes here!</p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1311,10 +1595,22 @@ const StudentDashboard = () => {
                 </div>
                 <button
                   onClick={() => downloadPDFReport(monthlyReport.month, monthlyReport.year)}
-                  className="bg-white hover:bg-gray-100 text-teal-700 px-6 py-3 rounded-xl transition-colors flex items-center gap-2 font-medium shadow-lg"
+                  disabled={generatingPDF}
+                  className={`${
+                    generatingPDF ? "bg-gray-300 cursor-not-allowed" : "bg-white hover:bg-gray-100"
+                  } text-teal-700 px-6 py-3 rounded-xl transition-colors flex items-center gap-2 font-medium shadow-lg`}
                 >
-                  <Download className="w-5 h-5" />
-                  Download PDF Report
+                  {generatingPDF ? (
+                    <>
+                      <div className="animate-spin h-5 w-5 border-2 border-teal-700 border-t-transparent rounded-full"></div>
+                      Generating PDF...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-5 h-5" />
+                      Download PDF Report
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -1333,108 +1629,43 @@ const StudentDashboard = () => {
                   <div className="text-3xl font-bold text-blue-700">{monthlyReport.stats.totalActivities}</div>
                 </div>
                 <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-6 border border-emerald-200">
-                  <div className="text-emerald-600 text-sm font-medium">Avg Points/Day</div>
-                  <div className="text-3xl font-bold text-emerald-700">{monthlyReport.stats.averagePointsPerDay}</div>
+                  <div className="text-emerald-600 text-sm font-medium">Attendance Days</div>
+                  <div className="text-3xl font-bold text-emerald-700">{calculateAttendanceDays()}</div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 shadow-lg">
-                  <h4 className="font-semibold text-gray-700 mb-4">Activities by Type</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 bg-white rounded-xl">
-                      <span>Assignments:</span>
-                      <span className="font-medium text-teal-600">{monthlyReport.stats.activitiesByType.assignment}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-white rounded-xl">
-                      <span>Assessments:</span>
-                      <span className="font-medium text-indigo-600">{monthlyReport.stats.activitiesByType.assessment}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-white rounded-xl">
-                      <span>Projects:</span>
-                      <span className="font-medium text-blue-600">{monthlyReport.stats.activitiesByType.project}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-white rounded-xl">
-                      <span>Attendance:</span>
-                      <span className="font-medium text-emerald-600">{monthlyReport.stats.activitiesByType.attendance}</span>
-                    </div>
+              {/* Course Learnings in Report Modal */}
+              {courseLearnings.length > 0 && (
+                <div className="mb-8">
+                  <h4 className="text-lg font-semibold text-teal-700 mb-4">Course Learnings This Month</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {courseLearnings.slice(0, 4).map((course) => (
+                      <div
+                        key={course._id}
+                        className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 shadow-sm"
+                      >
+                        <h5 className="font-medium text-gray-700 mb-2">{course.title}</h5>
+                        <div className="text-sm text-gray-600">
+                          {course.learningOutcomes?.slice(0, 2).map((outcome, index) => (
+                            <div key={index} className="mb-1">
+                              • {outcome}
+                            </div>
+                          ))}
+                          {course.learningOutcomes?.length > 2 && (
+                            <div className="text-xs text-gray-500">
+                              +{course.learningOutcomes.length - 2} more outcomes
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 shadow-lg">
-                  <h4 className="font-semibold text-gray-700 mb-4">Daily Activity</h4>
-                  <div className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={monthlyReport.dailyData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
-                        <Tooltip />
-                        <Area
-                          type="monotone"
-                          dataKey="pointsEarned"
-                          stroke="#14b8a6"
-                          fill="#14b8a6"
-                          fillOpacity={0.3}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              </div>
+              )}
 
               <div className="mt-8 flex gap-4">
                 <button
                   onClick={() => setShowReportModal(false)}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-xl transition-colors font-medium"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Enhanced Modals with improved styling */}
-      {/* Assessment Details Modal */}
-      {showAssessmentModal && selectedAssessment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600">
-              <h2 className="text-2xl font-bold text-white">{selectedAssessment.title}</h2>
-              <p className="text-indigo-100 mt-2">{selectedAssessment.description}</p>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 border border-indigo-200">
-                  <div className="text-indigo-600 text-sm font-medium">Duration</div>
-                  <div className="text-xl font-bold text-indigo-700">{selectedAssessment.duration} min</div>
-                </div>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                  <div className="text-blue-600 text-sm font-medium">Questions</div>
-                  <div className="text-xl font-bold text-blue-700">{selectedAssessment.questions?.length || 0}</div>
-                </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                  <div className="text-purple-600 text-sm font-medium">Max Marks</div>
-                  <div className="text-xl font-bold text-purple-700">{selectedAssessment.maxMarks}</div>
-                </div>
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
-                  <div className="text-emerald-600 text-sm font-medium">Points</div>
-                  <div className="text-xl font-bold text-emerald-700">10-20</div>
-                </div>
-              </div>
-
-              {selectedAssessment.instructions && (
-                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                  <h4 className="font-medium text-amber-800 mb-2">Instructions:</h4>
-                  <p className="text-amber-700">{selectedAssessment.instructions}</p>
-                </div>
-              )}
-
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setShowAssessmentModal(false)}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-xl transition-colors font-medium"
                 >
                   Close
@@ -1481,6 +1712,54 @@ const StudentDashboard = () => {
               <div className="flex gap-4">
                 <button
                   onClick={() => setShowAssignmentModal(false)}
+                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-xl transition-colors font-medium"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assessment Details Modal */}
+      {showAssessmentModal && selectedAssessment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600">
+              <h2 className="text-2xl font-bold text-white">{selectedAssessment.title}</h2>
+              <p className="text-indigo-100 mt-2">{selectedAssessment.description}</p>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 border border-indigo-200">
+                  <div className="text-indigo-600 text-sm font-medium">Duration</div>
+                  <div className="text-xl font-bold text-indigo-700">{selectedAssessment.duration} min</div>
+                </div>
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                  <div className="text-blue-600 text-sm font-medium">Questions</div>
+                  <div className="text-xl font-bold text-blue-700">{selectedAssessment.questions?.length || 0}</div>
+                </div>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+                  <div className="text-purple-600 text-sm font-medium">Max Marks</div>
+                  <div className="text-xl font-bold text-purple-700">{selectedAssessment.maxMarks}</div>
+                </div>
+                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
+                  <div className="text-emerald-600 text-sm font-medium">Points</div>
+                  <div className="text-xl font-bold text-emerald-700">10-20</div>
+                </div>
+              </div>
+
+              {selectedAssessment.instructions && (
+                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                  <h4 className="font-medium text-amber-800 mb-2">Instructions:</h4>
+                  <p className="text-amber-700">{selectedAssessment.instructions}</p>
+                </div>
+              )}
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowAssessmentModal(false)}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-xl transition-colors font-medium"
                 >
                   Close

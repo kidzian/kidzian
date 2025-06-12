@@ -159,7 +159,7 @@ export default function ProjectView() {
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-2">Rock Paper Scissor</h3>
                     <p className="text-gray-600 leading-relaxed">
-                     Rock Paper Scissor is a Fun Game developed by Anaya.
+                     Rock Paper Scissor is a Fun Game developed by Aanya.
                     </p>
                   </div>
                 </div>

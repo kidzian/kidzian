@@ -154,6 +154,46 @@ router.get("/profile", auth(["student"]), async (req, res) => {
   }
 })
 
+// NEW: Get course learnings for student
+router.get("/course-learnings", auth(["student"]), async (req, res) => {
+  try {
+    const student = await User.findById(req.user.id).populate({
+      path: "batches.batch",
+      populate: {
+        path: "course",
+        select: "title ageGroup about learningOutcomes",
+      },
+    })
+
+    if (!student) return res.status(404).json({ message: "Student not found" })
+
+    // Extract unique courses from student's batches
+    const courseLearnings = []
+    const seenCourses = new Set()
+
+    student.batches.forEach((enrollment) => {
+      if (enrollment.batch && enrollment.batch.course) {
+        const course = enrollment.batch.course
+        if (!seenCourses.has(course._id.toString())) {
+          seenCourses.add(course._id.toString())
+          courseLearnings.push({
+            _id: course._id,
+            title: course.title,
+            ageGroup: course.ageGroup,
+            about: course.about || [],
+            learningOutcomes: course.learningOutcomes || [],
+          })
+        }
+      }
+    })
+
+    res.json(courseLearnings)
+  } catch (err) {
+    console.error("Course learnings error:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
 // Enrollments / Courses
 router.get("/enrollments", auth(["student"]), async (req, res) => {
   try {
@@ -698,6 +738,7 @@ router.get("/monthly-report/:month/:year", auth(["student"]), async (req, res) =
         assessment: 0,
         project: 0,
         login: 0,
+        attendance: 0,
       },
     }
 

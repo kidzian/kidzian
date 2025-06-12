@@ -1,121 +1,178 @@
-import React, { useState } from "react";
+"use client"
+
+import { useState, useEffect, useRef } from "react"
 
 const ParentsFeedback = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [expandedComments, setExpandedComments] = useState({});
-  
-  const googleReviewUrl = "https://www.google.com/search?q=kidzian&rlz=1C1GCEU_en&oq=kidzian&gs_lcrp=EgZjaHJvbWUqBggBEEUYOzIGCAAQRRg8MgYIARBFGDsyDAgCEAAYChixAxiABDIJCAMQABgKGIAEMhIIBBAuGAoYrwEYxwEYsQMYgAQyBggFEEUYPTIGCAYQRRg8MgYIBxBFGDzSAQkxMDY2MWowajSoAgewAgHxBSi2-DrMeI6n&sourceid=chrome&ie=UTF-8#lrd=0x3bae0f89479856cd:0x96ea16cfc43a695,1,,,,";
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [expandedComments, setExpandedComments] = useState({})
+  const [isInView, setIsInView] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
+  const sectionRef = useRef(null)
+
+  const googleReviewUrl =
+    "https://www.google.com/search?q=kidzian&rlz=1C1GCEU_en&oq=kidzian&gs_lcrp=EgZjaHJvbWUqBggBEEUYOzIGCAAQRRg8MgYIARBFGDsyDAgCEAAYChixAxiABDIJCAMQABgKGIAEMhIIBBAuGAoYrwEYxwEYsQMYgAQyBggFEEUYPTIGCAYQRRg8MgYIBxBFGDzSAQkxMDY2MWowajSoAgewAgHxBSi2-DrMeI6n&sourceid=chrome&ie=UTF-8#lrd=0x3bae0f89479856cd:0x96ea16cfc43a695,1,,,,"
 
   const testimonials = [
     {
       id: 1,
-      name: "Sujata Munirangappa", // Female
+      name: "Sujata Munirangappa",
       reviewInfo: "2 reviews",
       date: "a month ago",
-      avatar: "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=150&h=150&fit=crop&crop=face&auto=format", // Indian female
+      avatar: "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=150&h=150&fit=crop&crop=face&auto=format",
       rating: 5,
-      shortComment: "Kidzian has been a fantastic learning platform for my son! He has developed a strong interest in coding and enjoys every session...",
-      fullComment: "Kidzian has been a fantastic learning platform for my son! He has developed a strong interest in coding and enjoys every session. The interactive approach keeps him engaged, and his problem-solving skills have improved significantly. I'm truly grateful for the positive impact on his learning journey!",
+      shortComment:
+        "Kidzian has been a fantastic learning platform for my son! He has developed a strong interest in coding and enjoys every session...",
+      fullComment:
+        "Kidzian has been a fantastic learning platform for my son! He has developed a strong interest in coding and enjoys every session. The interactive approach keeps him engaged, and his problem-solving skills have improved significantly. I'm truly grateful for the positive impact on his learning journey!",
       isGoogle: true,
     },
     {
       id: 2,
-      name: "Dr.S.Pramila", // Female (Doctor)
+      name: "Dr.S.Pramila",
       reviewInfo: "3 reviews · 1 photo",
       date: "a year ago",
-      avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face&auto=format", // Indian female doctor
+      avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face&auto=format",
       rating: 5,
-      shortComment: "She is a very excellent teacher and explains the concept very well. My son is always exited to attend her classes...",
-      fullComment: "She is a very excellent teacher and explains the concept very well. My son is always exited to attend her classes. She always maintains students in a participative learning environment. I have also received very good feedback from other parents also.",
+      shortComment:
+        "She is a very excellent teacher and explains the concept very well. My son is always exited to attend her classes...",
+      fullComment:
+        "She is a very excellent teacher and explains the concept very well. My son is always exited to attend her classes. She always maintains students in a participative learning environment. I have also received very good feedback from other parents also.",
       isGoogle: true,
     },
     {
       id: 3,
-      name: "Kalpana Thulasiraman", // Female
+      name: "Kalpana Thulasiraman",
       reviewInfo: "3 reviews",
       date: "a year ago",
-      avatar: "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=150&h=150&fit=crop&crop=face&auto=format", // Indian female
+      avatar: "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=150&h=150&fit=crop&crop=face&auto=format",
       rating: 5,
-      shortComment: "It's been many months since mam is teaching my daughter.and I have seen a vast improvement in my daughter...",
-      fullComment: "It's been many months since mam is teaching my daughter.and I have seen a vast improvement in my daughter.my daughter also enjoys her teaching methods",
+      shortComment:
+        "It's been many months since mam is teaching my daughter.and I have seen a vast improvement in my daughter...",
+      fullComment:
+        "It's been many months since mam is teaching my daughter.and I have seen a vast improvement in my daughter.my daughter also enjoys her teaching methods",
       isGoogle: true,
     },
     {
       id: 4,
-      name: "Dr.Mraju SB", // Male (Doctor)
+      name: "Dr.Mraju SB",
       reviewInfo: "6 reviews · 10 photos",
       date: "a year ago",
-      avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face&auto=format", // Indian male doctor
+      avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face&auto=format",
       rating: 5,
-      shortComment: "Kidzian is one of the best institute to learn coding and other related subjects from the founder Ms. Rashmi who has vast experience...",
-      fullComment: "Kidzian is one of the best institute to learn coding and other related subjects from the founder Ms. Rashmi who has vast experience in software programing and development and teaching the children with hands on experience so that children can learn wit dedication please admit your children too and encourage neighbors and friends to admit their wards too",
+      shortComment:
+        "Kidzian is one of the best institute to learn coding and other related subjects from the founder Ms. Rashmi who has vast experience...",
+      fullComment:
+        "Kidzian is one of the best institute to learn coding and other related subjects from the founder Ms. Rashmi who has vast experience in software programing and development and teaching the children with hands on experience so that children can learn wit dedication please admit your children too and encourage neighbors and friends to admit their wards too",
       isGoogle: true,
     },
     {
       id: 5,
-      name: "Priya Sharma", // Female
+      name: "Priya Sharma",
       reviewInfo: "5 reviews · 2 photos",
       date: "2 months ago",
-      avatar: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=150&h=150&fit=crop&crop=face&auto=format", // Indian female
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face&auto=format", // Updated to Indian girl
       rating: 5,
-      shortComment: "Amazing experience with Kidzian! My daughter has learned so much about programming and logical thinking...",
-      fullComment: "Amazing experience with Kidzian! My daughter has learned so much about programming and logical thinking. The teachers are very patient and explain concepts in a way that children can easily understand. Highly recommended for parents looking for quality coding education.",
+      shortComment:
+        "Amazing experience with Kidzian! My daughter has learned so much about programming and logical thinking...",
+      fullComment:
+        "Amazing experience with Kidzian! My daughter has learned so much about programming and logical thinking. The teachers are very patient and explain concepts in a way that children can easily understand. Highly recommended for parents looking for quality coding education.",
       isGoogle: true,
     },
     {
       id: 6,
-      name: "Rajesh Kumar", // Male
+      name: "Rajesh Kumar",
       reviewInfo: "4 reviews",
       date: "3 months ago",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&auto=format", // Indian male
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&auto=format",
       rating: 5,
-      shortComment: "Excellent teaching methodology and very supportive staff. My son enjoys every class and has shown remarkable improvement...",
-      fullComment: "Excellent teaching methodology and very supportive staff. My son enjoys every class and has shown remarkable improvement in his problem-solving abilities. The curriculum is well-structured and age-appropriate. Thank you Kidzian team!",
+      shortComment:
+        "Excellent teaching methodology and very supportive staff. My son enjoys every class and has shown remarkable improvement...",
+      fullComment:
+        "Excellent teaching methodology and very supportive staff. My son enjoys every class and has shown remarkable improvement in his problem-solving abilities. The curriculum is well-structured and age-appropriate. Thank you Kidzian team!",
       isGoogle: true,
     },
     {
       id: 7,
-      name: "Anita Desai", // Female
+      name: "Anita Desai",
       reviewInfo: "2 reviews",
       date: "4 months ago",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face&auto=format", // Indian female
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face&auto=format",
       rating: 5,
-      shortComment: "My daughter absolutely loves her coding classes at Kidzian. The teachers are very patient and encouraging...",
-      fullComment: "My daughter absolutely loves her coding classes at Kidzian. The teachers are very patient and encouraging. She has gained so much confidence in problem-solving and logical thinking. The online platform is user-friendly and engaging for kids.",
+      shortComment:
+        "My daughter absolutely loves her coding classes at Kidzian. The teachers are very patient and encouraging...",
+      fullComment:
+        "My daughter absolutely loves her coding classes at Kidzian. The teachers are very patient and encouraging. She has gained so much confidence in problem-solving and logical thinking. The online platform is user-friendly and engaging for kids.",
       isGoogle: true,
     },
     {
       id: 8,
-      name: "Vikram Singh", // Male
+      name: "Vikram Singh",
       reviewInfo: "7 reviews · 3 photos",
       date: "5 months ago",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&auto=format", // Indian male
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&auto=format",
       rating: 5,
-      shortComment: "Outstanding coding program for kids! My son has developed excellent programming skills and logical reasoning...",
-      fullComment: "Outstanding coding program for kids! My son has developed excellent programming skills and logical reasoning. The curriculum is well-designed and the instructors are highly qualified. I would definitely recommend Kidzian to other parents.",
+      shortComment:
+        "Outstanding coding program for kids! My son has developed excellent programming skills and logical reasoning...",
+      fullComment:
+        "Outstanding coding program for kids! My son has developed excellent programming skills and logical reasoning. The curriculum is well-designed and the instructors are highly qualified. I would definitely recommend Kidzian to other parents.",
       isGoogle: true,
+    },
+  ]
+
+  // Intersection Observer to detect when section is in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting)
+      },
+      {
+        threshold: 0.3, // Trigger when 30% of the section is visible
+      },
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
     }
-  ];
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current)
+      }
+    }
+  }, [])
+
+  // Auto-play functionality
+  useEffect(() => {
+    let interval
+
+    if (isInView && !isPaused) {
+      interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex === testimonials.length - 3 ? 0 : prevIndex + 1))
+      }, 4000) // Change slide every 4 seconds
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [isInView, isPaused, testimonials.length])
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? testimonials.length - 3 : prevIndex - 1
-    );
-  };
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? testimonials.length - 3 : prevIndex - 1))
+  }
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === testimonials.length - 3 ? 0 : prevIndex + 1
-    );
-  };
+    setCurrentIndex((prevIndex) => (prevIndex === testimonials.length - 3 ? 0 : prevIndex + 1))
+  }
 
   const toggleComment = (id, e) => {
-    e.stopPropagation(); // Prevent card click when clicking Read more
-    setExpandedComments(prev => ({
+    e.stopPropagation()
+    setExpandedComments((prev) => ({
       ...prev,
-      [id]: !prev[id]
-    }));
-  };
+      [id]: !prev[id],
+    }))
+  }
 
   const renderStars = (rating) => {
     return Array(5)
@@ -123,48 +180,40 @@ const ParentsFeedback = () => {
       .map((_, i) => (
         <svg
           key={i}
-          className={`w-5 h-5 ${
-            i < rating ? "text-yellow-400" : "text-gray-300"
-          }`}
+          className={`w-5 h-5 ${i < rating ? "text-yellow-400" : "text-gray-300"}`}
           fill="currentColor"
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
-      ));
-  };
+      ))
+  }
 
-  const visibleTestimonials = testimonials.slice(currentIndex, currentIndex + 3);
+  const visibleTestimonials = testimonials.slice(currentIndex, currentIndex + 3)
 
   return (
-    <div className="bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      ref={sectionRef}
+      className="bg-white py-12 px-4 sm:px-6 lg:px-8"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       <div className="max-w-7xl mx-auto">
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-teal-700 mb-4">
-            Parents' Feedback
-          </h2>
+          <h2 className="text-4xl font-bold text-teal-700 mb-4">Parents' Feedback</h2>
           <p className="text-xl text-gray-700 mb-12">
-            You don't have to take our word. See why children love us, and
-            parents admire us.
+            You don't have to take our word. See why children love us, and parents admire us.
           </p>
         </div>
 
         <div className="flex items-center justify-center mb-8">
           <div className="flex flex-col items-center">
             <div className="text-xl font-bold text-gray-800">EXCELLENT</div>
-            <div className="flex space-x-1 my-2">
-              {renderStars(5)}
-            </div>
+            <div className="flex space-x-1 my-2">{renderStars(5)}</div>
             <div className="flex gap-1 ">
               <div className="">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="120"
-                  height="40"
-                  viewBox="0 0 272 92"
-                  className="w-32"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 272 92" className="w-32">
                   <path
                     fill="#EA4335"
                     d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"
@@ -197,7 +246,7 @@ const ParentsFeedback = () => {
           <div className="flex items-center justify-between">
             <button
               onClick={handlePrev}
-              className="absolute left-0 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 focus:outline-none"
+              className="absolute left-0 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 focus:outline-none transition-all duration-200 hover:scale-110"
               aria-label="Previous testimonial"
             >
               <svg
@@ -207,57 +256,50 @@ const ParentsFeedback = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mx-12">
-              {visibleTestimonials.map((testimonial) => (
+              {visibleTestimonials.map((testimonial, index) => (
                 <div
                   key={testimonial.id}
-                  className="bg-gray-50 p-6 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md cursor-pointer"
-                  onClick={() => window.open(googleReviewUrl, '_blank')}
+                  className="bg-gray-50 p-6 rounded-lg shadow-sm transition-all duration-500 hover:shadow-md cursor-pointer transform hover:scale-105 animate-fade-in"
+                  style={{
+                    animationDelay: `${index * 0.1}s`,
+                  }}
+                  onClick={() => window.open(googleReviewUrl, "_blank")}
                 >
                   <div className="flex items-center mb-4">
                     <div className="w-10 h-10 rounded-full overflow-hidden mr-3 flex-shrink-0">
                       <img
                         src={testimonial.avatar || "/placeholder.svg"}
                         alt={`${testimonial.name}'s profile`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                         onError={(e) => {
-                          // Fallback to initials if image fails to load
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
+                          e.target.style.display = "none"
+                          e.target.nextSibling.style.display = "flex"
                         }}
                       />
-                      <div 
+                      <div
                         className="w-full h-full bg-purple-500 flex items-center justify-center text-white font-bold text-sm hidden"
-                        style={{ display: 'none' }}
+                        style={{ display: "none" }}
                       >
-                        {testimonial.name.split(' ').map(n => n[0]).join('')}
+                        {testimonial.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </div>
                     </div>
                     <div className="flex-grow min-w-0">
-                      <h3 className="font-semibold text-gray-800 truncate">
-                        {testimonial.name}
-                      </h3>
+                      <h3 className="font-semibold text-gray-800 truncate">{testimonial.name}</h3>
                       <p className="text-xs text-gray-500">
                         {testimonial.reviewInfo} · {testimonial.date}
                       </p>
                     </div>
                     {testimonial.isGoogle && (
                       <div className="ml-2 flex-shrink-0">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                        >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                           <path
                             fill="#4285F4"
                             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -294,12 +336,10 @@ const ParentsFeedback = () => {
                     </svg>
                   </div>
                   <p className="text-gray-700 mb-2">
-                    {expandedComments[testimonial.id] 
-                      ? testimonial.fullComment 
-                      : testimonial.shortComment}
+                    {expandedComments[testimonial.id] ? testimonial.fullComment : testimonial.shortComment}
                   </p>
-                  <button 
-                    className="text-blue-400 text-sm hover:underline focus:outline-none"
+                  <button
+                    className="text-blue-400 text-sm hover:underline focus:outline-none transition-colors duration-200"
                     onClick={(e) => toggleComment(testimonial.id, e)}
                   >
                     {expandedComments[testimonial.id] ? "Read less" : "Read more"}
@@ -310,7 +350,7 @@ const ParentsFeedback = () => {
 
             <button
               onClick={handleNext}
-              className="absolute right-0 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 focus:outline-none"
+              className="absolute right-0 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 focus:outline-none transition-all duration-200 hover:scale-110"
               aria-label="Next testimonial"
             >
               <svg
@@ -320,14 +360,33 @@ const ParentsFeedback = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
+          </div>
+        </div>
+
+        {/* Auto-play indicator dots */}
+        <div className="flex justify-center mt-6 space-x-2">
+          {Array.from({ length: testimonials.length - 2 }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                currentIndex === index ? "bg-teal-600 scale-125" : "bg-gray-300 hover:bg-gray-400"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Auto-play status indicator */}
+        <div className="flex justify-center mt-4">
+          <div className="flex items-center text-sm text-gray-500">
+            {/* <div
+              className={`w-2 h-2 rounded-full mr-2 ${isInView && !isPaused ? "bg-green-500 animate-pulse" : "bg-gray-400"}`}
+            ></div> */}
+            {/* {isInView && !isPaused ? "Auto-playing" : isPaused ? "Paused" : "Not in view"} */}
           </div>
         </div>
 
@@ -351,8 +410,25 @@ const ParentsFeedback = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
-};
 
-export default ParentsFeedback;
+      <style jsx>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out forwards;
+        }
+      `}</style>
+    </div>
+  )
+}
+
+export default ParentsFeedback

@@ -1,147 +1,380 @@
-import React, { useState } from 'react';
-import Heading from '../components/Heading';
-import { LinkedinIcon, Send, Phone } from 'lucide-react';
-import { ToastContainer, toast } from 'react-toastify';
-import Footer from '../components/Footer';
+"use client"
+
+import { useState } from "react"
+import Heading from "../components/Heading"
+import { LinkedinIcon, Send, Phone, MapPin, Clock, Mail, CheckCircle } from "lucide-react"
+import { ToastContainer, toast } from "react-toastify"
+import Footer from "../components/Footer"
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    category: '',
-    message: '',
-  });
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+  
+    message: "",
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
+    const { name, value } = e.target
+    setFormData((prevData) => ({ ...prevData, [name]: value }))
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { firstName, lastName, email, phone, message } = formData;
+    e.preventDefault()
+    const { firstName, lastName, email, phone, message } = formData
+
     if (!firstName || !lastName || !email || !phone || !message) {
-      toast.error('Please fill in all fields!');
-      return;
+      toast.error("Please fill in all fields!")
+      return
     }
+
+    setIsSubmitting(true)
+
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contact`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      });
+      })
+
       if (response.ok) {
-        toast.success('Message sent successfully!');
-        setFormData({ firstName: '', lastName: '', email: '', phone: '', category: '', message: '' });
+        toast.success("Message sent successfully!")
+        setFormData({ firstName: "", lastName: "", email: "", phone: "",  message: "" })
       } else {
-        toast.error('Failed to send message. Please try again.');
+        toast.error("Failed to send message. Please try again.")
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
-      toast.error('Something went wrong. Please try again later.');
+      console.error("Error submitting form:", error)
+      toast.error("Something went wrong. Please try again later.")
+    } finally {
+      setIsSubmitting(false)
     }
-  };
+  }
+
+  const contactInfo = [
+    {
+      icon: Phone,
+      title: "Call Us",
+      content: "+91-9599-860-105",
+      description: "Mon-Fri from 8am to 5pm",
+      link: "tel:+919599860105",
+    },
+    {
+      icon: Mail,
+      title: "Email Us",
+      content: "info@kidzians.com",
+      description: "We'll respond within 24 hours",
+      link: "mailto:info@kidzians.com",
+    },
+    {
+      icon: LinkedinIcon,
+      title: "LinkedIn",
+      content: "Message us on LinkedIn",
+      description: "Connect with our team",
+      link: "https://in.linkedin.com/company/kidzian?trk=public_post_feed-actor-name",
+    },
+    {
+      icon: MapPin,
+      title: "Visit Us",
+      content: "Bangalore, India",
+      description: "Come say hello at our office",
+      link: "#map",
+    },
+  ]
+
+  const features = [
+    "Expert-led interactive classes",
+    "Project-based learning approach",
+    "Personalized learning paths",
+    "24/7 support available",
+  ]
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50">
       <Heading />
-      <ToastContainer />
-      {/* <div className="w-full flex flex-col lg:flex-row gap-6 px-4 lg:px-20 py-12">
-        <div className="w-full lg:w-1/2 h-[300px] lg:h-[87.5vh]">
-          <iframe
-            title="Google Map Location"
-            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d31103.368066902996!2d77.751342!3d12.976904!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae0f89479856cd%3A0x96ea16cfc43a695!2sKidzian%20Pvt%20Ltd!5e0!3m2!1sen!2sus!4v1736935942056!5m2!1sen!2sus"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
 
-        <div className="w-full lg:w-1/2 flex flex-col gap-6">
-          <h1 className="text-5xl font-bold">Get In Touch</h1>
-          <p className="text-gray-700">We're here to help. Chat to our friendly team 24/7.</p>
-          <div className="flex flex-col gap-2">
-            <h1 className="flex items-center text-[#6e2cf6] font-semibold text-sm">
-              <Phone size={15} className="mr-1" /> +91-9599-860-105
-            </h1>
-            <h1 className="flex items-center text-[#6e2cf6] font-semibold text-sm">
-              <Send size={15} className="mr-1" /> info@kidzians.com
-            </h1>
-            <a href='https://in.linkedin.com/company/kidzian?trk=public_post_feed-actor-name' className="text-[#6e2cf6] font-semibold text-sm">
-              <LinkedinIcon size={15} className="mr-1" /> Message us on LinkedIn
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-600 text-white py-16 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">Get In Touch</h1>
+          <p className="text-xl md:text-2xl text-teal-100 mb-8 max-w-3xl mx-auto animate-fade-in-delay">
+            We're here to help your child unlock their potential through coding. Chat with our friendly team 24/7.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 animate-fade-in-delay-2">
+            {features.map((feature, index) => (
+              <div key={index} className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+                <CheckCircle className="w-5 h-5 text-teal-200 mr-2" />
+                <span className="text-sm font-medium">{feature}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Info Cards */}
+      <div className="max-w-7xl mx-auto px-4 -mt-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {contactInfo.map((info, index) => (
+            <a
+              key={index}
+              href={info.link}
+              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 text-center group hover:scale-105 border border-teal-100"
+            >
+              <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <info.icon className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">{info.title}</h3>
+              <p className="text-teal-600 font-medium mb-1">{info.content}</p>
+              <p className="text-sm text-gray-500">{info.description}</p>
             </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Form Section */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-10 border border-teal-100">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">Send us a message</h2>
+              <p className="text-gray-600 text-lg">
+                Ready to start your child's coding journey? Fill out the form below and we'll get back to you within 24
+                hours.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">First Name *</label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="Enter your first name"
+                    onChange={handleChange}
+                    value={formData.firstName}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Last Name *</label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Enter your last name"
+                    onChange={handleChange}
+                    value={formData.lastName}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Email Address *</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email address"
+                  onChange={handleChange}
+                  value={formData.email}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Phone Number *</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Enter your phone number"
+                  onChange={handleChange}
+                  value={formData.phone}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
+                  required
+                />
+              </div>
+
+              {/* <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Category</label>
+                <select
+                  name="category"
+                  onChange={handleChange}
+                  value={formData.category}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white"
+                >
+                  <option value="">Select a category</option>
+                  <option value="trial-session">Trial Session</option>
+                  <option value="course-inquiry">Course Inquiry</option>
+                  <option value="technical-support">Technical Support</option>
+                  <option value="billing">Billing</option>
+                  <option value="partnership">Partnership</option>
+                  <option value="other">Other</option>
+                </select>
+              </div> */}
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Message *</label>
+                <textarea
+                  name="message"
+                  placeholder="Tell us how we can help you..."
+                  rows="5"
+                  onChange={handleChange}
+                  value={formData.message}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors duration-200 bg-gray-50 focus:bg-white resize-none"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-4 bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-semibold rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Sending Message...
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <Send className="w-5 h-5 mr-2" />
+                    Send Message
+                  </div>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-8 p-6 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl border border-teal-100">
+              <div className="flex items-center mb-3">
+                <Clock className="w-5 h-5 text-teal-600 mr-2" />
+                <h3 className="font-semibold text-gray-800">Response Time</h3>
+              </div>
+              <p className="text-gray-600 text-sm">
+                We typically respond to all inquiries within 24 hours during business days. For urgent matters, please
+                call us directly.
+              </p>
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <input type="text" name="firstName" placeholder="First Name" onChange={handleChange} value={formData.firstName} className="p-2 border rounded-md w-full" required />
-              <input type="text" name="lastName" placeholder="Last Name" onChange={handleChange} value={formData.lastName} className="p-2 border rounded-md w-full" required />
+          {/* Map Section */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-teal-100">
+              <div className="p-6 bg-gradient-to-r from-teal-600 to-cyan-600 text-white">
+                <h3 className="text-2xl font-bold mb-2">Visit Our Office</h3>
+                <p className="text-teal-100">
+                  Come and meet our team in person. We'd love to show you around and discuss how we can help your child
+                  succeed.
+                </p>
+              </div>
+              <div className="h-96 lg:h-[500px]" id="map">
+                <iframe
+                  title="Google Map Location"
+                  src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d31103.368066902996!2d77.751342!3d12.976904!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae0f89479856cd%3A0x96ea16cfc43a695!2sKidzian%20Pvt%20Ltd!5e0!3m2!1sen!2us!4v1736935942056!5m2!1sen!2us"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="filter hover:saturate-110 transition-all duration-300"
+                />
+              </div>
             </div>
-            <input type="email" name="email" placeholder="Email" onChange={handleChange} value={formData.email} className="p-2 border rounded-md w-full" required />
-            <input type="tel" name="phone" placeholder="Phone" onChange={handleChange} value={formData.phone} className="p-2 border rounded-md w-full" required />
-            <textarea name="message" placeholder="Message" rows="5" onChange={handleChange} value={formData.message} className="p-2 border rounded-md w-full"></textarea>
-            <button type="submit" className="w-full py-2 bg-[#6e2cf6] text-white font-semibold rounded-md hover:bg-blue-600">Submit</button>
-          </form>
+
+            {/* Additional Info Card */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-teal-100">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">Why Choose Kidzian?</h3>
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                    <CheckCircle className="w-5 h-5 text-teal-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-1">Expert Instructors</h4>
+                    <p className="text-gray-600 text-sm">
+                      Founded by senior researcher from IIT Delhi with years of experience in tech education.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                    <CheckCircle className="w-5 h-5 text-teal-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-1">Proven Results</h4>
+                    <p className="text-gray-600 text-sm">
+                      Thousands of students have successfully learned coding and built amazing projects with us.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center mr-4 mt-1">
+                    <CheckCircle className="w-5 h-5 text-teal-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-1">Flexible Learning</h4>
+                    <p className="text-gray-600 text-sm">
+                      Online and offline classes available to fit your schedule and learning preferences.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div> */}
-
-
-<div className="w-full flex flex-col-reverse lg:flex-row gap-6 px-4 lg:px-20 py-12">
-  {/* Form Section */}
-  <div className="w-full lg:w-1/2 flex flex-col gap-6">
-    <h1 className="text-5xl font-bold">Get In Touch</h1>
-    <p className="text-gray-700">We're here to help. Chat to our friendly team 24/7.</p>
-    <div className="flex flex-col gap-2">
-      <h1 className="flex items-center text-[#3a84f6] font-semibold text-sm">
-        <Phone size={15} className="mr-1" /> +91-9599-860-105
-      </h1>
-      <h1 className="flex items-center text-[#3a84f6] font-semibold text-sm">
-        <Send size={15} className="mr-1" /> info@kidzians.com
-      </h1>
-      <a href='https://in.linkedin.com/company/kidzian?trk=public_post_feed-actor-name' className="text-[#3a84f6] font-semibold text-sm flex">
-        <LinkedinIcon size={15} className="mr-1" /> Message us on LinkedIn
-      </a>
-    </div>
-
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col lg:flex-row gap-4">
-        <input type="text" name="firstName" placeholder="First Name" onChange={handleChange} value={formData.firstName} className="p-2 border rounded-md w-full" required />
-        <input type="text" name="lastName" placeholder="Last Name" onChange={handleChange} value={formData.lastName} className="p-2 border rounded-md w-full" required />
       </div>
-      <input type="email" name="email" placeholder="Email" onChange={handleChange} value={formData.email} className="p-2 border rounded-md w-full" required />
-      <input type="tel" name="phone" placeholder="Phone" onChange={handleChange} value={formData.phone} className="p-2 border rounded-md w-full" required />
-      <textarea name="message" placeholder="Message" rows="5" onChange={handleChange} value={formData.message} className="p-2 border rounded-md w-full"></textarea>
-      <button type="submit" className="w-full py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-semibold rounded-md hover:bg-blue-800">Submit</button>
-    </form>
-  </div>
-
-  {/* Map Section */}
-  <div className="w-full lg:w-1/2 h-[300px] lg:h-[87.5vh]">
-    <iframe
-      title="Google Map Location"
-      src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d31103.368066902996!2d77.751342!3d12.976904!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae0f89479856cd%3A0x96ea16cfc43a695!2sKidzian%20Pvt%20Ltd!5e0!3m2!1sen!2us!4v1736935942056!5m2!1sen!2us"
-      width="100%"
-      height="100%"
-      style={{ border: 0 }}
-      allowFullScreen=""
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
-    ></iframe>
-  </div>
-</div>
-
-
 
       <Footer />
-    </div>
-  );
-};
 
-export default Contact;
+      <style jsx>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-out forwards;
+        }
+        
+        .animate-fade-in-delay {
+          animation: fade-in 0.8s ease-out 0.2s forwards;
+          opacity: 0;
+        }
+        
+        .animate-fade-in-delay-2 {
+          animation: fade-in 0.8s ease-out 0.4s forwards;
+          opacity: 0;
+        }
+      `}</style>
+    </div>
+  )
+}
+
+export default Contact

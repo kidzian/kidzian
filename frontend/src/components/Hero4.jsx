@@ -2,7 +2,6 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight, Sparkles, CheckCircle, X } from "lucide-react"
 
-
 export default function Hero4() {
   const [showModal, setShowModal] = useState(false)
   const [selectedGrade, setSelectedGrade] = useState(null)
@@ -22,13 +21,26 @@ export default function Hero4() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      alert("Trial session booked successfully!")
-      setShowModal(false)
-      setFormData({ name: "", phone: "", email: "", course: "" })
+      const response = await fetch("http://localhost:5000/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...formData, grade: selectedGrade }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        alert("Trial session booked successfully!")
+        setShowModal(false)
+        setFormData({ name: "", phone: "", email: "", course: "" })
+        setSelectedGrade(null)
+      } else {
+        alert(result.error || "Something went wrong.")
+      }
     } catch (error) {
       alert("Failed to book trial session. Please try again.")
     } finally {
@@ -41,7 +53,7 @@ export default function Hero4() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row items-center">
           {/* Left Content */}
-          <div className="w-full md:w-1/2 space-y-8 md:pr-8 md:ml-20 ">
+          <div className="w-full md:w-1/2 space-y-8 md:pr-8 md:ml-20">
             <motion.div
               initial={{ x: -60, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -49,12 +61,11 @@ export default function Hero4() {
               className="space-y-2"
             >
               <h2 className="text-lg font-medium text-gray-700">
-              After-school program for young coders and innovators.  
+                After-school program for young coders and innovators.
               </h2>
               <h1 className="text-4xl md:text-5xl font-bold text-teal-600">
-              Unlock your child’s potential, <br />
-              With Power Of Coding
-
+                Unlock your child’s potential, <br />
+                With Power Of Coding
               </h1>
             </motion.div>
 
@@ -65,20 +76,24 @@ export default function Hero4() {
               className="text-gray-700 space-y-6"
             >
               <p className="text-lg">
-              At Kidzian, through our engaging, world-class curriculum built on the latest technology and innovation, we empower young minds to think, create, and lead.
-Prepare them for the future
-with cutting-edge courses that build real-world tech skills from an early age.
-
-
+                At Kidzian, through our engaging, world-class curriculum built
+                on the latest technology and innovation, we empower young minds
+                to think, create, and lead.
+                Prepare them for the future
+                with cutting-edge courses that build real-world tech skills from an early age.
               </p>
 
               <div className="space-y-1">
-                <p className="font-medium -mt-2 ">Founded by Senior Researcher from IIT Delhi</p>
+                <p className="font-medium -mt-2">Founded by Senior Researcher from IIT Delhi</p>
                 <p className="font-medium">For ages 7–17 years</p>
               </div>
 
-              <div className="space-y-3 ">
-                {["Expert-led interactive classes", "Project-based learning approach","Personalized learning paths for every child"].map((feature, index) => (
+              <div className="space-y-3">
+                {[
+                  "Expert-led interactive classes",
+                  "Project-based learning approach",
+                  "Personalized learning paths for every child"
+                ].map((feature, index) => (
                   <motion.div
                     key={index}
                     initial={{ x: -20, opacity: 0 }}
@@ -98,16 +113,15 @@ with cutting-edge courses that build real-world tech skills from an early age.
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
             >
-           <button
-  onClick={() => setShowModal(true)}
-  className="bg-[#f4a024] hover:bg-[#e6951f] -mt-2 text-white font-semibold px-6 py-3 rounded-md shadow-md transition duration-300 animate-blink"
->
-  <span className="relative z-10 flex items-center gap-2">
-    Request a Trial Session
-    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-  </span>
-</button>
-
+              <button
+                onClick={() => setShowModal(true)}
+                className="bg-[#f4a024] hover:bg-[#e6951f] -mt-2 text-white font-semibold px-6 py-3 rounded-md shadow-md transition duration-300"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  Request a Trial Session
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </span>
+              </button>
             </motion.div>
           </div>
 
@@ -120,18 +134,18 @@ with cutting-edge courses that build real-world tech skills from an early age.
           >
             <div className="relative w-full max-w-[500px] aspect-square">
               <img
-                src="https://img.freepik.com/free-photo/content-teacher-checking-task-standing-pupil_74855-9761.jpg?t=st=1747046864~exp=1747050464~hmac=d8810c8a3d4ac7d74b9704240fd954ea77c862223c430c24fafee92d94f6ab94&w=740"
+                src="https://img.freepik.com/free-photo/content-teacher-checking-task-standing-pupil_74855-9761.jpg"
                 alt="Child learning STEM"
                 className="rounded-lg object-cover w-full h-full shadow-xl"
               />
-              
-              <motion.div 
+
+              <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
                 className="absolute -top-4 -left-4 w-16 h-16 bg-cyan-500 rounded-full opacity-20"
               />
-              <motion.div 
+              <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
@@ -144,17 +158,17 @@ with cutting-edge courses that build real-world tech skills from an early age.
 
       {/* Modal */}
       {showModal && (
-        <div 
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-        onClick={() => setShowModal(false)}
-      >
-        <motion.div
-          onClick={(e) => e.stopPropagation()}
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white rounded-xl shadow-2xl w-full max-w-[425px] p-6 relative"
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={() => setShowModal(false)}
         >
+          <motion.div
+            onClick={(e) => e.stopPropagation()}
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            className="bg-white rounded-xl shadow-2xl w-full max-w-[425px] p-6 relative"
+          >
             <button
               onClick={() => setShowModal(false)}
               className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
@@ -175,7 +189,7 @@ with cutting-edge courses that build real-world tech skills from an early age.
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                  className="w-full border border-gray-300 rounded-lg p-2.5"
                   placeholder="Enter your full name"
                   required
                 />
@@ -188,7 +202,7 @@ with cutting-edge courses that build real-world tech skills from an early age.
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                  className="w-full border border-gray-300 rounded-lg p-2.5"
                   placeholder="Enter your phone number"
                   required
                 />
@@ -201,7 +215,7 @@ with cutting-edge courses that build real-world tech skills from an early age.
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                  className="w-full border border-gray-300 rounded-lg p-2.5"
                   placeholder="Enter your email address"
                   required
                 />
@@ -213,7 +227,7 @@ with cutting-edge courses that build real-world tech skills from an early age.
                   name="course"
                   value={formData.course}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                  className="w-full border border-gray-300 rounded-lg p-2.5"
                   required
                 >
                   <option value="">Select a course</option>
@@ -231,7 +245,7 @@ with cutting-edge courses that build real-world tech skills from an early age.
                   name="grade"
                   value={selectedGrade || ""}
                   onChange={(e) => setSelectedGrade(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                  className="w-full border border-gray-300 rounded-lg p-2.5"
                   required
                 >
                   <option value="">Select a grade</option>
