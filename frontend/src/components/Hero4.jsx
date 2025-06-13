@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight, Sparkles, CheckCircle, X } from "lucide-react"
+const VITE_API_URL=import.meta.env.VITE_API_URL;
 
 export default function Hero4() {
   const [showModal, setShowModal] = useState(false)
@@ -85,7 +86,7 @@ export default function Hero4() {
   setLoading(true)
 
   try {
-    const response = await fetch("http://localhost:5000/api/send-email", {
+    const response = await fetch(`${VITE_API_URL}/api/send-email`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
