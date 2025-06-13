@@ -78,7 +78,7 @@ export default function Hero4() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault()
 
   if (!validateForm()) return
@@ -86,24 +86,16 @@ export default function Hero4() {
   setLoading(true)
 
   try {
-    const response = await fetch(`${VITE_API_URL}/api/send-email`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-        course: formData.course,
-        grade: selectedGrade,
-      }),
+    const response = await axios.post(`${VITE_API_URL}/api/send-email`, {
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      course: formData.course,
+      grade: selectedGrade,
     })
 
-    const data = await response.json()
-
-    if (!response.ok) {
-      throw new Error(data.error || "Something went wrong")
+    if (response.data?.success === false) {
+      throw new Error(response.data.message || "Something went wrong")
     }
 
     alert("Trial session booked successfully!")
@@ -113,11 +105,12 @@ export default function Hero4() {
     setErrors({})
   } catch (error) {
     console.error(error)
-    alert("Failed to book trial session. Please try again.")
+    alert(error?.response?.data?.message || "Failed to book trial session. Please try again.")
   } finally {
     setLoading(false)
   }
 }
+
 
 
   return (
