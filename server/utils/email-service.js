@@ -250,6 +250,7 @@ const emailTemplates = {
 }
 
 // Email sending functions
+// test 
 const sendEmail = async (to, template) => {
   try {
     const mailOptions = {

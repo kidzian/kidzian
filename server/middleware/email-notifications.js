@@ -4,6 +4,7 @@ const Teacher = require("../models/Teacher")
 const Batch = require("../models/Batch")
 
 // Helper function to get students in a batch
+// test
 const getStudentsInBatch = async (batchId) => {
   try {
     const batch = await Batch.findById(batchId).populate("students", "name email")
