@@ -62,6 +62,7 @@ app.use("/api/teachers", teacherRoutes)
 app.use("/api/students", studentRoutes)
 app.use('/api', courseRoutes);
 app.use("/api", emailRoutes)
+// test
 
 
 app.get('/api/batch/:batchId', async (req, res) => {
