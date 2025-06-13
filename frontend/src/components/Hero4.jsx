@@ -3,7 +3,9 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight, Sparkles, CheckCircle, X } from "lucide-react"
+import axios from "axios"
 const VITE_API_URL=import.meta.env.VITE_API_URL;
+
 
 export default function Hero4() {
   const [showModal, setShowModal] = useState(false)
@@ -114,6 +116,7 @@ const handleSubmit = async (e) => {
 
 
   return (
+    // testing 
     <section className="w-full min-h-[90vh] py-12">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row items-center">
