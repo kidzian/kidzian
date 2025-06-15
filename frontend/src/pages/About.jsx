@@ -1,20 +1,6 @@
 import React, { useEffect } from 'react';
 import Heading from "../components/Heading";
-import {
-  DumbbellIcon as BicepsFlexed,
-  Cpu,
-  Earth,
-  Gamepad2,
-  Heart,
-  MailCheck,
-  Users,
-  BookOpen,
-  Award,
-  Code,
-  Sparkles,
-  ChevronRight,
-  GraduationCap,
-} from "lucide-react";
+import { DumbbellIcon as BicepsFlexed, Cpu, Earth, Gamepad2, Heart, MailCheck, Users, BookOpen, Award, Code, Sparkles, ChevronRight, GraduationCap } from 'lucide-react';
 import { FaRocket } from "react-icons/fa";
 import { FaLightbulb } from "react-icons/fa6";
 import { FaStar } from "react-icons/fa6";
@@ -133,7 +119,7 @@ const About = () => {
   };
 
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden bg-white dark:bg-gray-900 transition-colors duration-300">
       <Heading />
 
       {/* Hero Section */}
@@ -141,9 +127,9 @@ const About = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="relative w-full h-[50vh] md:h-[60vh] bg-gradient-to-r from-[#28826a] to-[#1f6e59] flex items-center justify-center overflow-hidden"
+        className="relative w-full h-[50vh] md:h-[60vh] bg-gradient-to-r from-[#28826a] to-[#1f6e59] dark:from-[#1f6e59] dark:to-[#0f4c3a] flex items-center justify-center overflow-hidden"
       >
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 bg-black opacity-50 dark:opacity-60"></div>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 z-10">
           <motion.h1
             initial={{ y: 30, opacity: 0 }}
@@ -168,7 +154,7 @@ const About = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleClick}
-            className="mt-8 px-8 py-3 bg-[#c79d27] text-white rounded-full font-bold text-lg flex items-center hover:bg-[#d4a82c] transition-colors shadow-lg"
+            className="mt-8 px-8 py-3 bg-[#c79d27] dark:bg-[#d4a82c] text-white rounded-full font-bold text-lg flex items-center hover:bg-[#d4a82c] dark:hover:bg-[#e6b933] transition-colors shadow-lg"
           >
             Explore Our Courses <ChevronRight className="ml-2" />
           </motion.button>
@@ -179,6 +165,7 @@ const About = () => {
               fill="#ffffff"
               fillOpacity="1"
               d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+              className="fill-white dark:fill-gray-900"
             ></path>
           </svg>
         </div>
@@ -190,7 +177,7 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="py-16 px-4 bg-white"
+        className="py-16 px-4 bg-white dark:bg-gray-900"
       >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -198,11 +185,11 @@ const About = () => {
               <motion.div
                 key={index}
                 variants={fadeIn}
-                className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-300"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-300 border dark:border-gray-700"
               >
                 <div className="flex justify-center mb-4">{stat.icon}</div>
-                <h3 className="text-3xl font-bold text-gray-800">{stat.number}</h3>
-                <p className="text-gray-600">{stat.label}</p>
+                <h3 className="text-3xl font-bold text-gray-800 dark:text-white">{stat.number}</h3>
+                <p className="text-gray-600 dark:text-gray-300">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -215,7 +202,7 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="flex flex-col lg:flex-row w-full min-h-screen items-center justify-center px-6 lg:px-16 py-12 gap-8 bg-gray-50"
+        className="flex flex-col lg:flex-row w-full min-h-screen items-center justify-center px-6 lg:px-16 py-12 gap-8 bg-gray-50 dark:bg-gray-800"
       >
         {/* Image Section */}
         <motion.div variants={fadeIn} className="w-full lg:w-1/2 flex justify-center">
@@ -224,13 +211,13 @@ const About = () => {
 
         {/* Text Section */}
         <div className="w-full lg:w-1/2 flex flex-col gap-6">
-          <motion.h1 variants={fadeIn} className="text-3xl font-bold text-center lg:text-left">
+          <motion.h1 variants={fadeIn} className="text-3xl font-bold text-center lg:text-left text-gray-900 dark:text-white">
             Our Story
           </motion.h1>
 
           <motion.div variants={fadeIn} className="flex gap-4">
             <FaRocket size={80} className="text-[#28826a] flex-shrink-0" />
-            <p className="text-gray-700">
+            <p className="text-gray-700 dark:text-gray-300">
               Kidzian was founded in 2023 by Rashmi Raju, a passionate software engineer and educator with an M.Tech in
               Computer Science. Having worked in top-tier software companies, Rashmi gained invaluable experience and
               insights into the tech world. Despite her successful career, she felt a strong desire to inspire the next
@@ -240,7 +227,7 @@ const About = () => {
 
           <motion.div variants={fadeIn} className="flex gap-4">
             <FaLightbulb size={60} className="text-[#c79d27] flex-shrink-0" />
-            <p className="text-gray-700">
+            <p className="text-gray-700 dark:text-gray-300">
               The idea for Kidzian was sparked by a neighborhood coding workshop she organized, where the children's
               enthusiasm and excitement were contagious. Rashmi realized the potential of a more engaging approach to
               tech education and decided to create Kidzian to make learning technology fun, interactive, and impactful.
@@ -249,7 +236,7 @@ const About = () => {
 
           <motion.div variants={fadeIn} className="flex gap-4">
             <FaStar size={80} className="text-[#28826a] flex-shrink-0" />
-            <p className="text-gray-700">
+            <p className="text-gray-700 dark:text-gray-300">
               Starting with a small center and a handful of students, Kidzian has grown into a leading tech school for
               children aged 7 to 17, offering courses in block-based coding, Python, Java, JavaScript, HTML, CSS, and
               more. Our gamified, interactive learning platform provides personalized paths and collaborative projects
@@ -259,7 +246,7 @@ const About = () => {
 
           <motion.div variants={fadeIn} className="flex gap-4">
             <Heart className="h-12 w-12 text-[#c79d27] flex-shrink-0" />
-            <p className="text-gray-700">
+            <p className="text-gray-700 dark:text-gray-300">
               We are committed to continuous innovation, ensuring our students stay ahead in the ever-evolving world of
               technology. Join us at Kidzian, where learning technology is an exciting adventure!
             </p>
@@ -273,12 +260,12 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="py-16 px-4 bg-white"
+        className="py-16 px-4 bg-white dark:bg-gray-900"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div variants={fadeIn} className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Age-Specific Learning Paths</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Age-Specific Learning Paths</h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Our curriculum is carefully designed to match each age group's developmental needs, ensuring an engaging
               and effective learning experience.
             </p>
@@ -290,15 +277,15 @@ const About = () => {
                 key={index}
                 variants={fadeIn}
                 whileHover={{ y: -10 }}
-                className="bg-white rounded-xl shadow-lg overflow-hidden"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border dark:border-gray-700"
               >
                 <div className={`${group.color} h-2`}></div>
                 <div className="p-6">
-                  <div className="inline-block rounded-full bg-gray-100 px-3 py-1 text-sm font-medium mb-4">
+                  <div className="inline-block rounded-full bg-gray-100 dark:bg-gray-700 px-3 py-1 text-sm font-medium mb-4 text-gray-800 dark:text-gray-200">
                     {group.age}
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{group.title}</h3>
-                  <p className="text-gray-600">{group.description}</p>
+                  <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{group.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300">{group.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -312,12 +299,12 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="py-16 px-4 bg-gray-50"
+        className="py-16 px-4 bg-gray-50 dark:bg-gray-800"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div variants={fadeIn} className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Featured Courses</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Featured Courses</h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Explore our most popular tech courses designed specifically for young minds
             </p>
           </motion.div>
@@ -328,23 +315,23 @@ const About = () => {
                 key={index}
                 variants={fadeIn}
                 whileHover={{ y: -10 }}
-                className="bg-white rounded-xl shadow-lg p-6 flex flex-col h-full"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col h-full border dark:border-gray-700"
               >
-                <div className="bg-gray-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
+                <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4">
                   {course.icon}
                 </div>
-                <h3 className="text-xl font-bold mb-2">{course.title}</h3>
-                <p className="text-gray-600 mb-4 flex-grow">{course.description}</p>
+                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{course.title}</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4 flex-grow">{course.description}</p>
                 <div className="flex items-center mt-auto">
-                  <GraduationCap className="h-5 w-5 text-gray-400 mr-2" />
-                  <span className="text-sm text-gray-500">{course.age}</span>
+                  <GraduationCap className="h-5 w-5 text-gray-400 dark:text-gray-500 mr-2" />
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{course.age}</span>
                 </div>
               </motion.div>
             ))}
           </div>
 
           <motion.div variants={fadeIn} className="mt-10 text-center">
-            <button onClick={handleClick} className=" px-8 py-3 bg-[#28826a] text-white rounded-full font-bold text-lg hover:bg-[#1f6e59] transition-colors flex items-center mx-auto shadow-lg">
+            <button onClick={handleClick} className="px-8 py-3 bg-[#28826a] dark:bg-[#1f6e59] text-white rounded-full font-bold text-lg hover:bg-[#1f6e59] dark:hover:bg-[#0f4c3a] transition-colors flex items-center mx-auto shadow-lg">
               View All Courses <ChevronRight className="ml-2" />
             </button>
           </motion.div>
@@ -357,9 +344,9 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="w-full min-h-[75vh] flex flex-col items-center justify-center px-4 py-16 bg-white"
+        className="w-full min-h-[75vh] flex flex-col items-center justify-center px-4 py-16 bg-white dark:bg-gray-900"
       >
-        <motion.h2 variants={fadeIn} className="text-3xl font-bold mb-16 text-center">
+        <motion.h2 variants={fadeIn} className="text-3xl font-bold mb-16 text-center text-gray-900 dark:text-white">
           Our Mission
         </motion.h2>
 
@@ -369,12 +356,12 @@ const About = () => {
               key={index}
               variants={fadeIn}
               whileHover={{ y: -10 }}
-              className="bg-white h-auto rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer"
+              className="bg-white dark:bg-gray-800 h-auto rounded-lg p-6 shadow-lg flex flex-col items-center gap-4 text-center cursor-pointer border dark:border-gray-700"
             >
               <div className="flex flex-col items-center gap-4 w-full">
                 {item.icon}
-                <h3 className="text-black text-lg font-semibold">{item.title}</h3>
-                <p className="leading-tight text-sm text-gray-500">{item.description}</p>
+                <h3 className="text-black dark:text-white text-lg font-semibold">{item.title}</h3>
+                <p className="leading-tight text-sm text-gray-500 dark:text-gray-400">{item.description}</p>
               </div>
             </motion.div>
           ))}
@@ -387,7 +374,7 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="py-16 px-4 bg-gradient-to-r from-[#28826a] to-[#1f6e59] text-white"
+        className="py-16 px-4 bg-gradient-to-r from-[#28826a] to-[#1f6e59] dark:from-[#1f6e59] dark:to-[#0f4c3a] text-white"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div variants={fadeIn} className="text-center mb-12">
@@ -401,9 +388,9 @@ const About = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <motion.div
               variants={fadeIn}
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-6 flex flex-col md:flex-row gap-4 items-center"
+              className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 flex flex-col md:flex-row gap-4 items-center border border-white/20"
             >
-              <div className="bg-white/20 p-4 rounded-full">
+              <div className="bg-white/20 dark:bg-white/10 p-4 rounded-full">
                 <Gamepad2 className="h-10 w-10 text-white" />
               </div>
               <div>
@@ -417,9 +404,9 @@ const About = () => {
 
             <motion.div
               variants={fadeIn}
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-6 flex flex-col md:flex-row gap-4 items-center"
+              className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 flex flex-col md:flex-row gap-4 items-center border border-white/20"
             >
-              <div className="bg-white/20 p-4 rounded-full">
+              <div className="bg-white/20 dark:bg-white/10 p-4 rounded-full">
                 <Users className="h-10 w-10 text-white" />
               </div>
               <div>
@@ -432,9 +419,9 @@ const About = () => {
 
             <motion.div
               variants={fadeIn}
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-6 flex flex-col md:flex-row gap-4 items-center"
+              className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 flex flex-col md:flex-row gap-4 items-center border border-white/20"
             >
-              <div className="bg-white/20 p-4 rounded-full">
+              <div className="bg-white/20 dark:bg-white/10 p-4 rounded-full">
                 <Sparkles className="h-10 w-10 text-white" />
               </div>
               <div>
@@ -447,9 +434,9 @@ const About = () => {
 
             <motion.div
               variants={fadeIn}
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-6 flex flex-col md:flex-row gap-4 items-center"
+              className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 flex flex-col md:flex-row gap-4 items-center border border-white/20"
             >
-              <div className="bg-white/20 p-4 rounded-full">
+              <div className="bg-white/20 dark:bg-white/10 p-4 rounded-full">
                 <Award className="h-10 w-10 text-white" />
               </div>
               <div>
@@ -469,25 +456,25 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="w-full py-16 bg-white"
+        className="w-full py-16 bg-white dark:bg-gray-900"
       >
-        <motion.h2 variants={fadeIn} className="text-3xl font-bold mb-16 text-center">
+        <motion.h2 variants={fadeIn} className="text-3xl font-bold mb-16 text-center text-gray-900 dark:text-white">
           Kidzian is Backed By
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
           <motion.div variants={fadeIn} whileHover={{ y: -10 }} className="flex flex-col items-center justify-center">
-            <div className="bg-gray-100 w-36 h-36 rounded-full flex items-center justify-center mb-4">
-              <div className="w-24 h-24 bg-[#28826a]/10 rounded-lg flex items-center justify-center text-[#28826a] font-bold">
+            <div className="bg-gray-100 dark:bg-gray-800 w-36 h-36 rounded-full flex items-center justify-center mb-4 border dark:border-gray-700">
+              <div className="w-24 h-24 bg-[#28826a]/10 dark:bg-[#28826a]/20 rounded-lg flex items-center justify-center text-[#28826a] font-bold">
                 WSS
               </div>
             </div>
-            <h3 className="font-bold text-lg">Women Startup Stories</h3>
-            <p className="text-gray-600 text-sm text-center">Kidzian is featured in WSS</p>
+            <h3 className="font-bold text-lg text-gray-900 dark:text-white">Women Startup Stories</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm text-center">Kidzian is featured in WSS</p>
           </motion.div>
 
           <motion.div variants={fadeIn} whileHover={{ y: -10 }} className="flex flex-col items-center justify-center">
-            <div className="bg-gray-100 w-36 h-36 rounded-full flex items-center justify-center mb-4">
+            <div className="bg-gray-100 dark:bg-gray-800 w-36 h-36 rounded-full flex items-center justify-center mb-4 border dark:border-gray-700">
               <div className="w-24 h-24 flex items-center justify-center">
                 <svg viewBox="0 0 24 24" width="80" height="80">
                   <path
@@ -509,18 +496,18 @@ const About = () => {
                 </svg>
               </div>
             </div>
-            <h3 className="font-bold text-lg">Google For Startups</h3>
-            <p className="text-gray-600 text-sm text-center">Part of Levelup program at Google</p>
+            <h3 className="font-bold text-lg text-gray-900 dark:text-white">Google For Startups</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm text-center">Part of Levelup program at Google</p>
           </motion.div>
 
           <motion.div variants={fadeIn} whileHover={{ y: -10 }} className="flex flex-col items-center justify-center">
-            <div className="bg-gray-100 w-36 h-36 rounded-full flex items-center justify-center mb-4">
-              <div className="w-24 h-24 bg-[#28826a]/10 rounded-lg flex items-center justify-center text-[#28826a] font-bold">
+            <div className="bg-gray-100 dark:bg-gray-800 w-36 h-36 rounded-full flex items-center justify-center mb-4 border dark:border-gray-700">
+              <div className="w-24 h-24 bg-[#28826a]/10 dark:bg-[#28826a]/20 rounded-lg flex items-center justify-center text-[#28826a] font-bold">
                 CBFW
               </div>
             </div>
-            <h3 className="font-bold text-lg">Cherie Blair Foundation For Women</h3>
-            <p className="text-gray-600 text-sm text-center">Kidzian is selected for mentor program</p>
+            <h3 className="font-bold text-lg text-gray-900 dark:text-white">Cherie Blair Foundation For Women</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm text-center">Kidzian is selected for mentor program</p>
           </motion.div>
         </div>
       </motion.div>
@@ -531,13 +518,13 @@ const About = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="py-16 px-4 bg-gray-50"
+        className="py-16 px-4 bg-gray-50 dark:bg-gray-800"
       >
         <div className="max-w-3xl mx-auto text-center">
-          <motion.h2 variants={fadeIn} className="text-3xl font-bold mb-4">
+          <motion.h2 variants={fadeIn} className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
             Subscribe to our Newsletter
           </motion.h2>
-          <motion.p variants={fadeIn} className="text-gray-600 mb-8">
+          <motion.p variants={fadeIn} className="text-gray-600 dark:text-gray-300 mb-8">
             Stay updated with the latest in tech education, coding tips, and fun activities from Kidzian by subscribing
             to our monthly newsletter. Don't miss out on exclusive content and resources designed to enhance your
             child's learning journey—subscribe today!
@@ -546,11 +533,11 @@ const About = () => {
             <input
               type="email"
               placeholder="Enter your email"
-              className="px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#28826a] flex-grow max-w-md"
+              className="px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#28826a] flex-grow max-w-md"
             />
             <button
               type="submit"
-              className="bg-[#28826a] hover:bg-[#1f6e59] text-white px-6 py-3 rounded-lg transition duration-300 flex items-center justify-center shadow-lg"
+              className="bg-[#28826a] hover:bg-[#1f6e59] dark:bg-[#1f6e59] dark:hover:bg-[#0f4c3a] text-white px-6 py-3 rounded-lg transition duration-300 flex items-center justify-center shadow-lg"
             >
               Subscribe
               <MailCheck size={18} className="ml-2" />

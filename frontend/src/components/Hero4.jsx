@@ -4,8 +4,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight, Sparkles, CheckCircle, X } from "lucide-react"
 import axios from "axios"
-const VITE_API_URL=import.meta.env.VITE_API_URL;
-
+const VITE_API_URL = import.meta.env.VITE_API_URL
 
 export default function Hero4() {
   const [showModal, setShowModal] = useState(false)
@@ -80,44 +79,41 @@ export default function Hero4() {
     return Object.keys(newErrors).length === 0
   }
 
-const handleSubmit = async (e) => {
-  e.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault()
 
-  if (!validateForm()) return
+    if (!validateForm()) return
 
-  setLoading(true)
+    setLoading(true)
 
-  try {
-    const response = await axios.post(`${VITE_API_URL}/api/send-email`, {
-      name: formData.name,
-      phone: formData.phone,
-      email: formData.email,
-      course: formData.course,
-      grade: selectedGrade,
-    })
+    try {
+      const response = await axios.post(`${VITE_API_URL}/api/send-email`, {
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        course: formData.course,
+        grade: selectedGrade,
+      })
 
-    if (response.data?.success === false) {
-      throw new Error(response.data.message || "Something went wrong")
+      if (response.data?.success === false) {
+        throw new Error(response.data.message || "Something went wrong")
+      }
+
+      alert("Trial session booked successfully!")
+      setShowModal(false)
+      setFormData({ name: "", phone: "", email: "", course: "" })
+      setSelectedGrade(null)
+      setErrors({})
+    } catch (error) {
+      console.error(error)
+      alert(error?.response?.data?.message || "Failed to book trial session. Please try again.")
+    } finally {
+      setLoading(false)
     }
-
-    alert("Trial session booked successfully!")
-    setShowModal(false)
-    setFormData({ name: "", phone: "", email: "", course: "" })
-    setSelectedGrade(null)
-    setErrors({})
-  } catch (error) {
-    console.error(error)
-    alert(error?.response?.data?.message || "Failed to book trial session. Please try again.")
-  } finally {
-    setLoading(false)
   }
-}
-
-
 
   return (
-    // testing 
-    <section className="w-full min-h-[90vh] py-12">
+    <section className="w-full min-h-[90vh] py-12 bg-white dark:bg-gray-900 transition-colors duration-300">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row items-center">
           {/* Left Content */}
@@ -128,10 +124,10 @@ const handleSubmit = async (e) => {
               transition={{ duration: 0.8, type: "spring", stiffness: 50 }}
               className="space-y-2"
             >
-              <h2 className="text-lg font-medium text-gray-700">
+              <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300">
                 After-school program for young coders and innovators.
               </h2>
-              <h1 className="text-4xl md:text-5xl font-bold text-teal-600">
+              <h1 className="text-4xl md:text-5xl font-bold text-teal-600 dark:text-teal-400">
                 Unlock your child's potential, <br />
                 With Power Of Coding
               </h1>
@@ -141,7 +137,7 @@ const handleSubmit = async (e) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-gray-700 space-y-6"
+              className="text-gray-700 dark:text-gray-300 space-y-6"
             >
               <p className="text-lg">
                 At Kidzian, through our engaging, world-class curriculum built on the latest technology and innovation,
@@ -167,7 +163,7 @@ const handleSubmit = async (e) => {
                     transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
                     className="flex items-center gap-2 -mt-2"
                   >
-                    <CheckCircle className="text-green-500 h-5 w-5 flex-shrink-0" />
+                    <CheckCircle className="text-green-500 dark:text-green-400 h-5 w-5 flex-shrink-0" />
                     <p>{feature}</p>
                   </motion.div>
                 ))}
@@ -181,7 +177,7 @@ const handleSubmit = async (e) => {
             >
               <button
                 onClick={() => setShowModal(true)}
-                className="bg-[#f4a024] hover:bg-[#e6951f] -mt-2 text-white font-semibold px-6 py-3 rounded-md shadow-md transition duration-300 animate-blink"
+                className="bg-[#f4a024] hover:bg-[#e6951f] dark:bg-[#d4a82c] dark:hover:bg-[#c79d27] -mt-2 text-white font-semibold px-6 py-3 rounded-md shadow-md transition duration-300 animate-blink"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   Request a Trial Session
@@ -209,13 +205,13 @@ const handleSubmit = async (e) => {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="absolute -top-4 -left-4 w-16 h-16 bg-cyan-500 rounded-full opacity-20"
+                className="absolute -top-4 -left-4 w-16 h-16 bg-cyan-500 dark:bg-cyan-600 rounded-full opacity-20"
               />
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
-                className="absolute -bottom-5 -right-5 w-24 h-24 bg-teal-600 rounded-full opacity-20"
+                className="absolute -bottom-5 -right-5 w-24 h-24 bg-teal-600 dark:bg-teal-700 rounded-full opacity-20"
               />
             </div>
           </motion.div>
@@ -225,7 +221,7 @@ const handleSubmit = async (e) => {
       {/* Modal */}
       {showModal && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50"
           onClick={() => setShowModal(false)}
         >
           <motion.div
@@ -233,43 +229,45 @@ const handleSubmit = async (e) => {
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
-            className="bg-white rounded-xl shadow-2xl w-full max-w-[425px] p-6 relative"
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-[425px] p-6 relative border dark:border-gray-700"
           >
             <button
               onClick={() => setShowModal(false)}
-              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+              className="absolute right-4 top-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             >
               <X className="h-5 w-5" />
             </button>
 
-            <h2 className="text-xl font-bold text-teal-600 mb-6 mt-9 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-teal-600 dark:text-teal-400 mb-6 mt-9 flex items-center gap-2">
               <Sparkles className="h-5 w-5" />
               Book Your Free Trial Class
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                  className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-teal-500 dark:focus:border-teal-400 outline-none"
                   placeholder="Enter your full name"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className={`w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none ${
-                    errors.phone ? "border-red-500 bg-red-50" : "border-gray-300"
+                  className={`w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-teal-500 dark:focus:border-teal-400 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                    errors.phone
+                      ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                      : "border-gray-300 dark:border-gray-600"
                   }`}
                   placeholder="Enter 10-digit phone number"
                   maxLength="10"
@@ -277,19 +275,21 @@ const handleSubmit = async (e) => {
                 />
                 {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 {formData.phone && formData.phone.length < 10 && !errors.phone && (
-                  <p className="text-gray-500 text-xs mt-1">{formData.phone.length}/10 digits</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">{formData.phone.length}/10 digits</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Email Address</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none ${
-                    errors.email ? "border-red-500 bg-red-50" : "border-gray-300"
+                  className={`w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-teal-500 dark:focus:border-teal-400 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                    errors.email
+                      ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                      : "border-gray-300 dark:border-gray-600"
                   }`}
                   placeholder="Enter your email address"
                   required
@@ -298,12 +298,12 @@ const handleSubmit = async (e) => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Course</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Course</label>
                 <select
                   name="course"
                   value={formData.course}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                  className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-teal-500 dark:focus:border-teal-400 outline-none"
                   required
                 >
                   <option value="">Select a course</option>
@@ -316,12 +316,12 @@ const handleSubmit = async (e) => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Grade</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Grade</label>
                 <select
                   name="grade"
                   value={selectedGrade || ""}
                   onChange={(e) => setSelectedGrade(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                  className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-teal-500 dark:focus:border-teal-400 outline-none"
                   required
                 >
                   <option value="">Select a grade</option>
@@ -336,7 +336,7 @@ const handleSubmit = async (e) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-teal-600 to-cyan-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70"
+                className="w-full bg-gradient-to-r from-teal-600 to-cyan-500 dark:from-teal-500 dark:to-cyan-400 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70"
               >
                 {loading ? (
                   <>
@@ -351,7 +351,9 @@ const handleSubmit = async (e) => {
                 )}
               </button>
 
-              <p className="text-center text-sm text-gray-500">No credit card required. Cancel anytime.</p>
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+                No credit card required. Cancel anytime.
+              </p>
             </form>
           </motion.div>
         </div>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+"use client"
+import { useNavigate } from "react-router-dom"
 
 const steps = [
   {
@@ -16,7 +16,7 @@ const steps = [
         <line x1="12" y1="21" x2="12" y2="21.01" />
         <line x1="17" y1="21" x2="17" y2="21.01" />
       </svg>
-    )
+    ),
   },
   {
     id: 2,
@@ -31,7 +31,7 @@ const steps = [
         <circle cx="5.5" cy="13" r="1" fill="currentColor" />
         <circle cx="5.5" cy="17" r="1" fill="currentColor" />
       </svg>
-    )
+    ),
   },
   {
     id: 3,
@@ -46,19 +46,19 @@ const steps = [
         <line x1="6" y1="18" x2="12" y2="18" />
         <path d="M14 9l1 1 3-3" />
       </svg>
-    )
+    ),
   },
-];
+]
 
 const Steps = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleClick = () => {
-    navigate('/contact-us');
-  };
+    navigate("/contact-us")
+  }
 
   return (
-    <div className="bg-[#2a9c7e] py-16 px-6 md:px-12 lg:px-20 rounded-lg shadow-lg overflow-hidden">
+    <div className="bg-[#2a9c7e] dark:bg-[#1f7a63] py-16 px-6 md:px-12 lg:px-20 rounded-lg shadow-lg overflow-hidden transition-colors duration-300">
       <div className="max-w-7xl mx-auto relative">
         <div className="flex justify-center mb-14">
           <h1 className="text-white px-4 py-2 font-semibold text-3xl text-center">
@@ -70,25 +70,28 @@ const Steps = () => {
           {steps.map((step) => (
             <div
               key={step.id}
-              className="flex flex-col items-center text-center bg-white rounded-xl p-8 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+              className="flex flex-col items-center text-center bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border dark:border-gray-700"
             >
-              <div className="text-4xl font-extrabold text-gray-800 mb-4">{step.id}</div>
-              <div className="flex items-center justify-center w-24 h-24 border-2 border-black rounded-full mb-5 bg-gray-100 hover:bg-black hover:text-white transition-all duration-300">
+              <div className="text-4xl font-extrabold text-gray-800 dark:text-white mb-4">{step.id}</div>
+              <div className="flex items-center justify-center w-24 h-24 border-2 border-black dark:border-gray-300 rounded-full mb-5 bg-gray-100 dark:bg-gray-700 hover:bg-black dark:hover:bg-gray-600 hover:text-white dark:hover:text-white transition-all duration-300 text-gray-800 dark:text-gray-300">
                 {step.icon}
               </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900">{step.title}</h3>
-              <p className="text-sm md:text-base text-gray-600">{step.description}</p>
+              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{step.title}</h3>
+              <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">{step.description}</p>
             </div>
           ))}
         </div>
 
         {/* Arrows */}
-        <div className="hidden md:flex absolute w-full justify-between items-center mt-28" style={{ top: '32%', left: '0', pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', left: '33%', transform: 'translateX(-50%)' }}>
-            <span className="text-6xl font-bold text-black animate-pulse">&gt;</span>
+        <div
+          className="hidden md:flex absolute w-full justify-between items-center mt-28"
+          style={{ top: "32%", left: "0", pointerEvents: "none" }}
+        >
+          <div style={{ position: "absolute", left: "33%", transform: "translateX(-50%)" }}>
+            <span className="text-6xl font-bold text-black dark:text-white animate-pulse">&gt;</span>
           </div>
-          <div style={{ position: 'absolute', right: '33%', transform: 'translateX(50%)' }}>
-            <span className="text-6xl font-bold text-black animate-pulse">&gt;</span>
+          <div style={{ position: "absolute", right: "33%", transform: "translateX(50%)" }}>
+            <span className="text-6xl font-bold text-black dark:text-white animate-pulse">&gt;</span>
           </div>
         </div>
       </div>
@@ -97,13 +100,13 @@ const Steps = () => {
       <div className="text-center mt-16">
         <button
           onClick={handleClick}
-          className="bg-[#c79d27] text-white font-bold py-3 px-10 mb-4 rounded-lg hover:bg-gray-100 transition-colors duration-300 shadow-lg"
+          className="bg-[#c79d27] dark:bg-[#d4a82c] text-white font-bold py-3 px-10 mb-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-200 hover:text-gray-800 dark:hover:text-gray-800 transition-colors duration-300 shadow-lg"
         >
           Start Today
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Steps;
+export default Steps

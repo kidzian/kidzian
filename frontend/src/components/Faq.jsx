@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -19,11 +18,11 @@ const Faq = () => {
     },
     {
       question: 'How are Kidzian classes structured?',
-      answer: 'Our classes are structured to be interactive and hands-on, with a focus on project-based learning. Students work on real-world projects and challenges that help them apply what they’ve learned in practical, meaningful ways.',
+      answer: "'Our classes are structured to be interactive and hands-on, with a focus on project-based learning. Students work on real-world projects and challenges that help them apply what theyve learned in practical, meaningful ways'.",
     },
     {
-      question: 'How can parents track their child\'s progress at Kidzian?',
-      answer: 'Parents can track their child’s progress through regular updates and reports provided by our instructors. We also offer parent-teacher meetings and showcase events where students can demonstrate their projects and achievements.',
+      question: "How can parents track their child's progress at Kidzian?",
+      answer: "'Parents can track their child's progress through regular updates and reports provided by our instructors. We also offer parent-teacher meetings and showcase events where students can demonstrate their projects and achievements.",
     },
     {
       question: 'Do students need any prior coding experience to join Kidzian?',
@@ -52,8 +51,8 @@ const Faq = () => {
   }, [])
 
   return (
-    <div className="w-full h-[75vh] flex items-center justify-center flex-col p-5 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6">Frequently Asked Questions</h1>
+    <div className="w-full h-[75vh] flex items-center justify-center flex-col p-5 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white transition-colors duration-300">Frequently Asked Questions</h1>
 
       {/* FAQ List with scroll-triggered animation */}
       <ul ref={faqRef} className="flex flex-col gap-3 w-full max-w-[800px]">
@@ -70,7 +69,7 @@ const Faq = () => {
               duration: 0.6, // Duration for smooth animation
             }}
             exit={{ opacity: 0, y: 20 }}
-            className="flex flex-col bg-white shadow-md rounded-md w-full p-4 cursor-pointer"
+            className="flex flex-col bg-white dark:bg-gray-700 shadow-md rounded-md w-full p-4 cursor-pointer border dark:border-gray-600 transition-colors duration-300"
             onClick={() => toggleFAQ(index)}
             whileHover={{
               backgroundColor: '#f7fafc', // Light gray-blue background on hover
@@ -80,8 +79,8 @@ const Faq = () => {
             whileTap={{ scale: 0.98 }} // Slight shrink effect on tap
           >
             <div className="flex justify-between items-center">
-              <span className="text-lg">{faq.question}</span>
-              <span className="text-xl">
+              <span className="text-lg text-gray-800 dark:text-white transition-colors duration-300">{faq.question}</span>
+              <span className="text-xl text-gray-600 dark:text-gray-300 transition-colors duration-300">
                 {openIndex === index ? <ChevronUp /> : <ChevronDown />}
               </span>
             </div>
@@ -94,7 +93,7 @@ const Faq = () => {
               className="overflow-hidden mt-2"
             >
               {openIndex === index && (
-                <p className="text-gray-700">{faq.answer}</p>
+                <p className="text-gray-700 dark:text-gray-300 transition-colors duration-300">{faq.answer}</p>
               )}
             </motion.div>
           </motion.li>

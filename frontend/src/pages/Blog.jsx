@@ -104,7 +104,7 @@ function useCounter(initialValue = 0) {
 
 React Hooks provide a powerful and flexible way to manage state and side effects in React applications. By following best practices and understanding the underlying principles, you can write more maintainable and efficient React code.`,
       author: "Sarah Johnson",
-      authorImage: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=100&h=100&fit=crop&crop=face&auto=format",
+      authorImage: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face&auto=format",
       date: "2024-01-15",
       readTime: "8 min read",
       category: "Programming",
@@ -1087,10 +1087,10 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       {/* Header */}
       <motion.header 
-        className="bg-white shadow-md border-b sticky top-0 z-10"
+        className="bg-white dark:bg-gray-800 shadow-md border-b dark:border-gray-700 sticky top-0 z-10"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -1098,20 +1098,20 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-4xl font-bold bg-teal-700 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-teal-800 dark:from-teal-400 dark:to-teal-600 bg-clip-text text-transparent">
                 Tech Blog
               </h1>
-              <p className="text-gray-600 mt-2">Insights, tutorials, and trends in technology</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Insights, tutorials, and trends in technology</p>
             </div>
             <div className="mt-4 md:mt-0 flex items-center space-x-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
                 <input
                   type="text"
                   placeholder="Search articles..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent w-64 transition-all duration-300"
+                  className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 rounded-full focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent w-64 transition-all duration-300"
                 />
               </div>
             </div>
@@ -1135,8 +1135,8 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                      <TrendingUp className="w-6 h-6 mr-2 text-purple-600" />
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                      <TrendingUp className="w-6 h-6 mr-2 text-purple-600 dark:text-purple-400" />
                       Featured Articles
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1159,11 +1159,11 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
                   transition={{ duration: 0.5, delay: 0.4 }}
                 >
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                      <BookOpen className="w-6 h-6 mr-2 text-purple-600" />
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                      <BookOpen className="w-6 h-6 mr-2 text-purple-600 dark:text-purple-400" />
                       All Articles
                     </h2>
-                    <span className="text-gray-600 bg-white px-3 py-1 rounded-full shadow-sm">
+                    <span className="text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 px-3 py-1 rounded-full shadow-sm border dark:border-gray-700">
                       {filteredPosts.length} articles
                     </span>
                   </div>
@@ -1183,14 +1183,14 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
 
                   {filteredPosts.length === 0 && (
                     <motion.div 
-                      className="text-center py-12 bg-white rounded-lg shadow-sm"
+                      className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700"
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                      <h3 className="text-xl font-medium text-gray-900 mb-2">No articles found</h3>
-                      <p className="text-gray-600">Try adjusting your search or filter criteria.</p>
+                      <BookOpen className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                      <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">No articles found</h3>
+                      <p className="text-gray-600 dark:text-gray-400">Try adjusting your search or filter criteria.</p>
                     </motion.div>
                   )}
                 </motion.section>
@@ -1207,9 +1207,9 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
           >
             <div className="sticky top-24 space-y-8">
               {/* Categories */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <Tag className="w-5 h-5 mr-2 text-purple-600" />
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <Tag className="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" />
                   Categories
                 </h3>
                 <div className="space-y-2">
@@ -1221,20 +1221,20 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
                         onClick={() => setSelectedCategory(category.name)}
                         className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-300 ${
                           selectedCategory === category.name
-                            ? 'bg-purple-50 text-purple-700 border border-purple-200 shadow-sm'
-                            : 'hover:bg-gray-50 text-gray-700'
+                            ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-700 shadow-sm'
+                            : 'hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                         }`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
                         <div className="flex items-center">
-                          <Icon className={`w-5 h-5 mr-3 ${selectedCategory === category.name ? 'text-purple-600' : 'text-gray-500'}`} />
+                          <Icon className={`w-5 h-5 mr-3 ${selectedCategory === category.name ? 'text-purple-600 dark:text-purple-400' : 'text-gray-500 dark:text-gray-400'}`} />
                           <span>{category.name}</span>
                         </div>
                         <span className={`text-sm px-2 py-1 rounded-full ${
                           selectedCategory === category.name 
-                            ? 'bg-purple-200 text-purple-800' 
-                            : 'bg-gray-100 text-gray-600'
+                            ? 'bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200' 
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                         }`}>
                           {category.count}
                         </span>
@@ -1245,9 +1245,9 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
               </div>
 
               {/* Recent Posts */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <Clock className="w-5 h-5 mr-2 text-purple-600" />
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <Clock className="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" />
                   Recent Posts
                 </h3>
                 <div className="space-y-4">
@@ -1255,8 +1255,8 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
                     <motion.div 
                       key={post.id}
                       onClick={() => setSelectedPost(post)}
-                      className="flex cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-                      whileHover={{ scale: 1.02, backgroundColor: 'rgba(243, 244, 246, 1)' }}
+                      className="flex cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors"
+                      whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
                       <img
@@ -1265,10 +1265,10 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
                         className="w-16 h-16 object-cover rounded-lg mr-3"
                       />
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 mb-1">
                           {post.title}
                         </h4>
-                        <p className="text-xs text-gray-500">{post.date}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{post.date}</p>
                       </div>
                     </motion.div>
                   ))}
@@ -1276,9 +1276,9 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
               </div>
 
               {/* Popular Tags */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <Tag className="w-5 h-5 mr-2 text-purple-600" />
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <Tag className="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" />
                   Popular Tags
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -1286,7 +1286,7 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
                     <motion.button
                       key={tag}
                       onClick={() => setSearchTerm(tag)}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-purple-100 hover:text-purple-700 transition-colors"
+                      className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -1307,31 +1307,31 @@ Node.js and Express.js provide a powerful foundation for building web applicatio
 const LoadingState = () => (
   <div className="space-y-8">
     <div className="animate-pulse">
-      <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+      <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-6"></div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="h-48 bg-gray-300 w-full"></div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border dark:border-gray-700">
+          <div className="h-48 bg-gray-300 dark:bg-gray-600 w-full"></div>
           <div className="p-6">
-            <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-            <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-4"></div>
             <div className="flex justify-between">
-              <div className="h-8 bg-gray-200 rounded-full w-24"></div>
-              <div className="h-8 bg-gray-200 rounded w-24"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-24"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="h-48 bg-gray-300 w-full"></div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border dark:border-gray-700">
+          <div className="h-48 bg-gray-300 dark:bg-gray-600 w-full"></div>
           <div className="p-6">
-            <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-            <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-4"></div>
             <div className="flex justify-between">
-              <div className="h-8 bg-gray-200 rounded-full w-24"></div>
-              <div className="h-8 bg-gray-200 rounded w-24"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-24"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
             </div>
           </div>
         </div>
@@ -1339,22 +1339,22 @@ const LoadingState = () => (
     </div>
     
     <div className="animate-pulse">
-      <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+      <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-6"></div>
       <div className="space-y-6">
         {[1, 2, 3].map(i => (
-          <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border dark:border-gray-700">
             <div className="md:flex">
               <div className="md:w-1/3">
-                <div className="h-48 bg-gray-300 w-full"></div>
+                <div className="h-48 bg-gray-300 dark:bg-gray-600 w-full"></div>
               </div>
               <div className="md:w-2/3 p-6">
-                <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
+                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-4"></div>
                 <div className="flex justify-between">
-                  <div className="h-8 bg-gray-200 rounded-full w-24"></div>
-                  <div className="h-8 bg-gray-200 rounded w-24"></div>
+                  <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full w-24"></div>
+                  <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
                 </div>
               </div>
             </div>
@@ -1369,7 +1369,7 @@ const LoadingState = () => (
 const FeaturedPostCard = ({ post, onClick, index }) => (
   <motion.div 
     onClick={onClick}
-    className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-all duration-300 group"
+    className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-all duration-300 group border dark:border-gray-700"
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay: 0.1 * index }}
@@ -1388,17 +1388,17 @@ const FeaturedPostCard = ({ post, onClick, index }) => (
       </div>
     </div>
     <div className="p-6">
-      <div className="flex items-center text-sm text-gray-500 mb-2">
-        <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
+      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+        <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded text-xs">
           {post.category}
         </span>
         <span className="mx-2">•</span>
         <span>{post.readTime}</span>
       </div>
-      <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-700 transition-colors">
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
         {post.title}
       </h3>
-      <p className="text-gray-600 mb-4 line-clamp-3">
+      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
         {post.excerpt}
       </p>
       <div className="flex items-center justify-between">
@@ -1406,14 +1406,14 @@ const FeaturedPostCard = ({ post, onClick, index }) => (
           <img
             src={post.authorImage || "/placeholder.svg"}
             alt={post.author}
-            className="w-8 h-8 rounded-full mr-3 border-2 border-white shadow-sm"
+            className="w-8 h-8 rounded-full mr-3 border-2 border-white dark:border-gray-700 shadow-sm"
           />
           <div>
-            <p className="text-sm font-medium text-gray-900">{post.author}</p>
-            <p className="text-xs text-gray-500">{post.date}</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">{post.author}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{post.date}</p>
           </div>
         </div>
-        <div className="flex items-center space-x-4 text-sm text-gray-500">
+        <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
           <span className="flex items-center">
             <Eye className="w-4 h-4 mr-1" />
             {post.views}
@@ -1432,7 +1432,7 @@ const FeaturedPostCard = ({ post, onClick, index }) => (
 const PostCard = ({ post, onClick, index }) => (
   <motion.div 
     onClick={onClick}
-    className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-all duration-300 group"
+    className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-all duration-300 group border dark:border-gray-700"
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay: 0.1 * index }}
@@ -1447,22 +1447,22 @@ const PostCard = ({ post, onClick, index }) => (
         />
       </div>
       <div className="md:w-2/3 p-6">
-        <div className="flex items-center text-sm text-gray-500 mb-2">
-          <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
+        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+          <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded text-xs">
             {post.category}
           </span>
           <span className="mx-2">•</span>
           <span>{post.readTime}</span>
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-700 transition-colors">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
           {post.title}
         </h3>
-        <p className="text-gray-600 mb-4 line-clamp-3">
+        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
           {post.excerpt}
         </p>
         <div className="flex flex-wrap gap-2 mb-4">
           {post.tags.slice(0, 3).map(tag => (
-            <span key={tag} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded group-hover:bg-purple-100 group-hover:text-purple-700 transition-colors">
+            <span key={tag} className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded group-hover:bg-purple-100 dark:group-hover:bg-purple-900/30 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
               #{tag}
             </span>
           ))}
@@ -1472,14 +1472,14 @@ const PostCard = ({ post, onClick, index }) => (
             <img
               src={post.authorImage || "/placeholder.svg"}
               alt={post.author}
-              className="w-8 h-8 rounded-full mr-3 border-2 border-white shadow-sm"
+              className="w-8 h-8 rounded-full mr-3 border-2 border-white dark:border-gray-700 shadow-sm"
             />
             <div>
-              <p className="text-sm font-medium text-gray-900">{post.author}</p>
-              <p className="text-xs text-gray-500">{post.date}</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">{post.author}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{post.date}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4 text-sm text-gray-500">
+          <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
             <span className="flex items-center">
               <Eye className="w-4 h-4 mr-1" />
               {post.views}
@@ -1516,7 +1516,7 @@ const BlogPost = ({ post, onBack }) => {
 
   return (
     <motion.div 
-      className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100"
+      className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -1526,7 +1526,7 @@ const BlogPost = ({ post, onBack }) => {
         {/* Back Button */}
         <motion.button
           onClick={onBack}
-          className="flex items-center text-purple-600 hover:text-purple-700 mb-6 group"
+          className="flex items-center text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 mb-6 group"
           whileHover={{ x: -5 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -1536,13 +1536,13 @@ const BlogPost = ({ post, onBack }) => {
 
         {/* Article Header */}
         <motion.article 
-          className="bg-white rounded-lg shadow-sm overflow-hidden"
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border dark:border-gray-700"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
           <div className="relative">
-            <div className={`w-full h-64 md:h-96 bg-gray-200 ${!isImageLoaded ? 'animate-pulse' : ''}`}>
+            <div className={`w-full h-64 md:h-96 bg-gray-200 dark:bg-gray-700 ${!isImageLoaded ? 'animate-pulse' : ''}`}>
               <img
                 src={post.image || "/placeholder.svg"}
                 alt={post.title}
@@ -1567,7 +1567,7 @@ const BlogPost = ({ post, onBack }) => {
           
           <div className="p-8">
             <motion.h1 
-              className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+              className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
@@ -1576,7 +1576,7 @@ const BlogPost = ({ post, onBack }) => {
             </motion.h1>
 
             <motion.div 
-              className="flex items-center justify-between mb-8 pb-8 border-b"
+              className="flex items-center justify-between mb-8 pb-8 border-b dark:border-gray-700"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.5 }}
@@ -1585,11 +1585,11 @@ const BlogPost = ({ post, onBack }) => {
                 <img
                   src={post.authorImage || "/placeholder.svg"}
                   alt={post.author}
-                  className="w-12 h-12 rounded-full mr-4 border-2 border-white shadow-sm"
+                  className="w-12 h-12 rounded-full mr-4 border-2 border-white dark:border-gray-700 shadow-sm"
                 />
                 <div>
-                  <p className="font-medium text-gray-900">{post.author}</p>
-                  <p className="text-sm text-gray-500">Published on {post.date}</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{post.author}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Published on {post.date}</p>
                 </div>
               </div>
               
@@ -1597,7 +1597,7 @@ const BlogPost = ({ post, onBack }) => {
                 <motion.button
                   onClick={handleLike}
                   className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                    liked ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    liked ? 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -1606,7 +1606,7 @@ const BlogPost = ({ post, onBack }) => {
                   <span>{likeCount}</span>
                 </motion.button>
                 <motion.button 
-                  className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -1618,32 +1618,32 @@ const BlogPost = ({ post, onBack }) => {
 
             {/* Article Content */}
             <motion.div 
-              className="prose prose-lg max-w-none"
+              className="prose prose-lg max-w-none dark:prose-invert"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              <div className="whitespace-pre-line text-gray-700 leading-relaxed">
+              <div className="whitespace-pre-line text-gray-700 dark:text-gray-300 leading-relaxed">
                 {post.content}
               </div>
             </motion.div>
 
             {/* Tags */}
             <motion.div 
-              className="mt-8 pt-8 border-t"
+              className="mt-8 pt-8 border-t dark:border-gray-700"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5 }}
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Tag className="w-5 h-5 mr-2 text-purple-600" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                <Tag className="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" />
                 Tags
               </h3>
               <div className="flex flex-wrap gap-2">
                 {post.tags.map(tag => (
                   <motion.span 
                     key={tag} 
-                    className="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-sm"
+                    className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full text-sm"
                     whileHover={{ scale: 1.05 }}
                   >
                     #{tag}
@@ -1654,12 +1654,12 @@ const BlogPost = ({ post, onBack }) => {
 
             {/* Article Stats */}
             <motion.div 
-              className="mt-8 pt-8 border-t flex items-center justify-between"
+              className="mt-8 pt-8 border-t dark:border-gray-700 flex items-center justify-between"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.5 }}
             >
-              <div className="flex items-center space-x-6 text-sm text-gray-500">
+              <div className="flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400">
                 <span className="flex items-center">
                   <Eye className="w-4 h-4 mr-1" />
                   {post.views} views
@@ -1674,7 +1674,7 @@ const BlogPost = ({ post, onBack }) => {
                 </span>
               </div>
               <motion.button 
-                className="text-purple-600 hover:text-purple-700 font-medium"
+                className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

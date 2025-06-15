@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Search, Calendar, MapPin, ExternalLink, Users, Trophy, Star } from 'lucide-react'
+import { Search, Calendar, MapPin, ExternalLink, Users, Trophy, Star } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 // Mock data for upcoming hackathons
@@ -15,11 +15,12 @@ const UPCOMING_HACKATHONS = [
     endDate: "2025-03-17",
     location: "Online",
     registrationUrl: "https://hackathons.hackclub.com/",
-    imageUrl: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    imageUrl:
+      "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     organizer: "HackClub",
     category: "AI & ML",
     participants: "500+",
-    prizes: "₹1,10,000"
+    prizes: "₹1,10,000",
   },
   {
     id: 2,
@@ -29,11 +30,12 @@ const UPCOMING_HACKATHONS = [
     endDate: "2025-04-12",
     location: "Bangalore, India",
     registrationUrl: "https://codefest2025.web.app/",
-    imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    imageUrl:
+      "https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     organizer: "HackerEarth",
     category: "Web Development",
     participants: "300+",
-    prizes: "₹90,000"
+    prizes: "₹90,000",
   },
   {
     id: 3,
@@ -43,11 +45,12 @@ const UPCOMING_HACKATHONS = [
     endDate: "2025-04-27",
     location: "Mumbai, India",
     registrationUrl: "https://www.eduhack.org/",
-    imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    imageUrl:
+      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     organizer: "Unstop",
     category: "Education",
     participants: "400+",
-    prizes: "₹1,00,000"
+    prizes: "₹1,00,000",
   },
   {
     id: 4,
@@ -61,7 +64,7 @@ const UPCOMING_HACKATHONS = [
     organizer: "Devfolio",
     category: "Healthcare",
     participants: "350+",
-    prizes: "₹25,000"
+    prizes: "₹25,000",
   },
   {
     id: 5,
@@ -71,11 +74,12 @@ const UPCOMING_HACKATHONS = [
     endDate: "2025-06-22",
     location: "Hyderabad, India",
     registrationUrl: "https://mlh.io/events/smartcityhack2025",
-    imageUrl: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    imageUrl:
+      "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     organizer: "Major League Hacking",
     category: "Smart Cities",
     participants: "600+",
-    prizes: "₹10,000"
+    prizes: "₹10,000",
   },
   {
     id: 6,
@@ -85,12 +89,13 @@ const UPCOMING_HACKATHONS = [
     endDate: "2025-07-12",
     location: "Pune, India",
     registrationUrl: "https://hackathon.io/events/fintechinnovation2025",
-    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    imageUrl:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     organizer: "Hackathon.io",
     category: "FinTech",
     participants: "450+",
-    prizes: "₹50,000"
-  }
+    prizes: "₹50,000",
+  },
 ]
 
 // Mock data for past successful events
@@ -101,10 +106,11 @@ const PAST_EVENTS = [
     description: "Successfully concluded with 800+ participants from across India",
     date: "2024-11-15",
     location: "Chennai, India",
-    imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    imageUrl:
+      "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     participants: "800+",
     projects: "150+",
-    winner: "Team InnovateTech"
+    winner: "Team InnovateTech",
   },
   {
     id: 2,
@@ -112,10 +118,11 @@ const PAST_EVENTS = [
     description: "Amazing AI solutions developed by talented students nationwide",
     date: "2024-10-20",
     location: "Bangalore, India",
-    imageUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    imageUrl:
+      "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     participants: "650+",
     projects: "120+",
-    winner: "Team AI Pioneers"
+    winner: "Team AI Pioneers",
   },
   {
     id: 3,
@@ -123,11 +130,12 @@ const PAST_EVENTS = [
     description: "Outstanding web applications created in just 48 hours",
     date: "2024-09-25",
     location: "Mumbai, India",
-    imageUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    imageUrl:
+      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     participants: "500+",
     projects: "95+",
-    winner: "Team WebWizards"
-  }
+    winner: "Team WebWizards",
+  },
 ]
 
 const CATEGORIES = ["All", "AI & ML", "Web Development", "Education", "Healthcare", "Smart Cities", "FinTech"]
@@ -137,7 +145,8 @@ const Events = () => {
   const [filteredHackathons, setFilteredHackathons] = useState(UPCOMING_HACKATHONS)
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [activeTab, setActiveTab] = useState("upcoming")
-const navigate = useNavigate();
+  const navigate = useNavigate()
+
   // Filter hackathons based on search term and category
   useEffect(() => {
     let filtered = [...UPCOMING_HACKATHONS]
@@ -147,7 +156,7 @@ const navigate = useNavigate();
         (hackathon) =>
           hackathon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           hackathon.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          hackathon.category.toLowerCase().includes(searchTerm.toLowerCase())
+          hackathon.category.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     }
 
@@ -172,7 +181,7 @@ const navigate = useNavigate();
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-6 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         {/* Hero Section */}
         <motion.div
@@ -181,11 +190,12 @@ const navigate = useNavigate();
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            Discover Amazing <span className="text-teal-700">Hackathons</span>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4">
+            Discover Amazing <span className="text-teal-700 dark:text-teal-400">Hackathons</span>
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Join exciting coding competitions, build innovative solutions, and connect with talented developers from across India
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Join exciting coding competitions, build innovative solutions, and connect with talented developers from
+            across India
           </p>
         </motion.div>
 
@@ -196,33 +206,33 @@ const navigate = useNavigate();
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <div className="bg-white p-6 rounded-xl shadow-lg text-center border-l-4 border-teal-500">
-            <div className="text-3xl font-bold text-teal-700 mb-2">20+</div>
-            <div className="text-gray-600">Active Events</div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center border-l-4 border-teal-500 dark:border-teal-400">
+            <div className="text-3xl font-bold text-teal-700 dark:text-teal-400 mb-2">20+</div>
+            <div className="text-gray-600 dark:text-gray-300">Active Events</div>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg text-center border-l-4 border-blue-500">
-            <div className="text-3xl font-bold text-blue-700 mb-2">2K+</div>
-            <div className="text-gray-600">Participants</div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center border-l-4 border-blue-500 dark:border-blue-400">
+            <div className="text-3xl font-bold text-blue-700 dark:text-blue-400 mb-2">2K+</div>
+            <div className="text-gray-600 dark:text-gray-300">Participants</div>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg text-center border-l-4 border-green-500">
-            <div className="text-3xl font-bold text-green-700 mb-2">₹5L+</div>
-            <div className="text-gray-600">Total Prizes</div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center border-l-4 border-green-500 dark:border-green-400">
+            <div className="text-3xl font-bold text-green-700 dark:text-green-400 mb-2">₹5L+</div>
+            <div className="text-gray-600 dark:text-gray-300">Total Prizes</div>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg text-center border-l-4 border-purple-500">
-            <div className="text-3xl font-bold text-purple-700 mb-2">50+</div>
-            <div className="text-gray-600">Success Stories</div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center border-l-4 border-purple-500 dark:border-purple-400">
+            <div className="text-3xl font-bold text-purple-700 dark:text-purple-400 mb-2">50+</div>
+            <div className="text-gray-600 dark:text-gray-300">Success Stories</div>
           </div>
         </motion.div>
 
         {/* Tab Navigation */}
         <div className="flex justify-center mb-6">
-          <div className="bg-white p-1 rounded-lg shadow-md">
+          <div className="bg-white dark:bg-gray-800 p-1 rounded-lg shadow-md border dark:border-gray-700">
             <button
               onClick={() => setActiveTab("upcoming")}
               className={`px-6 py-2 rounded-md font-medium transition-all ${
                 activeTab === "upcoming"
-                  ? "bg-teal-700 text-white shadow-md"
-                  : "text-gray-600 hover:text-teal-700"
+                  ? "bg-teal-700 dark:bg-teal-600 text-white shadow-md"
+                  : "text-gray-600 dark:text-gray-300 hover:text-teal-700 dark:hover:text-teal-400"
               }`}
             >
               Upcoming Events
@@ -231,8 +241,8 @@ const navigate = useNavigate();
               onClick={() => setActiveTab("past")}
               className={`px-6 py-2 rounded-md font-medium transition-all ${
                 activeTab === "past"
-                  ? "bg-teal-700 text-white shadow-md"
-                  : "text-gray-600 hover:text-teal-700"
+                  ? "bg-teal-700 dark:bg-teal-600 text-white shadow-md"
+                  : "text-gray-600 dark:text-gray-300 hover:text-teal-700 dark:hover:text-teal-400"
               }`}
             >
               Successful Events
@@ -244,20 +254,20 @@ const navigate = useNavigate();
           <>
             {/* Search and Filter Section */}
             <motion.div
-              className="bg-white p-6 rounded-xl shadow-lg mb-8"
+              className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8 border dark:border-gray-700"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
               <div className="flex flex-col md:flex-row gap-4 items-center">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Search hackathons by name, description, or category..."
                     value={searchTerm}
                     onChange={handleSearchChange}
-                    className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="pl-10 pr-4 py-3 w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-transparent"
                   />
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -267,8 +277,8 @@ const navigate = useNavigate();
                       onClick={() => setSelectedCategory(category)}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                         selectedCategory === category
-                          ? "bg-teal-700 text-white shadow-md"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          ? "bg-teal-700 dark:bg-teal-600 text-white shadow-md"
+                          : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                       }`}
                     >
                       {category}
@@ -288,7 +298,7 @@ const navigate = useNavigate();
               {filteredHackathons.map((hackathon, index) => (
                 <motion.div
                   key={hackathon.id}
-                  className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+                  className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border dark:border-gray-700"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -299,38 +309,42 @@ const navigate = useNavigate();
                       alt={hackathon.title}
                       className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                     />
-                    <div className="absolute top-4 right-4 bg-teal-700 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="absolute top-4 right-4 bg-teal-700 dark:bg-teal-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                       {hackathon.category}
                     </div>
-                    <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-gray-800">
+                    <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-gray-800 dark:text-gray-200">
                       {hackathon.prizes}
                     </div>
                   </div>
-                  
+
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{hackathon.title}</h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{hackathon.description}</p>
-                    
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{hackathon.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
+                      {hackathon.description}
+                    </p>
+
                     <div className="space-y-2 mb-4">
-                      <div className="flex items-center text-gray-500 text-sm">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm">
                         <Calendar className="w-4 h-4 mr-2" />
-                        <span>{formatDate(hackathon.date)} - {formatDate(hackathon.endDate)}</span>
+                        <span>
+                          {formatDate(hackathon.date)} - {formatDate(hackathon.endDate)}
+                        </span>
                       </div>
-                      <div className="flex items-center text-gray-500 text-sm">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm">
                         <MapPin className="w-4 h-4 mr-2" />
                         <span>{hackathon.location}</span>
                       </div>
-                      <div className="flex items-center text-gray-500 text-sm">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm">
                         <Users className="w-4 h-4 mr-2" />
                         <span>{hackathon.participants} Expected</span>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">By {hackathon.organizer}</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">By {hackathon.organizer}</span>
                       <button
                         onClick={() => handleRegister(hackathon.registrationUrl)}
-                        className="bg-teal-700 hover:bg-teal-800 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 flex items-center shadow-md hover:shadow-lg"
+                        className="bg-teal-700 dark:bg-teal-600 hover:bg-teal-800 dark:hover:bg-teal-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 flex items-center shadow-md hover:shadow-lg"
                       >
                         Register
                         <ExternalLink className="w-4 h-4 ml-2" />
@@ -343,28 +357,24 @@ const navigate = useNavigate();
 
             {filteredHackathons.length === 0 && (
               <motion.div
-                className="bg-white rounded-xl p-12 text-center shadow-lg"
+                className="bg-white dark:bg-gray-800 rounded-xl p-12 text-center shadow-lg border dark:border-gray-700"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
               >
                 <div className="text-6xl mb-4">🔍</div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">No hackathons found</h3>
-                <p className="text-gray-500">Try adjusting your search terms or filters</p>
+                <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">No hackathons found</h3>
+                <p className="text-gray-500 dark:text-gray-400">Try adjusting your search terms or filters</p>
               </motion.div>
             )}
           </>
         )}
 
         {activeTab === "past" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Success Stories</h2>
-              <p className="text-lg text-gray-600">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Our Success Stories</h2>
+              <p className="text-lg text-gray-600 dark:text-gray-300">
                 Celebrating the amazing achievements of our hackathon community
               </p>
             </div>
@@ -373,7 +383,7 @@ const navigate = useNavigate();
               {PAST_EVENTS.map((event, index) => (
                 <motion.div
                   key={event.id}
-                  className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border dark:border-gray-700"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -384,40 +394,40 @@ const navigate = useNavigate();
                       alt={event.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                    <div className="absolute top-4 right-4 bg-green-600 dark:bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
                       <Trophy className="w-4 h-4 mr-1" />
                       Completed
                     </div>
                   </div>
-                  
+
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{event.title}</h3>
-                    <p className="text-gray-600 text-sm mb-4">{event.description}</p>
-                    
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{event.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{event.description}</p>
+
                     <div className="space-y-2 mb-4">
-                      <div className="flex items-center text-gray-500 text-sm">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm">
                         <Calendar className="w-4 h-4 mr-2" />
                         <span>{formatDate(event.date)}</span>
                       </div>
-                      <div className="flex items-center text-gray-500 text-sm">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm">
                         <MapPin className="w-4 h-4 mr-2" />
                         <span>{event.location}</span>
                       </div>
-                      <div className="flex items-center text-gray-500 text-sm">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm">
                         <Users className="w-4 h-4 mr-2" />
                         <span>{event.participants} Participants</span>
                       </div>
                     </div>
-                    
-                    <div className="bg-gray-50 rounded-lg p-3">
+
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Projects Submitted:</span>
-                        <span className="font-semibold text-teal-700">{event.projects}</span>
+                        <span className="text-gray-600 dark:text-gray-300">Projects Submitted:</span>
+                        <span className="font-semibold text-teal-700 dark:text-teal-400">{event.projects}</span>
                       </div>
                       <div className="flex items-center justify-between text-sm mt-1">
-                        <span className="text-gray-600">Winner:</span>
-                        <span className="font-semibold text-gray-800 flex items-center">
-                          <Star className="w-4 h-4 mr-1 text-yellow-500" />
+                        <span className="text-gray-600 dark:text-gray-300">Winner:</span>
+                        <span className="font-semibold text-gray-800 dark:text-gray-200 flex items-center">
+                          <Star className="w-4 h-4 mr-1 text-yellow-500 dark:text-yellow-400" />
                           {event.winner}
                         </span>
                       </div>
@@ -431,18 +441,21 @@ const navigate = useNavigate();
 
         {/* Call to Action */}
         <motion.div
-          className="bg-gradient-to-r from-teal-700 to-teal-900 text-white rounded-xl p-8 mt-12 text-center"
+          className="bg-gradient-to-r from-teal-700 to-teal-900 dark:from-teal-800 dark:to-teal-950 text-white rounded-xl p-8 mt-12 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <h2 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
-          <p className="text-teal-100 mb-6 max-w-2xl mx-auto">
-            Join thousands of students and developers who have already participated in our hackathons. 
-            Build amazing projects, learn new skills, and win exciting prizes!
+          <p className="text-teal-100 dark:text-teal-200 mb-6 max-w-2xl mx-auto">
+            Join thousands of students and developers who have already participated in our hackathons. Build amazing
+            projects, learn new skills, and win exciting prizes!
           </p>
-          <button className="bg-white text-teal-700 px-8 py-3 rounded-lg font-semibold hover:bg-teal-50 transition-colors shadow-lg"     onClick={() => navigate("/contact-us")}>
-          JOIN US
+          <button
+            className="bg-white text-teal-700 dark:text-teal-800 px-8 py-3 rounded-lg font-semibold hover:bg-teal-50 dark:hover:bg-gray-100 transition-colors shadow-lg"
+            onClick={() => navigate("/contact-us")}
+          >
+            JOIN US
           </button>
         </motion.div>
       </div>

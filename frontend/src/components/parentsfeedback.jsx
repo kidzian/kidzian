@@ -180,7 +180,7 @@ const ParentsFeedback = () => {
       .map((_, i) => (
         <svg
           key={i}
-          className={`w-5 h-5 ${i < rating ? "text-yellow-400" : "text-gray-300"}`}
+          className={`w-5 h-5 ${i < rating ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"}`}
           fill="currentColor"
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"
@@ -195,21 +195,25 @@ const ParentsFeedback = () => {
   return (
     <div
       ref={sectionRef}
-      className="bg-white py-12 px-4 sm:px-6 lg:px-8"
+      className="bg-white dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-teal-700 mb-4">Parents' Feedback</h2>
-          <p className="text-xl text-gray-700 mb-12">
+          <h2 className="text-4xl font-bold text-teal-700 dark:text-teal-400 mb-4 transition-colors duration-300">
+            Parents' Feedback
+          </h2>
+          <p className="text-xl text-gray-700 dark:text-gray-300 mb-12 transition-colors duration-300">
             You don't have to take our word. See why children love us, and parents admire us.
           </p>
         </div>
 
         <div className="flex items-center justify-center mb-8">
           <div className="flex flex-col items-center">
-            <div className="text-xl font-bold text-gray-800">EXCELLENT</div>
+            <div className="text-xl font-bold text-gray-800 dark:text-white transition-colors duration-300">
+              EXCELLENT
+            </div>
             <div className="flex space-x-1 my-2">{renderStars(5)}</div>
             <div className="flex gap-1 ">
               <div className="">
@@ -237,7 +241,9 @@ const ParentsFeedback = () => {
                   />
                 </svg>
               </div>
-              <div className="text-sm text-gray-600 mt-2">Based on 48 reviews</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 mt-2 transition-colors duration-300">
+                Based on 48 reviews
+              </div>
             </div>
           </div>
         </div>
@@ -246,12 +252,12 @@ const ParentsFeedback = () => {
           <div className="flex items-center justify-between">
             <button
               onClick={handlePrev}
-              className="absolute left-0 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 focus:outline-none transition-all duration-200 hover:scale-110"
+              className="absolute left-0 z-10 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 hover:scale-110 border dark:border-gray-600"
               aria-label="Previous testimonial"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-gray-600"
+                className="h-6 w-6 text-gray-600 dark:text-gray-300"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -264,7 +270,7 @@ const ParentsFeedback = () => {
               {visibleTestimonials.map((testimonial, index) => (
                 <div
                   key={testimonial.id}
-                  className="bg-gray-50 p-6 rounded-lg shadow-sm transition-all duration-500 hover:shadow-md cursor-pointer transform hover:scale-105 animate-fade-in"
+                  className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm transition-all duration-500 hover:shadow-md cursor-pointer transform hover:scale-105 animate-fade-in border dark:border-gray-700"
                   style={{
                     animationDelay: `${index * 0.1}s`,
                   }}
@@ -292,8 +298,10 @@ const ParentsFeedback = () => {
                       </div>
                     </div>
                     <div className="flex-grow min-w-0">
-                      <h3 className="font-semibold text-gray-800 truncate">{testimonial.name}</h3>
-                      <p className="text-xs text-gray-500">
+                      <h3 className="font-semibold text-gray-800 dark:text-white truncate transition-colors duration-300">
+                        {testimonial.name}
+                      </h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300">
                         {testimonial.reviewInfo} · {testimonial.date}
                       </p>
                     </div>
@@ -335,11 +343,11 @@ const ParentsFeedback = () => {
                       />
                     </svg>
                   </div>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
                     {expandedComments[testimonial.id] ? testimonial.fullComment : testimonial.shortComment}
                   </p>
                   <button
-                    className="text-blue-400 text-sm hover:underline focus:outline-none transition-colors duration-200"
+                    className="text-blue-400 dark:text-blue-300 text-sm hover:underline focus:outline-none transition-colors duration-200"
                     onClick={(e) => toggleComment(testimonial.id, e)}
                   >
                     {expandedComments[testimonial.id] ? "Read less" : "Read more"}
@@ -350,12 +358,12 @@ const ParentsFeedback = () => {
 
             <button
               onClick={handleNext}
-              className="absolute right-0 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 focus:outline-none transition-all duration-200 hover:scale-110"
+              className="absolute right-0 z-10 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200 hover:scale-110 border dark:border-gray-600"
               aria-label="Next testimonial"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-gray-600"
+                className="h-6 w-6 text-gray-600 dark:text-gray-300"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -373,7 +381,9 @@ const ParentsFeedback = () => {
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                currentIndex === index ? "bg-teal-600 scale-125" : "bg-gray-300 hover:bg-gray-400"
+                currentIndex === index
+                  ? "bg-teal-600 dark:bg-teal-400 scale-125"
+                  : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -382,7 +392,7 @@ const ParentsFeedback = () => {
 
         {/* Auto-play status indicator */}
         <div className="flex justify-center mt-4">
-          <div className="flex items-center text-sm text-gray-500">
+          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
             {/* <div
               className={`w-2 h-2 rounded-full mr-2 ${isInView && !isPaused ? "bg-green-500 animate-pulse" : "bg-gray-400"}`}
             ></div> */}
@@ -391,7 +401,7 @@ const ParentsFeedback = () => {
         </div>
 
         <div className="flex justify-end mt-6">
-          <div className="bg-teal-600 text-white text-xs px-3 py-1 rounded flex items-center">
+          <div className="bg-teal-600 dark:bg-teal-500 text-white text-xs px-3 py-1 rounded flex items-center transition-colors duration-300">
             <span>Verified by Trustindex</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"

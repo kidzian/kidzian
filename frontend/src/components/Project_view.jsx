@@ -1,54 +1,53 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Splide, SplideSlide } from "@splidejs/react-splide";
-import "@splidejs/react-splide/css";
+"use client"
+import { useNavigate } from "react-router-dom"
+import { Splide, SplideSlide } from "@splidejs/react-splide"
+import "@splidejs/react-splide/css"
 
-import GuessNumber from "../assets/GuessNumber.jpg";
-import Akshath from "../assets/QuizAkshat.jpg";
-import shreya from "../assets/shreya.jpg";
-import anaya from "../assets/Anaya.jpg";
-import jaip from "../assets/Jaip.jpg";
+import GuessNumber from "../assets/GuessNumber.jpg"
+import Akshath from "../assets/QuizAkshat.jpg"
+import shreya from "../assets/shreya.jpg"
+import anaya from "../assets/Anaya.jpg"
+import jaip from "../assets/Jaip.jpg"
 import vihan from "../assets/Vihan.jpg"
 import EmailSend from "../assets/emailsender.jpg"
 
-import { Download } from "lucide-react";
+import { Download } from "lucide-react"
 
 export default function ProjectView() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleViewMoreProjects = () => {
-    navigate("/projects");
-  };
+    navigate("/projects")
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       <div className="container mx-auto px-4 py-12">
-        <div className="font-semibold flex items-center text-teal-700 mb-3 -mt-6 text-3xl justify-center">
+        <div className="font-semibold flex items-center text-teal-700 dark:text-teal-400 mb-3 -mt-6 text-3xl justify-center">
           Featured Projects by Kidzian's
         </div>
 
         <div className="max-w-6xl mx-auto">
           {/* Featured Project Card */}
-          <div className="bg-teal-700 rounded-2xl shadow-xl overflow-hidden mb-12">
+          <div className="bg-teal-700 dark:bg-teal-800 rounded-2xl shadow-xl overflow-hidden mb-12">
             <div className="md:flex items-start">
               <div className="md:w-2/5 p-6">
                 <div className="relative rounded-2xl overflow-hidden shadow-lg">
                   <img
-                    src={GuessNumber}
+                    src={GuessNumber || "/placeholder.svg"}
                     alt="Guess the Number App"
                     className="w-full h-auto object-cover rounded-2xl"
                   />
-                  
-                 <div className="absolute top-4 right-4 bg-white -mt-4 text-2xl font-bold text-green-700 font-extrabold text-sm text-black rounded-lg -px-4 py-2 text-sm font-bold shadow-lg flex items-center animate-blink gap-2 px-2">
-  <Download className="w-4 h-4 " />  1000+
-</div>
 
+                  <div className="absolute top-4 right-4 bg-white dark:bg-gray-800 -mt-4 text-2xl font-bold text-green-700 dark:text-green-400 font-extrabold text-sm text-black dark:text-white rounded-lg -px-4 py-2 text-sm font-bold shadow-lg flex items-center animate-blink gap-2 px-2">
+                    <Download className="w-4 h-4 " /> 1000+
+                  </div>
                 </div>
               </div>
 
               <div className="md:w-3/5 p-6 md:p-8">
                 <div className="flex items-center mb-6">
-                  <div className="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                  <div className="w-16 h-16 bg-blue-500 dark:bg-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
                     <span className="text-white text-2xl font-bold">GN</span>
                   </div>
                   <div>
@@ -70,9 +69,15 @@ export default function ProjectView() {
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">Games</span>
-                    <span className="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">Educational</span>
-                    <span className="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">Kids</span>
+                    <span className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm font-medium">
+                      Games
+                    </span>
+                    <span className="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 rounded-full text-sm font-medium">
+                      Educational
+                    </span>
+                    <span className="px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full text-sm font-medium">
+                      Kids
+                    </span>
                   </div>
                 </div>
 
@@ -87,13 +92,13 @@ export default function ProjectView() {
                     href="https://play.google.com/store/apps/developer?id=Kidzians"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+                    className="px-8 py-3 bg-blue-500 dark:bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 dark:hover:bg-blue-700 transition duration-300"
                   >
                     Download App
                   </a>
                   <button
                     onClick={handleViewMoreProjects}
-                    className="px-8 py-3 bg-white border-2 border-green-700 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition duration-300"
+                    className="px-8 py-3 bg-white dark:bg-gray-800 border-2 border-green-700 dark:border-green-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700 transition duration-300"
                   >
                     View More Projects
                   </button>
@@ -104,7 +109,7 @@ export default function ProjectView() {
 
           {/* More Projects Carousel */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6">More Projects</h2>
+            <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">More Projects</h2>
             <Splide
               options={{
                 type: "loop",
@@ -122,13 +127,13 @@ export default function ProjectView() {
             >
               {/* Card 1 */}
               <SplideSlide>
-                <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
-                  <div className="h-48 bg-blue-50 flex items-center justify-center">
-                    <img src={Akshath} alt="Akshath" />
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02] border dark:border-gray-700">
+                  <div className="h-48 bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+                    <img src={Akshath || "/placeholder.svg"} alt="Akshath" />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">Quiz Akshath</h3>
-                    <p className="text-gray-600 leading-relaxed">
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Quiz Akshath</h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                       An interactive quiz app designed by Akshath for improving general knowledge.
                     </p>
                   </div>
@@ -137,14 +142,14 @@ export default function ProjectView() {
 
               {/* Card 2 */}
               <SplideSlide>
-                <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
-                  <div className="h-48 bg-pink-50 flex items-center justify-center">
-                    <img src={shreya} alt="Shreya" />
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02] border dark:border-gray-700">
+                  <div className="h-48 bg-pink-50 dark:bg-pink-900/30 flex items-center justify-center">
+                    <img src={shreya || "/placeholder.svg"} alt="Shreya" />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">Simple Calculator</h3>
-                    <p className="text-gray-600 leading-relaxed">
-                     A Simple Calculator app devleoped by Shreya to calulate all basic arithmetic operations.
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Simple Calculator</h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                      A Simple Calculator app devleoped by Shreya to calulate all basic arithmetic operations.
                     </p>
                   </div>
                 </div>
@@ -152,53 +157,54 @@ export default function ProjectView() {
 
               {/* Card 3 */}
               <SplideSlide>
-                <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
-                  <div className="h-48 bg-purple-50 flex items-center justify-center">
-                    <img src={anaya} alt="Anaya" />
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02] border dark:border-gray-700">
+                  <div className="h-48 bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
+                    <img src={anaya || "/placeholder.svg"} alt="Anaya" />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">Rock Paper Scissor</h3>
-                    <p className="text-gray-600 leading-relaxed">
-                     Rock Paper Scissor is a Fun Game developed by Aanya.
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Rock Paper Scissor</h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                      Rock Paper Scissor is a Fun Game developed by Aanya.
                     </p>
                   </div>
                 </div>
               </SplideSlide>
               <SplideSlide>
-                <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
-                  <div className="h-48 bg-purple-50 flex items-center justify-center">
-                    <img src={jaip} alt="jaip" />
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02] border dark:border-gray-700">
+                  <div className="h-48 bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
+                    <img src={jaip || "/placeholder.svg"} alt="jaip" />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">Volume Calculator</h3>
-                    <p className="text-gray-600 leading-relaxed">
-                     A Volume Calculator App using Kotlin. This app can calculate volume Sphere, Cone, Cube and Cuboid. This can be very valuable for Maths Students.
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Volume Calculator</h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                      A Volume Calculator App using Kotlin. This app can calculate volume Sphere, Cone, Cube and Cuboid.
+                      This can be very valuable for Maths Students.
                     </p>
                   </div>
                 </div>
               </SplideSlide>
               <SplideSlide>
-                <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
-                  <div className="h-48 bg-purple-50 flex items-center justify-center">
-                    <img src={vihan} alt="vihan" />
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02] border dark:border-gray-700">
+                  <div className="h-48 bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
+                    <img src={vihan || "/placeholder.svg"} alt="vihan" />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">Chameleon</h3>
-                    <p className="text-gray-600 leading-relaxed">
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Chameleon</h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                       Chameleon is a simple App developed by 7 year old boy that Changes colors like a Chameleon.
                     </p>
                   </div>
                 </div>
               </SplideSlide>
               <SplideSlide>
-                <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02]">
-                  <div className="h-48 bg-purple-50 flex items-center justify-center">
-                    <img src={EmailSend} alt="Emailse" />
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 transform hover:scale-[1.02] border dark:border-gray-700">
+                  <div className="h-48 bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
+                    <img src={EmailSend || "/placeholder.svg"} alt="Emailse" />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">Email-Sender</h3>
-                    <p className="text-gray-600 leading-relaxed">
-                    Simple App Which Make Email Services Easy.
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Email-Sender</h3>
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                      Simple App Which Make Email Services Easy.
                     </p>
                   </div>
                 </div>
@@ -208,5 +214,5 @@ export default function ProjectView() {
         </div>
       </div>
     </div>
-  );
+  )
 }
