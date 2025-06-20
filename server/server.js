@@ -39,20 +39,23 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = ['https://kidzian.com', 'http://localhost:5173'];
 
-app.use(cors({
-  origin: (origin, callback) => {
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = ['https://kidzian.com', 'http://localhost:5173'];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('CORS not allowed'));
+      callback(new Error("CORS not allowed"));
     }
   },
-    methods: ['GET', 'POST', 'DELETE', 'PUT','PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cache-Control', 'Expires', 'Pragma'],
-    credentials: true,
-  })
-);
-app.options('*', cors()); // enable CORS preflight
+  credentials: true,
+  methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cache-Control', 'Expires', 'Pragma'],
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // ✅ ensure preflight uses same options
+// enable CORS preflight
 
 app.use(cookieParser());
 app.use(express.json());
