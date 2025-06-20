@@ -1025,39 +1025,65 @@ const StudentDashboard = () => {
                         key={course._id}
                         className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                       >
-                        <div className="flex items-center mb-4">
+                        <div className="flex items-center mb-6">
                           <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
                             <BookOpen className="w-6 h-6 text-white" />
                           </div>
                           <div className="ml-4">
                             <h4 className="text-xl font-semibold text-gray-900">{course.title}</h4>
-                            <p className="text-sm text-gray-500">Age Group: {course.ageGroup}</p>
+                            <p className="text-sm text-gray-500 mt-1">Age Group: {course.ageGroup}</p>
                           </div>
                         </div>
 
                         {course.about && course.about.length > 0 && (
                           <div className="mb-6">
-                            <h5 className="text-lg font-medium text-gray-700 mb-3">About This Course:</h5>
-                            <ul className="list-disc list-inside text-gray-600 space-y-2">
-                              {course.about.map((item, index) => (
-                                <li key={index} className="text-sm">
-                                  {item}
-                                </li>
-                              ))}
-                            </ul>
+                            <h5 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                              About This Course
+                            </h5>
+                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border-l-4 border-blue-500">
+                              <div className="space-y-3">
+                                {course.about.map((item, index) => (
+                                  <div key={index} className="flex items-start gap-3">
+                                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
+                                    <div className="space-y-1">
+                                      {item.split("\n").map((line, lineIndex) => (
+                                        <p key={lineIndex} className="text-gray-700 leading-relaxed text-sm">
+                                          {line.trim()}
+                                        </p>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
                           </div>
                         )}
 
                         {course.learningOutcomes && course.learningOutcomes.length > 0 && (
                           <div className="mb-6">
-                            <h5 className="text-lg font-medium text-gray-700 mb-3">Learning Outcomes:</h5>
-                            <ul className="list-disc list-inside text-gray-600 space-y-2">
-                              {course.learningOutcomes.map((outcome, index) => (
-                                <li key={index} className="text-sm">
-                                  {outcome}
-                                </li>
-                              ))}
-                            </ul>
+                            <h5 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                              <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
+                              Learning Outcomes
+                            </h5>
+                            <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border-l-4 border-emerald-500">
+                              <div className="grid grid-cols-1 gap-3">
+                                {course.learningOutcomes.map((outcome, index) => (
+                                  <div key={index} className="flex items-start gap-3">
+                                    <div className="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                      <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                                    </div>
+                                    <div className="space-y-1">
+                                      {outcome.split("\n").map((line, lineIndex) => (
+                                        <p key={lineIndex} className="text-gray-700 leading-relaxed text-sm">
+                                          {line.trim()}
+                                        </p>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
                           </div>
                         )}
 
@@ -1103,13 +1129,25 @@ const StudentDashboard = () => {
                             isOverdue ? "border-red-200 bg-red-50" : "border-gray-200 hover:-translate-y-1"
                           }`}
                         >
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h4 className="text-lg font-semibold text-teal-700">{assignment.title}</h4>
-                              <p className="text-sm text-gray-600 mt-1">{assignment.description}</p>
+                          <div className="flex justify-between items-start mb-6">
+                            <div className="flex-1">
+                              <h4 className="text-xl font-semibold text-teal-700 mb-3">{assignment.title}</h4>
+                              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                <h5 className="font-medium text-gray-800 mb-2 flex items-center">
+                                  <FileText className="w-4 h-4 mr-2" />
+                                  Assignment Description
+                                </h5>
+                                <div className="prose prose-sm max-w-none">
+                                  {assignment.description.split("\n").map((line, index) => (
+                                    <p key={index} className="text-gray-700 leading-relaxed mb-2 last:mb-0">
+                                      {line.trim()}
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
                             <span
-                              className={`px-4 py-2 text-sm rounded-full font-medium ${
+                              className={`px-4 py-2 text-sm rounded-full font-medium ml-4 flex-shrink-0 ${
                                 status === "Graded"
                                   ? "bg-emerald-100 text-emerald-800"
                                   : status === "Submitted"
@@ -1122,21 +1160,42 @@ const StudentDashboard = () => {
                               {isOverdue ? "Overdue" : status}
                             </span>
                           </div>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4">
-                            <div>
-                              <span className="font-medium">Course:</span> {assignment.course?.title || "Unknown"}
+
+                          {assignment.instructions && (
+                            <div className="mb-4 p-4 bg-amber-50 rounded-xl border border-amber-200">
+                              <h5 className="font-medium text-amber-800 mb-2 flex items-center">
+                                <Clock className="w-4 h-4 mr-2" />
+                                Instructions
+                              </h5>
+                              <div className="space-y-2">
+                                {assignment.instructions.split("\n").map((line, index) => (
+                                  <p key={index} className="text-amber-700 text-sm leading-relaxed">
+                                    {line.trim()}
+                                  </p>
+                                ))}
+                              </div>
                             </div>
-                            <div>
-                              <span className="font-medium">Due Date:</span>{" "}
-                              {new Date(assignment.dueDate).toLocaleDateString()}
+                          )}
+
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4 bg-gray-50 rounded-xl p-4">
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Course</span>
+                              <span className="text-gray-600">{assignment.course?.title || "Unknown"}</span>
                             </div>
-                            <div>
-                              <span className="font-medium">Max Marks:</span> {assignment.maxMarks}
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Due Date</span>
+                              <span className="text-gray-600">{new Date(assignment.dueDate).toLocaleDateString()}</span>
                             </div>
-                            <div>
-                              <span className="font-medium">Points:</span> 20
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Max Marks</span>
+                              <span className="text-gray-600">{assignment.maxMarks}</span>
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Points</span>
+                              <span className="text-emerald-600 font-semibold">20</span>
                             </div>
                           </div>
+
                           <div className="flex gap-3 flex-wrap">
                             <button
                               onClick={() => {
@@ -1198,13 +1257,25 @@ const StudentDashboard = () => {
                             isOverdue ? "border-red-200 bg-red-50" : "border-gray-200 hover:-translate-y-1"
                           }`}
                         >
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h4 className="text-lg font-semibold text-indigo-700">{assessment.title}</h4>
-                              <p className="text-sm text-gray-600 mt-1">{assessment.description}</p>
+                          <div className="flex justify-between items-start mb-6">
+                            <div className="flex-1">
+                              <h4 className="text-xl font-semibold text-indigo-700 mb-3">{assessment.title}</h4>
+                              <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-200">
+                                <h5 className="font-medium text-indigo-800 mb-2 flex items-center">
+                                  <Brain className="w-4 h-4 mr-2" />
+                                  Assessment Description
+                                </h5>
+                                <div className="prose prose-sm max-w-none">
+                                  {assessment.description.split("\n").map((line, index) => (
+                                    <p key={index} className="text-indigo-700 leading-relaxed mb-2 last:mb-0">
+                                      {line.trim()}
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
                             <span
-                              className={`px-4 py-2 text-sm rounded-full font-medium ${
+                              className={`px-4 py-2 text-sm rounded-full font-medium ml-4 flex-shrink-0 ${
                                 status === "Graded"
                                   ? "bg-emerald-100 text-emerald-800"
                                   : status === "Submitted"
@@ -1218,25 +1289,38 @@ const StudentDashboard = () => {
                             </span>
                           </div>
 
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4">
-                            <div>
-                              <span className="font-medium">Course:</span> {assessment.course?.title || "Unknown"}
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4 bg-gray-50 rounded-xl p-4">
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Course</span>
+                              <span className="text-gray-600">{assessment.course?.title || "Unknown"}</span>
                             </div>
-                            <div>
-                              <span className="font-medium">Duration:</span> {assessment.duration} minutes
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Duration</span>
+                              <span className="text-gray-600">{assessment.duration} minutes</span>
                             </div>
-                            <div>
-                              <span className="font-medium">Questions:</span> {assessment.questions?.length || 0}
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Questions</span>
+                              <span className="text-gray-600">{assessment.questions?.length || 0}</span>
                             </div>
-                            <div>
-                              <span className="font-medium">Max Marks:</span> {assessment.maxMarks}
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Max Marks</span>
+                              <span className="text-gray-600">{assessment.maxMarks}</span>
                             </div>
                           </div>
 
                           {assessment.instructions && (
                             <div className="mb-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                              <h5 className="font-medium text-blue-800 mb-1">Instructions:</h5>
-                              <p className="text-sm text-blue-700">{assessment.instructions}</p>
+                              <h5 className="font-medium text-blue-800 mb-2 flex items-center">
+                                <Clock className="w-4 h-4 mr-2" />
+                                Instructions
+                              </h5>
+                              <div className="space-y-2">
+                                {assessment.instructions.split("\n").map((line, index) => (
+                                  <p key={index} className="text-blue-700 text-sm leading-relaxed">
+                                    {line.trim()}
+                                  </p>
+                                ))}
+                              </div>
                             </div>
                           )}
 
@@ -1303,13 +1387,25 @@ const StudentDashboard = () => {
                             isOverdue ? "border-red-200 bg-red-50" : "border-gray-200 hover:-translate-y-1"
                           }`}
                         >
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h4 className="text-lg font-semibold text-blue-700">{project.title}</h4>
-                              <p className="text-sm text-gray-600 mt-1">{project.description}</p>
+                          <div className="flex justify-between items-start mb-6">
+                            <div className="flex-1">
+                              <h4 className="text-xl font-semibold text-blue-700 mb-3">{project.title}</h4>
+                              <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                                <h5 className="font-medium text-blue-800 mb-2 flex items-center">
+                                  <Code className="w-4 h-4 mr-2" />
+                                  Project Description
+                                </h5>
+                                <div className="prose prose-sm max-w-none">
+                                  {project.description.split("\n").map((line, index) => (
+                                    <p key={index} className="text-blue-700 leading-relaxed mb-2 last:mb-0">
+                                      {line.trim()}
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
                             <span
-                              className={`px-4 py-2 text-sm rounded-full font-medium ${
+                              className={`px-4 py-2 text-sm rounded-full font-medium ml-4 flex-shrink-0 ${
                                 status === "Graded"
                                   ? "bg-emerald-100 text-emerald-800"
                                   : status === "Submitted"
@@ -1324,31 +1420,45 @@ const StudentDashboard = () => {
                           </div>
 
                           {project.requirements && project.requirements.length > 0 && (
-                            <div className="mb-4">
-                              <h5 className="font-medium text-gray-700 mb-2">Requirements:</h5>
-                              <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                                {project.requirements.map((req, index) => (
-                                  <li key={index}>{req}</li>
-                                ))}
-                              </ul>
+                            <div className="mb-6">
+                              <h5 className="font-medium text-gray-800 mb-3 flex items-center">
+                                <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                                Project Requirements
+                              </h5>
+                              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4 border-l-4 border-purple-500">
+                                <div className="space-y-3">
+                                  {project.requirements.map((req, index) => (
+                                    <div key={index} className="flex items-start gap-3">
+                                      <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <span className="text-purple-600 font-semibold text-xs">{index + 1}</span>
+                                      </div>
+                                      <p className="text-gray-700 leading-relaxed text-sm">{req}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
                           )}
 
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4">
-                            <div>
-                              <span className="font-medium">Due Date:</span>{" "}
-                              {new Date(project.dueDate).toLocaleDateString()}
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4 bg-gray-50 rounded-xl p-4">
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Due Date</span>
+                              <span className="text-gray-600">{new Date(project.dueDate).toLocaleDateString()}</span>
                             </div>
-                            <div>
-                              <span className="font-medium">Team Size:</span> {project.teamSize}
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Team Size</span>
+                              <span className="text-gray-600">{project.teamSize}</span>
                             </div>
-                            <div>
-                              <span className="font-medium">Max Marks:</span> {project.maxMarks}
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Max Marks</span>
+                              <span className="text-gray-600">{project.maxMarks}</span>
                             </div>
-                            <div>
-                              <span className="font-medium">Points:</span> 30
+                            <div className="flex flex-col">
+                              <span className="font-medium text-gray-800">Points</span>
+                              <span className="text-emerald-600 font-semibold">30</span>
                             </div>
                           </div>
+
                           <div className="flex gap-3 flex-wrap">
                             <button
                               onClick={() => {
@@ -1682,7 +1792,16 @@ const StudentDashboard = () => {
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-teal-600 to-cyan-600">
               <h2 className="text-2xl font-bold text-white">{selectedAssignment.title}</h2>
-              <p className="text-teal-100 mt-2">{selectedAssignment.description}</p>
+              <div className="mt-3 bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <h3 className="text-teal-100 font-medium mb-2">Assignment Description</h3>
+                <div className="space-y-2">
+                  {selectedAssignment.description.split("\n").map((line, index) => (
+                    <p key={index} className="text-white leading-relaxed text-sm">
+                      {line.trim()}
+                    </p>
+                  ))}
+                </div>
+              </div>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
@@ -1704,8 +1823,17 @@ const StudentDashboard = () => {
 
               {selectedAssignment.instructions && (
                 <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                  <h4 className="font-medium text-amber-800 mb-2">Instructions:</h4>
-                  <p className="text-amber-700">{selectedAssignment.instructions}</p>
+                  <h4 className="font-medium text-amber-800 mb-3 flex items-center">
+                    <Clock className="w-4 h-4 mr-2" />
+                    Instructions:
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedAssignment.instructions.split("\n").map((line, index) => (
+                      <p key={index} className="text-amber-700 leading-relaxed">
+                        {line.trim()}
+                      </p>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -1728,7 +1856,16 @@ const StudentDashboard = () => {
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600">
               <h2 className="text-2xl font-bold text-white">{selectedAssessment.title}</h2>
-              <p className="text-indigo-100 mt-2">{selectedAssessment.description}</p>
+              <div className="mt-3 bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <h3 className="text-indigo-100 font-medium mb-2">Assessment Description</h3>
+                <div className="space-y-2">
+                  {selectedAssessment.description.split("\n").map((line, index) => (
+                    <p key={index} className="text-white leading-relaxed text-sm">
+                      {line.trim()}
+                    </p>
+                  ))}
+                </div>
+              </div>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -1752,8 +1889,17 @@ const StudentDashboard = () => {
 
               {selectedAssessment.instructions && (
                 <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                  <h4 className="font-medium text-amber-800 mb-2">Instructions:</h4>
-                  <p className="text-amber-700">{selectedAssessment.instructions}</p>
+                  <h4 className="font-medium text-amber-800 mb-3 flex items-center">
+                    <Clock className="w-4 h-4 mr-2" />
+                    Instructions:
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedAssessment.instructions.split("\n").map((line, index) => (
+                      <p key={index} className="text-amber-700 leading-relaxed">
+                        {line.trim()}
+                      </p>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -1776,7 +1922,16 @@ const StudentDashboard = () => {
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-600">
               <h2 className="text-2xl font-bold text-white">{selectedProject.title}</h2>
-              <p className="text-blue-100 mt-2">{selectedProject.description}</p>
+              <div className="mt-3 bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <h3 className="text-blue-100 font-medium mb-2">Project Description</h3>
+                <div className="space-y-2">
+                  {selectedProject.description.split("\n").map((line, index) => (
+                    <p key={index} className="text-white leading-relaxed text-sm">
+                      {line.trim()}
+                    </p>
+                  ))}
+                </div>
+              </div>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -1802,12 +1957,28 @@ const StudentDashboard = () => {
 
               {selectedProject.requirements && selectedProject.requirements.length > 0 && (
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-700 mb-3">Requirements:</h4>
-                  <ul className="list-disc list-inside text-gray-600 space-y-2">
-                    {selectedProject.requirements.map((req, index) => (
-                      <li key={index}>{req}</li>
-                    ))}
-                  </ul>
+                  <h4 className="font-medium text-gray-800 mb-3 flex items-center">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                    Project Requirements
+                  </h4>
+                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4 border-l-4 border-purple-500">
+                    <div className="space-y-3">
+                      {selectedProject.requirements.map((req, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <span className="text-purple-600 font-semibold text-xs">{index + 1}</span>
+                          </div>
+                          <div className="space-y-1">
+                            {req.split("\n").map((line, lineIndex) => (
+                              <p key={lineIndex} className="text-gray-700 leading-relaxed text-sm">
+                                {line.trim()}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
 

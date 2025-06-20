@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Heading from "../components/Heading"
 import Footer from "../components/Footer"
@@ -9,10 +9,19 @@ import { useNavigate } from "react-router-dom"
 
 const Courses = () => {
   const [selectedCourse, setSelectedCourse] = useState(null)
+  const [courseData, setCourseData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [activeFilter, setActiveFilter] = useState("all")
+  const navigate = useNavigate()
 
-  const [courseData] = useState([
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"
+
+  // Static courses that will be merged with backend courses
+  const staticCourses = [
     {
-      id: 1,
+      id: "static-1",
       title: "Python for Kids: Game Development",
       category: "beginner",
       image: "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg",
@@ -42,9 +51,10 @@ const Courses = () => {
         "User Input Handling",
         "Project Building",
       ],
+      isStatic: true,
     },
     {
-      id: 2,
+      id: "static-2",
       title: "Web Development Fundamentals",
       category: "beginner",
       image: "https://images.pexels.com/photos/1181677/pexels-photo-1181677.jpeg",
@@ -68,118 +78,70 @@ const Courses = () => {
         "Deploy websites live",
       ],
       overviewPoints: ["HTML Structure", "CSS Styling", "JavaScript Basics", "Responsive Design", "Web Deployment"],
+      isStatic: true,
     },
-    {
-      id: 3,
-      title: "Advanced JavaScript & React",
-      category: "advanced",
-      image: "https://images.pexels.com/photos/574071/pexels-photo-574071.jpeg",
-      ageGroup: "14-18 years",
-      studentsEnrolled: 125,
-      duration: "12 weeks",
-      rating: 4.9,
-      reviews: 76,
-      isBestseller: true,
-      description: "Master modern JavaScript and React development",
-      about: [
-        "Build complex React applications",
-        "State management with Redux",
-        "Modern JavaScript features",
-        "Real-world projects",
-      ],
-      learningOutcomes: [
-        "Create full-stack applications",
-        "Master React ecosystem",
-        "Implement advanced JS patterns",
-        "Build production-ready apps",
-      ],
-      overviewPoints: [
-        "ES6+ Features",
-        "React Components",
-        "State Management",
-        "API Integration",
-        "Testing & Deployment",
-      ],
-    },
-    {
-      id: 4,
-      title: "Intermediate Python & Data Science",
-      category: "intermediate",
-      image: "https://images.pexels.com/photos/577585/pexels-photo-577585.jpeg",
-      ageGroup: "12-16 years",
-      studentsEnrolled: 157,
-      duration: "10 weeks",
-      rating: 4.7,
-      reviews: 94,
-      isBestseller: true,
-      description: "Explore data science and analytics with Python",
-      about: [
-        "Data analysis fundamentals",
-        "Scientific computing with NumPy",
-        "Data visualization",
-        "Basic machine learning",
-      ],
-      learningOutcomes: [
-        "Analyze real-world data",
-        "Create data visualizations",
-        "Build predictive models",
-        "Handle large datasets",
-      ],
-      overviewPoints: [
-        "Data Analysis",
-        "NumPy & Pandas",
-        "Data Visualization",
-        "Machine Learning",
-        "Statistical Methods",
-      ],
-    },
-    {
-      id: 5,
-      title: "Mobile App Development",
-      category: "intermediate",
-      image: "https://images.pexels.com/photos/1181673/pexels-photo-1181673.jpeg",
-      ageGroup: "13-17 years",
-      studentsEnrolled: 92,
-      duration: "12 weeks",
-      rating: 4.5,
-      reviews: 63,
-      isBestseller: false,
-      description: "Create mobile apps with React Native",
-      about: ["Cross-platform development", "UI/UX design principles", "App deployment", "State management"],
-      learningOutcomes: [
-        "Build native mobile apps",
-        "Implement responsive designs",
-        "Handle user authentication",
-        "Deploy to app stores",
-      ],
-      overviewPoints: ["React Native", "Mobile UI Design", "Navigation", "Device Features", "App Store Deployment"],
-    },
-    {
-      id: 6,
-      title: "AI & Machine Learning Basics",
-      category: "advanced",
-      image: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg",
-      ageGroup: "15-18 years",
-      studentsEnrolled: 234,
-      duration: "14 weeks",
-      rating: 4.8,
-      reviews: 42,
-      isBestseller: false,
-      description: "Introduction to AI and machine learning concepts",
-      about: ["Basic AI concepts", "Machine learning fundamentals", "Neural networks intro", "Practical AI projects"],
-      learningOutcomes: [
-        "Understand AI basics",
-        "Build ML models",
-        "Process and analyze data",
-        "Create AI applications",
-      ],
-      overviewPoints: ["AI Fundamentals", "Machine Learning", "Neural Networks", "Data Processing", "AI Applications"],
-    },
-  ])
-  const [searchQuery, setSearchQuery] = useState("")
-  const [activeFilter, setActiveFilter] = useState("all")
-  const navigate=useNavigate()
-  
+  ]
+
+  // Function to transform backend course data to match frontend structure
+  const transformBackendCourse = (backendCourse) => {
+    return {
+      id: backendCourse._id,
+      title: backendCourse.title,
+      category: "beginner", // You might want to add category field to backend
+      image: backendCourse.image || "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg",
+      ageGroup: backendCourse.ageGroup || "8-16 years",
+      studentsEnrolled: Math.floor(Math.random() * 1000) + 50, // Random for now, add to backend if needed
+      duration: "8-12 weeks", // Add to backend if needed
+      rating: 4.5 + Math.random() * 0.5, // Random rating, add to backend if needed
+      reviews: Math.floor(Math.random() * 100) + 20, // Random reviews, add to backend if needed
+      isBestseller: Math.random() > 0.7, // Random bestseller status
+      description: backendCourse.about || "Learn coding with this amazing course",
+      about: backendCourse.about
+        ? [backendCourse.about]
+        : ["Interactive learning experience", "Expert instruction", "Hands-on projects"],
+      learningOutcomes: backendCourse.learningOutcomes
+        ? backendCourse.learningOutcomes.split("\n").filter((outcome) => outcome.trim())
+        : ["Master programming concepts", "Build real projects", "Problem-solving skills"],
+      overviewPoints: ["Fundamentals", "Practical Projects", "Problem Solving", "Code Review", "Final Project"],
+      isStatic: false,
+    }
+  }
+
+  // Fetch courses from backend
+  const fetchCourses = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`${API_BASE_URL}/api/courses`)
+
+      if (response.ok) {
+        const backendCourses = await response.json()
+
+        // Transform backend courses to match frontend structure
+        const transformedCourses = backendCourses.map(transformBackendCourse)
+
+        // Merge static courses with backend courses
+        const allCourses = [...staticCourses, ...transformedCourses]
+
+        setCourseData(allCourses)
+      } else {
+        console.error("Failed to fetch courses")
+        // If backend fails, use only static courses
+        setCourseData(staticCourses)
+        setError("Failed to load some courses. Showing available courses.")
+      }
+    } catch (err) {
+      console.error("Error fetching courses:", err)
+      // If backend fails, use only static courses
+      setCourseData(staticCourses)
+      setError("Failed to connect to server. Showing offline courses.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchCourses()
+  }, [])
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value)
@@ -199,6 +161,20 @@ const Courses = () => {
     backgroundImage: "url('https://images.pexels.com/photos/3769981/pexels-photo-3769981.jpeg')",
     backgroundSize: "cover",
     backgroundPosition: "center",
+  }
+
+  if (loading) {
+    return (
+      <div className="w-full bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+        <Heading />
+        <div className="min-h-screen flex items-center justify-center pt-[12.5vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-teal-600 mx-auto mb-4"></div>
+            <p className="text-teal-700 dark:text-teal-300 font-medium">Loading courses...</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -245,6 +221,18 @@ const Courses = () => {
                 onChange={handleSearchChange}
               />
             </motion.div>
+
+            {/* Error message */}
+            {error && (
+              <motion.div
+                className="mt-4 p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-lg text-yellow-200 text-sm max-w-xl mx-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                {error}
+              </motion.div>
+            )}
           </div>
         </div>
 
@@ -266,19 +254,35 @@ const Courses = () => {
             ))}
           </div>
 
+          {/* Course Count */}
+          <div className="text-center mb-8">
+            <p className="text-gray-600 dark:text-gray-400">
+              Showing {filteredCourses.length} course{filteredCourses.length !== 1 ? "s" : ""}
+              {activeFilter !== "all" && ` in ${activeFilter}`}
+              {searchQuery && ` matching "${searchQuery}"`}
+            </p>
+          </div>
+
           {/* Courses Grid */}
           <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" layout>
             <AnimatePresence>
               {filteredCourses.map((course, index) => (
                 <motion.div
-                  key={index}
-                  className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border dark:border-gray-700"
+                  key={course.id}
+                  className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border dark:border-gray-700 relative"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ delay: index * 0.1 }}
                   onClick={() => handleCardClick(course)}
                 >
+                  {/* Static course indicator */}
+                  {course.isStatic && (
+                    <div className="absolute top-2 right-2 z-10 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                      Featured
+                    </div>
+                  )}
+
                   <div className="relative h-48">
                     <img
                       src={course.image || "/placeholder.svg"}
@@ -332,6 +336,26 @@ const Courses = () => {
               ))}
             </AnimatePresence>
           </motion.div>
+
+          {/* No courses found */}
+          {filteredCourses.length === 0 && !loading && (
+            <div className="text-center py-16">
+              <div className="text-gray-400 dark:text-gray-600 mb-4">
+                <FiSearch className="w-16 h-16 mx-auto mb-4" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No courses found</h3>
+              <p className="text-gray-500 dark:text-gray-500">Try adjusting your search or filter criteria</p>
+              <button
+                onClick={() => {
+                  setSearchQuery("")
+                  setActiveFilter("all")
+                }}
+                className="mt-4 px-6 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-800 transition-colors duration-300"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Course Details Modal */}
@@ -375,6 +399,11 @@ const Courses = () => {
                       <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
                         {selectedCourse.ageGroup}
                       </span>
+                      {selectedCourse.isStatic && (
+                        <span className="px-3 py-1 bg-blue-500 backdrop-blur-sm rounded-full text-xs">
+                          Featured Course
+                        </span>
+                      )}
                     </div>
                     <h2 className="text-2xl font-bold mb-2">{selectedCourse.title}</h2>
                     <div className="flex items-center gap-4 text-white/90 text-xs">
@@ -451,7 +480,10 @@ const Courses = () => {
                           <p className="text-xs text-gray-600 dark:text-gray-300 mb-3">
                             Get detailed curriculum, assignments, and project details by joining the course.
                           </p>
-                          <button onClick={()=>navigate('/contact-us')} className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-500 dark:to-cyan-500 text-white py-2 rounded-lg hover:from-teal-700 hover:to-cyan-700 dark:hover:from-teal-600 dark:hover:to-cyan-600 transition-all duration-300 font-semibold text-sm">
+                          <button
+                            onClick={() => navigate("/contact-us")}
+                            className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-500 dark:to-cyan-500 text-white py-2 rounded-lg hover:from-teal-700 hover:to-cyan-700 dark:hover:from-teal-600 dark:hover:to-cyan-600 transition-all duration-300 font-semibold text-sm"
+                          >
                             Join Course
                           </button>
                         </div>
