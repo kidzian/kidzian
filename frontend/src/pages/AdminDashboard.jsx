@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -113,12 +114,6 @@ const AdminDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("")
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"
-
-  // Calculate active batches from the batches array
-  const getActiveBatchesCount = () => {
-    const currentDate = new Date()
-    return batches.filter((batch) => new Date(batch.endDate) > currentDate).length
-  }
 
   const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -729,17 +724,20 @@ const AdminDashboard = () => {
       <header className="bg-white shadow border-b-4 border-teal-700">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <div className="bg-white/20 backdrop-blur-sm rounded-full p-1">
-              <img
-                src={admin?.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-                alt="Profile"
-                className="w-12 h-12 rounded-full object-cover"
-              />
-            </div>
-            <h1 className="text-3xl font-bold text-teal-700">Admin Dashboard</h1>
-            <div></div>
-          </div>
 
+           <div className="bg-white/20 backdrop-blur-sm rounded-full p-1">
+    <img
+    src={admin?.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+
+      alt="Profile"
+      className="w-12 h-12 rounded-full object-cover"
+    />
+    
+  </div>
+  <h1 className="text-3xl font-bold text-teal-700">Admin Dashboard</h1>
+  <div></div>
+          </div>
+          
           <div className="flex items-center space-x-4">
             <span className="text-gray-700">{admin?.name}</span>
             <button onClick={handleLogout} className="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200">
@@ -816,7 +814,7 @@ const AdminDashboard = () => {
                   <dl>
                     <dt className="text-sm font-medium text-gray-500 truncate">Active Batches</dt>
                     <dd>
-                      <div className="text-lg font-medium text-gray-900">{getActiveBatchesCount()}</div>
+                      <div className="text-lg font-medium text-gray-900">{stats.activeBatches}</div>
                     </dd>
                   </dl>
                 </div>
@@ -1238,15 +1236,7 @@ const AdminDashboard = () => {
                             <h4 className="text-lg font-medium text-gray-900">{batch.name}</h4>
                             <p className="text-sm text-gray-500">{batch.courseName}</p>
                           </div>
-                          <span
-                            className={`px-2 py-1 text-xs rounded-full ${
-                              new Date(batch.endDate) > new Date()
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                            }`}
-                          >
-                            {new Date(batch.endDate) > new Date() ? "Active" : "Completed"}
-                          </span>
+                          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Active</span>
                         </div>
                         <div className="space-y-2 text-sm text-gray-600">
                           <div>

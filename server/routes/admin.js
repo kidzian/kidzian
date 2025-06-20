@@ -203,22 +203,24 @@ router.post("/add-student", auth(["admin"]), async (req, res) => {
 
 // Update a student
 router.put("/students/:id", auth(["admin"]), async (req, res) => {
-  try {
-    const { name, email, password, address, age, phoneNumber, grade } = req.body
-    const updateData = { name, email, address, age, phoneNumber, grade }
+ try {
+    const { id } = req.params;
+    const updateData = { ...req.body };
 
-    if (password && password.trim() !== "") {
-      updateData.password = password
+    // Hash password if it's being updated
+    if (updateData.password && updateData.password.trim() !== '') {
+      const saltRounds = 10;
+      updateData.password = await bcrypt.hash(updateData.password, saltRounds);
+      console.log('Password hashed for student update:', id);
     }
 
-    const updatedStudent = await User.findByIdAndUpdate(req.params.id, updateData, { new: true })
-    if (!updatedStudent) {
-      return res.status(404).json({ message: "Student not found" })
-    }
-    res.status(200).json({ message: "Student updated successfully", student: updatedStudent })
-  } catch (err) {
-    console.error("Error updating student:", err)
-    res.status(500).json({ message: "Server error" })
+    // Update student in database
+    const updatedStudent = await User.findByIdAndUpdate(id, updateData, { new: true });
+    
+    res.json({ message: 'Student updated successfully', student: updatedStudent });
+  } catch (error) {
+    console.error('Error updating student:', error);
+    res.status(500).json({ message: 'Failed to update student' });
   }
 })
 
@@ -262,21 +264,23 @@ router.post("/add-teacher", auth(["admin"]), async (req, res) => {
 // Update a teacher
 router.put("/teachers/:id", auth(["admin"]), async (req, res) => {
   try {
-    const { name, email, password, phoneNumber } = req.body
-    const updateData = { name, email, phoneNumber }
+    const { id } = req.params;
+    const updateData = { ...req.body };
 
-    if (password && password.trim() !== "") {
-      updateData.password = password
+    // Hash password if it's being updated
+    if (updateData.password && updateData.password.trim() !== '') {
+      const saltRounds = 10;
+      updateData.password = await bcrypt.hash(updateData.password, saltRounds);
+      console.log('Password hashed for teacher update:', id);
     }
 
-    const updatedTeacher = await Teacher.findByIdAndUpdate(req.params.id, updateData, { new: true })
-    if (!updatedTeacher) {
-      return res.status(404).json({ message: "Teacher not found" })
-    }
-    res.status(200).json({ message: "Teacher updated successfully", teacher: updatedTeacher })
-  } catch (err) {
-    console.error("Error updating teacher:", err)
-    res.status(500).json({ message: "Server error" })
+    // Update teacher in database
+    const updatedTeacher = await Teacher.findByIdAndUpdate(id, updateData, { new: true });
+    
+    res.json({ message: 'Teacher updated successfully', teacher: updatedTeacher });
+  } catch (error) {
+    console.error('Error updating teacher:', error);
+    res.status(500).json({ message: 'Failed to update teacher' });
   }
 })
 
