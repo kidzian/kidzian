@@ -26,6 +26,7 @@ const teacherRoutes = require("./routes/teachers")
 const studentRoutes = require("./routes/students")
 const courseRoutes = require('./routes/Courses.js');
 
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
@@ -80,7 +81,7 @@ app.get('/api/batch/:batchId', async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(batchId)) {
     return res.status(400).json({ error: 'Invalid batch ID format' });
   }
-
+// test
   try {
     const batchInfo = await Batch.findById(batchId);
 
