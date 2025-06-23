@@ -14,6 +14,14 @@ const Attendance = require("../models/Attendence")
 const StudentActivity = require("../models/StudentActivity")
 const auth = require("../middleware/auth")
 
+// Import file cleanup functions
+const {
+  cleanupAssignmentFiles,
+  cleanupAssessmentFiles,
+  cleanupProjectFiles,
+  cleanupOrphanedFiles,
+} = require("../middleware/filecleanup")
+
 // Import email notification middleware
 const {
   notifyAssignmentCreated,
@@ -170,7 +178,7 @@ router.post("/assignments", auth(["teacher"]), async (req, res) => {
   }
 })
 
-// Delete assignment
+// Enhanced Delete Assignment Route with File Cleanup
 router.delete("/assignments/:id", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
@@ -180,13 +188,27 @@ router.delete("/assignments/:id", auth(["teacher"]), async (req, res) => {
       return res.status(404).json({ message: "Assignment not found or not authorized" })
     }
 
-    // Delete related submissions
-    await Submission.deleteMany({ assignment: id })
+    console.log(`Cleaning up files for assignment: ${assignment.title}`)
 
-    // Delete the assignment
+    // Clean up associated files before deleting the assignment
+    const cleanupResult = await cleanupAssignmentFiles(id, { Submission })
+
+    // Delete the assignment from database
     await Assignment.findByIdAndDelete(id)
 
-    res.json({ message: "Assignment deleted successfully" })
+    // Log the cleanup results
+    if (cleanupResult.success) {
+      console.log(`Successfully deleted assignment and ${cleanupResult.deletedFiles} associated files`)
+    } else {
+      console.warn(`Assignment deleted but some files could not be removed:`, cleanupResult.errors)
+    }
+
+    res.json({
+      success: true,
+      message: "Assignment deleted successfully",
+      filesDeleted: cleanupResult.deletedFiles,
+      cleanupErrors: cleanupResult.errors.length > 0 ? cleanupResult.errors : undefined,
+    })
   } catch (err) {
     console.error("Error deleting assignment:", err)
     res.status(500).json({ message: "Server error" })
@@ -304,7 +326,7 @@ router.post("/assessments", auth(["teacher"]), async (req, res) => {
   }
 })
 
-// Delete assessment
+// Enhanced Delete Assessment Route with File Cleanup
 router.delete("/assessments/:id", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
@@ -314,13 +336,27 @@ router.delete("/assessments/:id", auth(["teacher"]), async (req, res) => {
       return res.status(404).json({ message: "Assessment not found or not authorized" })
     }
 
-    // Delete related submissions
-    await AssessmentSubmission.deleteMany({ assessment: id })
+    console.log(`Cleaning up files for assessment: ${assessment.title}`)
 
-    // Delete the assessment
+    // Clean up associated files before deleting the assessment
+    const cleanupResult = await cleanupAssessmentFiles(id, { AssessmentSubmission })
+
+    // Delete the assessment from database
     await Assessment.findByIdAndDelete(id)
 
-    res.json({ message: "Assessment deleted successfully" })
+    // Log the cleanup results
+    if (cleanupResult.success) {
+      console.log(`Successfully deleted assessment and ${cleanupResult.deletedFiles} associated files`)
+    } else {
+      console.warn(`Assessment deleted but some files could not be removed:`, cleanupResult.errors)
+    }
+
+    res.json({
+      success: true,
+      message: "Assessment deleted successfully",
+      filesDeleted: cleanupResult.deletedFiles,
+      cleanupErrors: cleanupResult.errors.length > 0 ? cleanupResult.errors : undefined,
+    })
   } catch (err) {
     console.error("Error deleting assessment:", err)
     res.status(500).json({ message: "Server error" })
@@ -407,7 +443,7 @@ router.post("/projects", auth(["teacher"]), async (req, res) => {
   }
 })
 
-// Delete project
+// Enhanced Delete Project Route with File Cleanup
 router.delete("/projects/:id", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
@@ -417,13 +453,27 @@ router.delete("/projects/:id", auth(["teacher"]), async (req, res) => {
       return res.status(404).json({ message: "Project not found or not authorized" })
     }
 
-    // Delete related submissions
-    await ProjectSubmission.deleteMany({ project: id })
+    console.log(`Cleaning up files for project: ${project.title}`)
 
-    // Delete the project
+    // Clean up associated files before deleting the project
+    const cleanupResult = await cleanupProjectFiles(id, { ProjectSubmission })
+
+    // Delete the project from database
     await Project.findByIdAndDelete(id)
 
-    res.json({ message: "Project deleted successfully" })
+    // Log the cleanup results
+    if (cleanupResult.success) {
+      console.log(`Successfully deleted project and ${cleanupResult.deletedFiles} associated files`)
+    } else {
+      console.warn(`Project deleted but some files could not be removed:`, cleanupResult.errors)
+    }
+
+    res.json({
+      success: true,
+      message: "Project deleted successfully",
+      filesDeleted: cleanupResult.deletedFiles,
+      cleanupErrors: cleanupResult.errors.length > 0 ? cleanupResult.errors : undefined,
+    })
   } catch (err) {
     console.error("Error deleting project:", err)
     res.status(500).json({ message: "Server error" })
@@ -720,6 +770,65 @@ router.get("/analytics", auth(["teacher"]), async (req, res) => {
   } catch (err) {
     console.error("Error fetching teacher analytics:", err)
     res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Utility route for cleaning up orphaned files (admin/teacher only)
+router.post("/cleanup-orphaned-files", auth(["teacher", "admin"]), async (req, res) => {
+  try {
+    const { deleteOrphaned = false } = req.body
+
+    const cleanupResult = await cleanupOrphanedFiles({
+      Submission,
+      AssessmentSubmission,
+      ProjectSubmission,
+    })
+
+    if (!cleanupResult.success) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to scan for orphaned files",
+        error: cleanupResult.error,
+      })
+    }
+
+    let deletedCount = 0
+    const deletionErrors = []
+
+    // If requested, delete the orphaned files
+    if (deleteOrphaned && cleanupResult.orphanedFiles.length > 0) {
+      const fs = require("fs").promises
+      const path = require("path")
+      const uploadsDir = path.join(process.cwd(), "uploads", "assignments")
+
+      for (const file of cleanupResult.orphanedFiles) {
+        try {
+          const filePath = path.join(uploadsDir, file)
+          await fs.unlink(filePath)
+          deletedCount++
+          console.log(`Deleted orphaned file: ${file}`)
+        } catch (error) {
+          console.error(`Failed to delete orphaned file ${file}:`, error)
+          deletionErrors.push(`Failed to delete: ${file}`)
+        }
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Scanned ${cleanupResult.checkedFiles} files`,
+      orphanedFiles: cleanupResult.orphanedFiles,
+      orphanedCount: cleanupResult.orphanedFiles.length,
+      deletedFiles: deletedCount,
+      deletionErrors: deletionErrors.length > 0 ? deletionErrors : undefined,
+    })
+  } catch (error) {
+    console.error("Error in cleanup utility:", error)
+    res.status(500).json({
+      success: false,
+      message: "Failed to run cleanup utility",
+      error: error.message,
+    })
   }
 })
 

@@ -85,6 +85,10 @@ const submissionSchema = new mongoose.Schema(
         version: Number,
       },
     ],
+
+    // Legacy fields for backward compatibility
+    filePath: String,
+    fileName: String,
   },
   {
     timestamps: true,
@@ -96,6 +100,10 @@ submissionSchema.index({ assignment: 1, student: 1 }, { unique: true })
 submissionSchema.index({ batch: 1, submittedAt: -1 })
 submissionSchema.index({ student: 1, submittedAt: -1 })
 submissionSchema.index({ gradedBy: 1, status: 1 })
+
+// Index for file cleanup queries
+submissionSchema.index({ "attachments.fileName": 1 })
+submissionSchema.index({ fileName: 1 }) // Legacy field
 
 // Virtual for grade percentage
 submissionSchema.virtual("gradePercentage").get(function () {
@@ -136,6 +144,36 @@ submissionSchema.methods.addGrade = function (grade, feedback, gradedBy) {
   return this.save()
 }
 
+// Pre-remove middleware to clean up files when submission is deleted
+submissionSchema.pre("remove", async function (next) {
+  const { deleteFile } = require("../middleware/filecleanup")
+  const path = require("path")
+
+  // Clean up attachments
+  if (this.attachments && this.attachments.length > 0) {
+    for (const attachment of this.attachments) {
+      if (attachment.filePath) {
+        let fullPath = attachment.filePath
+        if (!path.isAbsolute(fullPath)) {
+          fullPath = path.join(process.cwd(), attachment.filePath)
+        }
+        await deleteFile(fullPath)
+      }
+    }
+  }
+
+  // Clean up legacy file (if any)
+  if (this.filePath) {
+    let fullPath = this.filePath
+    if (!path.isAbsolute(fullPath)) {
+      fullPath = path.join(process.cwd(), this.filePath)
+    }
+    await deleteFile(fullPath)
+  }
+
+  next()
+})
+
 // Pre-save middleware to check if submission is late
 submissionSchema.pre("save", async function (next) {
   if (this.isNew) {
@@ -152,5 +190,42 @@ submissionSchema.post("save", async function () {
     await assignment.updateStats()
   }
 })
+
+// Static method to clean up files for multiple submissions
+submissionSchema.statics.cleanupFiles = async function (filter) {
+  const submissions = await this.find(filter)
+  const { deleteFile } = require("../middleware/filecleanup")
+  const path = require("path")
+
+  let deletedCount = 0
+
+  for (const submission of submissions) {
+    // Clean up attachments
+    if (submission.attachments && submission.attachments.length > 0) {
+      for (const attachment of submission.attachments) {
+        if (attachment.filePath) {
+          let fullPath = attachment.filePath
+          if (!path.isAbsolute(fullPath)) {
+            fullPath = path.join(process.cwd(), attachment.filePath)
+          }
+          const deleted = await deleteFile(fullPath)
+          if (deleted) deletedCount++
+        }
+      }
+    }
+
+    // Clean up legacy file (if any)
+    if (submission.filePath) {
+      let fullPath = submission.filePath
+      if (!path.isAbsolute(fullPath)) {
+        fullPath = path.join(process.cwd(), submission.filePath)
+      }
+      const deleted = await deleteFile(fullPath)
+      if (deleted) deletedCount++
+    }
+  }
+
+  return deletedCount
+}
 
 module.exports = mongoose.model("Submission", submissionSchema)
