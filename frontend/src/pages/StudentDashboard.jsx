@@ -15,6 +15,12 @@ import {
   Trophy,
   Download,
   Gem,
+  CheckCircle,
+  AlertCircle,
+  Users,
+  Target,
+  Star,
+  BookmarkCheck,
 } from "lucide-react"
 import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
@@ -1109,392 +1115,702 @@ const StudentDashboard = () => {
               </div>
             )}
 
-            {/* Assignments Tab */}
+            {/* ENHANCED Assignments Tab with Beautiful Formatting */}
             {activeTab === "assignments" && (
               <div>
-                <h3 className="text-xl font-bold text-teal-700 mb-6 flex items-center">
-                  <FileText className="w-6 h-6 mr-2" />
-                  My Assignments
-                </h3>
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-2xl font-bold text-teal-700 flex items-center">
+                    <div className="p-2 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl mr-3">
+                      <FileText className="w-6 h-6 text-white" />
+                    </div>
+                    My Assignments
+                  </h3>
+                  <div className="text-sm text-gray-500 bg-gray-100 px-4 py-2 rounded-full">
+                    {assignments.length} Total Assignments
+                  </div>
+                </div>
+
                 {assignments.length > 0 ? (
                   <div className="space-y-6">
                     {assignments.map((assignment) => {
                       const status = getSubmissionStatus("assignments", assignment._id)
                       const isOverdue = new Date(assignment.dueDate) < new Date() && status === "Not Submitted"
+                      const daysLeft = Math.ceil((new Date(assignment.dueDate) - new Date()) / (1000 * 60 * 60 * 24))
 
                       return (
                         <div
                           key={assignment._id}
-                          className={`bg-white border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 ${
-                            isOverdue ? "border-red-200 bg-red-50" : "border-gray-200 hover:-translate-y-1"
+                          className={`group relative bg-white border-2 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-500 ${
+                            isOverdue
+                              ? "border-red-200 bg-gradient-to-br from-red-50 to-red-100"
+                              : status === "Graded"
+                                ? "border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100"
+                                : status === "Submitted"
+                                  ? "border-teal-200 bg-gradient-to-br from-teal-50 to-teal-100"
+                                  : "border-gray-200 hover:border-teal-300 hover:-translate-y-2"
                           }`}
                         >
-                          <div className="flex justify-between items-start mb-6">
-                            <div className="flex-1">
-                              <h4 className="text-xl font-semibold text-teal-700 mb-3">{assignment.title}</h4>
-                              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                                <h5 className="font-medium text-gray-800 mb-2 flex items-center">
-                                  <FileText className="w-4 h-4 mr-2" />
+                          {/* Status Banner */}
+                          <div
+                            className={`absolute top-0 right-0 px-6 py-2 rounded-bl-2xl text-sm font-bold ${
+                              status === "Graded"
+                                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
+                                : status === "Submitted"
+                                  ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white"
+                                  : isOverdue
+                                    ? "bg-gradient-to-r from-red-500 to-red-600 text-white"
+                                    : "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
+                            }`}
+                          >
+                            {isOverdue
+                              ? "⚠️ Overdue"
+                              : status === "Graded"
+                                ? "✅ Graded"
+                                : status === "Submitted"
+                                  ? "📤 Submitted"
+                                  : "📝 Pending"}
+                          </div>
+
+                          <div className="p-8">
+                            {/* Header Section */}
+                            <div className="flex items-start justify-between mb-6">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-3">
+                                  <div className="p-3 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl shadow-lg">
+                                    <FileText className="w-6 h-6 text-white" />
+                                  </div>
+                                  <div>
+                                    <h4 className="text-2xl font-bold text-gray-900 group-hover:text-teal-700 transition-colors">
+                                      {assignment.title}
+                                    </h4>
+                                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                                      <span className="flex items-center gap-1">
+                                        <BookOpen className="w-4 h-4" />
+                                        {assignment.course?.title || "Unknown Course"}
+                                      </span>
+                                      <span className="flex items-center gap-1">
+                                        <Calendar className="w-4 h-4" />
+                                        Due: {new Date(assignment.dueDate).toLocaleDateString()}
+                                      </span>
+                                      {!isOverdue && daysLeft >= 0 && (
+                                        <span
+                                          className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                                            daysLeft <= 1
+                                              ? "bg-red-100 text-red-700"
+                                              : daysLeft <= 3
+                                                ? "bg-amber-100 text-amber-700"
+                                                : "bg-green-100 text-green-700"
+                                          }`}
+                                        >
+                                          <Clock className="w-3 h-3" />
+                                          {daysLeft === 0 ? "Due Today" : `${daysLeft} days left`}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Assignment Description - Enhanced */}
+                            <div className="mb-6">
+                              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-sm">
+                                <h5 className="font-bold text-gray-800 mb-4 flex items-center text-lg">
+                                  <div className="w-2 h-2 bg-teal-500 rounded-full mr-3"></div>
                                   Assignment Description
                                 </h5>
                                 <div className="prose prose-sm max-w-none">
                                   {assignment.description.split("\n").map((line, index) => (
-                                    <p key={index} className="text-gray-700 leading-relaxed mb-2 last:mb-0">
+                                    <p key={index} className="text-gray-700 leading-relaxed mb-3 last:mb-0">
                                       {line.trim()}
                                     </p>
                                   ))}
                                 </div>
                               </div>
                             </div>
-                            <span
-                              className={`px-4 py-2 text-sm rounded-full font-medium ml-4 flex-shrink-0 ${
-                                status === "Graded"
-                                  ? "bg-emerald-100 text-emerald-800"
-                                  : status === "Submitted"
-                                    ? "bg-teal-100 text-teal-800"
-                                    : isOverdue
-                                      ? "bg-red-100 text-red-800"
-                                      : "bg-amber-100 text-amber-800"
-                              }`}
-                            >
-                              {isOverdue ? "Overdue" : status}
-                            </span>
-                          </div>
 
-                          {assignment.instructions && (
-                            <div className="mb-4 p-4 bg-amber-50 rounded-xl border border-amber-200">
-                              <h5 className="font-medium text-amber-800 mb-2 flex items-center">
-                                <Clock className="w-4 h-4 mr-2" />
-                                Instructions
-                              </h5>
-                              <div className="space-y-2">
-                                {assignment.instructions.split("\n").map((line, index) => (
-                                  <p key={index} className="text-amber-700 text-sm leading-relaxed">
-                                    {line.trim()}
-                                  </p>
-                                ))}
+                            {/* Instructions Section - Enhanced */}
+                            {assignment.instructions && (
+                              <div className="mb-6">
+                                <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border-l-4 border-amber-400 shadow-sm">
+                                  <h5 className="font-bold text-amber-800 mb-4 flex items-center text-lg">
+                                    <Target className="w-5 h-5 mr-2" />
+                                    Instructions & Guidelines
+                                  </h5>
+                                  <div className="space-y-3">
+                                    {assignment.instructions.split("\n").map((line, index) => (
+                                      <div key={index} className="flex items-start gap-3">
+                                        <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                          <span className="text-amber-600 font-bold text-xs">{index + 1}</span>
+                                        </div>
+                                        <p className="text-amber-800 leading-relaxed text-sm font-medium">
+                                          {line.trim()}
+                                        </p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Assignment Details Grid - Enhanced */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 border border-blue-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Award className="w-4 h-4 text-blue-600" />
+                                  <span className="font-bold text-blue-800 text-sm">Max Marks</span>
+                                </div>
+                                <span className="text-2xl font-bold text-blue-700">{assignment.maxMarks}</span>
+                              </div>
+                              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-4 border border-emerald-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Star className="w-4 h-4 text-emerald-600" />
+                                  <span className="font-bold text-emerald-800 text-sm">Points</span>
+                                </div>
+                                <span className="text-2xl font-bold text-emerald-700">+20</span>
+                              </div>
+                              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-4 border border-purple-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Clock className="w-4 h-4 text-purple-600" />
+                                  <span className="font-bold text-purple-800 text-sm">Status</span>
+                                </div>
+                                <span
+                                  className={`text-sm font-bold ${
+                                    status === "Graded"
+                                      ? "text-emerald-700"
+                                      : status === "Submitted"
+                                        ? "text-teal-700"
+                                        : isOverdue
+                                          ? "text-red-700"
+                                          : "text-amber-700"
+                                  }`}
+                                >
+                                  {status}
+                                </span>
+                              </div>
+                              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-4 border border-indigo-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <BookmarkCheck className="w-4 h-4 text-indigo-600" />
+                                  <span className="font-bold text-indigo-800 text-sm">Priority</span>
+                                </div>
+                                <span
+                                  className={`text-sm font-bold ${
+                                    isOverdue
+                                      ? "text-red-700"
+                                      : daysLeft <= 1
+                                        ? "text-red-700"
+                                        : daysLeft <= 3
+                                          ? "text-amber-700"
+                                          : "text-green-700"
+                                  }`}
+                                >
+                                  {isOverdue ? "Overdue" : daysLeft <= 1 ? "Urgent" : daysLeft <= 3 ? "High" : "Normal"}
+                                </span>
                               </div>
                             </div>
-                          )}
 
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4 bg-gray-50 rounded-xl p-4">
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Course</span>
-                              <span className="text-gray-600">{assignment.course?.title || "Unknown"}</span>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Due Date</span>
-                              <span className="text-gray-600">{new Date(assignment.dueDate).toLocaleDateString()}</span>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Max Marks</span>
-                              <span className="text-gray-600">{assignment.maxMarks}</span>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Points</span>
-                              <span className="text-emerald-600 font-semibold">20</span>
-                            </div>
-                          </div>
-
-                          <div className="flex gap-3 flex-wrap">
-                            <button
-                              onClick={() => {
-                                setSelectedAssignment(assignment)
-                                setShowAssignmentModal(true)
-                              }}
-                              className="bg-teal-50 text-teal-600 py-2 px-4 rounded-xl hover:bg-teal-100 transition-colors flex items-center"
-                            >
-                              <Eye className="w-4 h-4 mr-2" />
-                              View Details
-                            </button>
-                            {status === "Not Submitted" && !isOverdue && (
+                            {/* Action Buttons - Enhanced */}
+                            <div className="flex gap-4 flex-wrap">
                               <button
                                 onClick={() => {
-                                  setSubmissionForm({
-                                    ...submissionForm,
-                                    type: "assignment",
-                                    id: assignment._id,
-                                  })
-                                  setShowSubmissionModal(true)
+                                  setSelectedAssignment(assignment)
+                                  setShowAssignmentModal(true)
                                 }}
-                                className="bg-emerald-50 text-emerald-600 py-2 px-4 rounded-xl hover:bg-emerald-100 transition-colors flex items-center"
+                                className="flex items-center gap-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-medium"
                               >
-                                <Upload className="w-4 h-4 mr-2" />
-                                Submit
+                                <Eye className="w-4 h-4" />
+                                View Full Details
                               </button>
-                            )}
+                              {status === "Not Submitted" && !isOverdue && (
+                                <button
+                                  onClick={() => {
+                                    setSubmissionForm({
+                                      ...submissionForm,
+                                      type: "assignment",
+                                      id: assignment._id,
+                                    })
+                                    setShowSubmissionModal(true)
+                                  }}
+                                  className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-medium"
+                                >
+                                  <Upload className="w-4 h-4" />
+                                  Submit Assignment
+                                </button>
+                              )}
+                              {status === "Submitted" && (
+                                <div className="flex items-center gap-2 bg-gradient-to-r from-teal-100 to-teal-200 text-teal-700 px-6 py-3 rounded-2xl font-medium">
+                                  <CheckCircle className="w-4 h-4" />
+                                  Submitted Successfully
+                                </div>
+                              )}
+                              {status === "Graded" && (
+                                <div className="flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-700 px-6 py-3 rounded-2xl font-medium">
+                                  <Award className="w-4 h-4" />
+                                  Graded & Complete
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       )
                     })}
                   </div>
                 ) : (
-                  <div className="text-center py-12 text-gray-500 bg-white rounded-2xl shadow-lg">
-                    <FileText className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                    <p className="text-lg">No assignments available yet.</p>
+                  <div className="text-center py-16 bg-white rounded-3xl shadow-lg border border-gray-100">
+                    <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                      <FileText className="h-12 w-12 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">No Assignments Available</h3>
+                    <p className="text-gray-500">Your teacher hasn't posted any assignments yet. Check back later!</p>
                   </div>
                 )}
               </div>
             )}
 
-            {/* Assessments Tab */}
+            {/* ENHANCED Assessments Tab with Beautiful Formatting */}
             {activeTab === "assessments" && (
               <div>
-                <h3 className="text-xl font-bold text-teal-700 mb-6 flex items-center">
-                  <Brain className="w-6 h-6 mr-2" />
-                  My Assessments
-                </h3>
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-2xl font-bold text-indigo-700 flex items-center">
+                    <div className="p-2 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl mr-3">
+                      <Brain className="w-6 h-6 text-white" />
+                    </div>
+                    My Assessments
+                  </h3>
+                  <div className="text-sm text-gray-500 bg-gray-100 px-4 py-2 rounded-full">
+                    {assessments.length} Total Assessments
+                  </div>
+                </div>
+
                 {assessments.length > 0 ? (
                   <div className="space-y-6">
                     {assessments.map((assessment) => {
                       const status = getSubmissionStatus("assessments", assessment._id)
                       const isOverdue = new Date(assessment.dueDate) < new Date() && status === "Not Submitted"
+                      const daysLeft = Math.ceil((new Date(assessment.dueDate) - new Date()) / (1000 * 60 * 60 * 24))
 
                       return (
                         <div
                           key={assessment._id}
-                          className={`bg-white border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 ${
-                            isOverdue ? "border-red-200 bg-red-50" : "border-gray-200 hover:-translate-y-1"
+                          className={`group relative bg-white border-2 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-500 ${
+                            isOverdue
+                              ? "border-red-200 bg-gradient-to-br from-red-50 to-red-100"
+                              : status === "Graded"
+                                ? "border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100"
+                                : status === "Submitted"
+                                  ? "border-indigo-200 bg-gradient-to-br from-indigo-50 to-indigo-100"
+                                  : "border-gray-200 hover:border-indigo-300 hover:-translate-y-2"
                           }`}
                         >
-                          <div className="flex justify-between items-start mb-6">
-                            <div className="flex-1">
-                              <h4 className="text-xl font-semibold text-indigo-700 mb-3">{assessment.title}</h4>
-                              <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-200">
-                                <h5 className="font-medium text-indigo-800 mb-2 flex items-center">
-                                  <Brain className="w-4 h-4 mr-2" />
+                          {/* Status Banner */}
+                          <div
+                            className={`absolute top-0 right-0 px-6 py-2 rounded-bl-2xl text-sm font-bold ${
+                              status === "Graded"
+                                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
+                                : status === "Submitted"
+                                  ? "bg-gradient-to-r from-indigo-500 to-indigo-600 text-white"
+                                  : isOverdue
+                                    ? "bg-gradient-to-r from-red-500 to-red-600 text-white"
+                                    : "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
+                            }`}
+                          >
+                            {isOverdue
+                              ? "⚠️ Overdue"
+                              : status === "Graded"
+                                ? "✅ Graded"
+                                : status === "Submitted"
+                                  ? "📤 Submitted"
+                                  : "🧠 Pending"}
+                          </div>
+
+                          <div className="p-8">
+                            {/* Header Section */}
+                            <div className="flex items-start justify-between mb-6">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-3">
+                                  <div className="p-3 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl shadow-lg">
+                                    <Brain className="w-6 h-6 text-white" />
+                                  </div>
+                                  <div>
+                                    <h4 className="text-2xl font-bold text-gray-900 group-hover:text-indigo-700 transition-colors">
+                                      {assessment.title}
+                                    </h4>
+                                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                                      <span className="flex items-center gap-1">
+                                        <BookOpen className="w-4 h-4" />
+                                        {assessment.course?.title || "Unknown Course"}
+                                      </span>
+                                      <span className="flex items-center gap-1">
+                                        <Clock className="w-4 h-4" />
+                                        {assessment.duration} minutes
+                                      </span>
+                                      <span className="flex items-center gap-1">
+                                        <Brain className="w-4 h-4" />
+                                        {assessment.questions?.length || 0} questions
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Assessment Description - Enhanced */}
+                            <div className="mb-6">
+                              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-sm">
+                                <h5 className="font-bold text-gray-800 mb-4 flex items-center text-lg">
+                                  <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
                                   Assessment Description
                                 </h5>
                                 <div className="prose prose-sm max-w-none">
                                   {assessment.description.split("\n").map((line, index) => (
-                                    <p key={index} className="text-indigo-700 leading-relaxed mb-2 last:mb-0">
+                                    <p key={index} className="text-gray-700 leading-relaxed mb-3 last:mb-0">
                                       {line.trim()}
                                     </p>
                                   ))}
                                 </div>
                               </div>
                             </div>
-                            <span
-                              className={`px-4 py-2 text-sm rounded-full font-medium ml-4 flex-shrink-0 ${
-                                status === "Graded"
-                                  ? "bg-emerald-100 text-emerald-800"
-                                  : status === "Submitted"
-                                    ? "bg-indigo-100 text-indigo-800"
-                                    : isOverdue
-                                      ? "bg-red-100 text-red-800"
-                                      : "bg-amber-100 text-amber-800"
-                              }`}
-                            >
-                              {isOverdue ? "Overdue" : status}
-                            </span>
-                          </div>
 
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4 bg-gray-50 rounded-xl p-4">
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Course</span>
-                              <span className="text-gray-600">{assessment.course?.title || "Unknown"}</span>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Duration</span>
-                              <span className="text-gray-600">{assessment.duration} minutes</span>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Questions</span>
-                              <span className="text-gray-600">{assessment.questions?.length || 0}</span>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Max Marks</span>
-                              <span className="text-gray-600">{assessment.maxMarks}</span>
-                            </div>
-                          </div>
+                            {/* Instructions Section - Enhanced */}
+                            {assessment.instructions && (
+                              <div className="mb-6">
+                                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border-l-4 border-blue-400 shadow-sm">
+                                  <h5 className="font-bold text-blue-800 mb-4 flex items-center text-lg">
+                                    <AlertCircle className="w-5 h-5 mr-2" />
+                                    Assessment Instructions
+                                  </h5>
+                                  <div className="space-y-3">
+                                    {assessment.instructions.split("\n").map((line, index) => (
+                                      <div key={index} className="flex items-start gap-3">
+                                        <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                          <span className="text-blue-600 font-bold text-xs">{index + 1}</span>
+                                        </div>
+                                        <p className="text-blue-800 leading-relaxed text-sm font-medium">
+                                          {line.trim()}
+                                        </p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
 
-                          {assessment.instructions && (
-                            <div className="mb-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                              <h5 className="font-medium text-blue-800 mb-2 flex items-center">
-                                <Clock className="w-4 h-4 mr-2" />
-                                Instructions
-                              </h5>
-                              <div className="space-y-2">
-                                {assessment.instructions.split("\n").map((line, index) => (
-                                  <p key={index} className="text-blue-700 text-sm leading-relaxed">
-                                    {line.trim()}
-                                  </p>
-                                ))}
+                            {/* Assessment Details Grid - Enhanced */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-4 border border-indigo-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Clock className="w-4 h-4 text-indigo-600" />
+                                  <span className="font-bold text-indigo-800 text-sm">Duration</span>
+                                </div>
+                                <span className="text-2xl font-bold text-indigo-700">{assessment.duration}m</span>
+                              </div>
+                              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-4 border border-purple-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Brain className="w-4 h-4 text-purple-600" />
+                                  <span className="font-bold text-purple-800 text-sm">Questions</span>
+                                </div>
+                                <span className="text-2xl font-bold text-purple-700">
+                                  {assessment.questions?.length || 0}
+                                </span>
+                              </div>
+                              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 border border-blue-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Award className="w-4 h-4 text-blue-600" />
+                                  <span className="font-bold text-blue-800 text-sm">Max Marks</span>
+                                </div>
+                                <span className="text-2xl font-bold text-blue-700">{assessment.maxMarks}</span>
+                              </div>
+                              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-4 border border-emerald-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Star className="w-4 h-4 text-emerald-600" />
+                                  <span className="font-bold text-emerald-800 text-sm">Points</span>
+                                </div>
+                                <span className="text-2xl font-bold text-emerald-700">10-20</span>
                               </div>
                             </div>
-                          )}
 
-                          <div className="flex gap-3 flex-wrap">
-                            <button
-                              onClick={() => {
-                                setSelectedAssessment(assessment)
-                                setShowAssessmentModal(true)
-                              }}
-                              className="bg-indigo-50 text-indigo-600 py-2 px-4 rounded-xl hover:bg-indigo-100 transition-colors flex items-center"
-                            >
-                              <Eye className="w-4 h-4 mr-2" />
-                              View Details
-                            </button>
-                            {status === "Not Submitted" && !isOverdue && (
+                            {/* Action Buttons - Enhanced */}
+                            <div className="flex gap-4 flex-wrap">
                               <button
                                 onClick={() => {
                                   setSelectedAssessment(assessment)
-                                  setSubmissionForm({
-                                    ...submissionForm,
-                                    type: "assessment",
-                                    id: assessment._id,
-                                    answers: new Array(assessment.questions?.length || 0).fill({ answer: "" }),
-                                  })
-                                  setShowSubmissionModal(true)
+                                  setShowAssessmentModal(true)
                                 }}
-                                className="bg-emerald-50 text-emerald-600 py-2 px-4 rounded-xl hover:bg-emerald-100 transition-colors flex items-center"
+                                className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-medium"
                               >
-                                <Brain className="w-4 h-4 mr-2" />
-                                Take Assessment
+                                <Eye className="w-4 h-4" />
+                                View Full Details
                               </button>
-                            )}
+                              {status === "Not Submitted" && !isOverdue && (
+                                <button
+                                  onClick={() => {
+                                    setSelectedAssessment(assessment)
+                                    setSubmissionForm({
+                                      ...submissionForm,
+                                      type: "assessment",
+                                      id: assessment._id,
+                                      answers: new Array(assessment.questions?.length || 0).fill({ answer: "" }),
+                                    })
+                                    setShowSubmissionModal(true)
+                                  }}
+                                  className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-medium"
+                                >
+                                  <Brain className="w-4 h-4" />
+                                  Take Assessment
+                                </button>
+                              )}
+                              {status === "Submitted" && (
+                                <div className="flex items-center gap-2 bg-gradient-to-r from-indigo-100 to-indigo-200 text-indigo-700 px-6 py-3 rounded-2xl font-medium">
+                                  <CheckCircle className="w-4 h-4" />
+                                  Assessment Completed
+                                </div>
+                              )}
+                              {status === "Graded" && (
+                                <div className="flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-700 px-6 py-3 rounded-2xl font-medium">
+                                  <Award className="w-4 h-4" />
+                                  Graded & Complete
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       )
                     })}
                   </div>
                 ) : (
-                  <div className="text-center py-12 text-gray-500 bg-white rounded-2xl shadow-lg">
-                    <Brain className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                    <p className="text-lg">No assessments available yet.</p>
+                  <div className="text-center py-16 bg-white rounded-3xl shadow-lg border border-gray-100">
+                    <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                      <Brain className="h-12 w-12 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">No Assessments Available</h3>
+                    <p className="text-gray-500">Your teacher hasn't posted any assessments yet. Check back later!</p>
                   </div>
                 )}
               </div>
             )}
 
-            {/* Projects Tab */}
+            {/* ENHANCED Projects Tab with Beautiful Formatting */}
             {activeTab === "projects" && (
               <div>
-                <h3 className="text-xl font-bold text-teal-700 mb-6 flex items-center">
-                  <Code className="w-6 h-6 mr-2" />
-                  My Projects
-                </h3>
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-2xl font-bold text-blue-700 flex items-center">
+                    <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl mr-3">
+                      <Code className="w-6 h-6 text-white" />
+                    </div>
+                    My Projects
+                  </h3>
+                  <div className="text-sm text-gray-500 bg-gray-100 px-4 py-2 rounded-full">
+                    {projects.length} Total Projects
+                  </div>
+                </div>
+
                 {projects.length > 0 ? (
                   <div className="space-y-6">
                     {projects.map((project) => {
                       const status = getSubmissionStatus("projects", project._id)
                       const isOverdue = new Date(project.dueDate) < new Date() && status === "Not Submitted"
+                      const daysLeft = Math.ceil((new Date(project.dueDate) - new Date()) / (1000 * 60 * 60 * 24))
 
                       return (
                         <div
                           key={project._id}
-                          className={`bg-white border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 ${
-                            isOverdue ? "border-red-200 bg-red-50" : "border-gray-200 hover:-translate-y-1"
+                          className={`group relative bg-white border-2 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-500 ${
+                            isOverdue
+                              ? "border-red-200 bg-gradient-to-br from-red-50 to-red-100"
+                              : status === "Graded"
+                                ? "border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100"
+                                : status === "Submitted"
+                                  ? "border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100"
+                                  : "border-gray-200 hover:border-blue-300 hover:-translate-y-2"
                           }`}
                         >
-                          <div className="flex justify-between items-start mb-6">
-                            <div className="flex-1">
-                              <h4 className="text-xl font-semibold text-blue-700 mb-3">{project.title}</h4>
-                              <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                                <h5 className="font-medium text-blue-800 mb-2 flex items-center">
-                                  <Code className="w-4 h-4 mr-2" />
+                          {/* Status Banner */}
+                          <div
+                            className={`absolute top-0 right-0 px-6 py-2 rounded-bl-2xl text-sm font-bold ${
+                              status === "Graded"
+                                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
+                                : status === "Submitted"
+                                  ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                                  : isOverdue
+                                    ? "bg-gradient-to-r from-red-500 to-red-600 text-white"
+                                    : "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
+                            }`}
+                          >
+                            {isOverdue
+                              ? "⚠️ Overdue"
+                              : status === "Graded"
+                                ? "✅ Graded"
+                                : status === "Submitted"
+                                  ? "📤 Submitted"
+                                  : "💻 Pending"}
+                          </div>
+
+                          <div className="p-8">
+                            {/* Header Section */}
+                            <div className="flex items-start justify-between mb-6">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-3">
+                                  <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg">
+                                    <Code className="w-6 h-6 text-white" />
+                                  </div>
+                                  <div>
+                                    <h4 className="text-2xl font-bold text-gray-900 group-hover:text-blue-700 transition-colors">
+                                      {project.title}
+                                    </h4>
+                                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                                      <span className="flex items-center gap-1">
+                                        <BookOpen className="w-4 h-4" />
+                                        {project.course?.title || "Unknown Course"}
+                                      </span>
+                                      <span className="flex items-center gap-1">
+                                        <Calendar className="w-4 h-4" />
+                                        Due: {new Date(project.dueDate).toLocaleDateString()}
+                                      </span>
+                                      <span className="flex items-center gap-1">
+                                        <Users className="w-4 h-4" />
+                                        Team Size: {project.teamSize}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Project Description - Enhanced */}
+                            <div className="mb-6">
+                              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-sm">
+                                <h5 className="font-bold text-gray-800 mb-4 flex items-center text-lg">
+                                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                                   Project Description
                                 </h5>
                                 <div className="prose prose-sm max-w-none">
                                   {project.description.split("\n").map((line, index) => (
-                                    <p key={index} className="text-blue-700 leading-relaxed mb-2 last:mb-0">
+                                    <p key={index} className="text-gray-700 leading-relaxed mb-3 last:mb-0">
                                       {line.trim()}
                                     </p>
                                   ))}
                                 </div>
                               </div>
                             </div>
-                            <span
-                              className={`px-4 py-2 text-sm rounded-full font-medium ml-4 flex-shrink-0 ${
-                                status === "Graded"
-                                  ? "bg-emerald-100 text-emerald-800"
-                                  : status === "Submitted"
-                                    ? "bg-blue-100 text-blue-800"
-                                    : isOverdue
-                                      ? "bg-red-100 text-red-800"
-                                      : "bg-amber-100 text-amber-800"
-                              }`}
-                            >
-                              {isOverdue ? "Overdue" : status}
-                            </span>
-                          </div>
 
-                          {project.requirements && project.requirements.length > 0 && (
-                            <div className="mb-6">
-                              <h5 className="font-medium text-gray-800 mb-3 flex items-center">
-                                <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
-                                Project Requirements
-                              </h5>
-                              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4 border-l-4 border-purple-500">
-                                <div className="space-y-3">
-                                  {project.requirements.map((req, index) => (
-                                    <div key={index} className="flex items-start gap-3">
-                                      <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                                        <span className="text-purple-600 font-semibold text-xs">{index + 1}</span>
+                            {/* Project Requirements - Enhanced */}
+                            {project.requirements && project.requirements.length > 0 && (
+                              <div className="mb-6">
+                                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6 border-l-4 border-purple-500 shadow-sm">
+                                  <h5 className="font-bold text-purple-800 mb-4 flex items-center text-lg">
+                                    <Target className="w-5 h-5 mr-2" />
+                                    Project Requirements
+                                  </h5>
+                                  <div className="space-y-4">
+                                    {project.requirements.map((req, index) => (
+                                      <div key={index} className="flex items-start gap-4">
+                                        <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                          <span className="text-purple-600 font-bold">{index + 1}</span>
+                                        </div>
+                                        <div className="flex-1">
+                                          {req.split("\n").map((line, lineIndex) => (
+                                            <p
+                                              key={lineIndex}
+                                              className="text-purple-800 leading-relaxed font-medium mb-2 last:mb-0"
+                                            >
+                                              {line.trim()}
+                                            </p>
+                                          ))}
+                                        </div>
                                       </div>
-                                      <p className="text-gray-700 leading-relaxed text-sm">{req}</p>
-                                    </div>
-                                  ))}
+                                    ))}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
+                            )}
 
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4 bg-gray-50 rounded-xl p-4">
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Due Date</span>
-                              <span className="text-gray-600">{new Date(project.dueDate).toLocaleDateString()}</span>
+                            {/* Project Details Grid - Enhanced */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 border border-blue-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Calendar className="w-4 h-4 text-blue-600" />
+                                  <span className="font-bold text-blue-800 text-sm">Due Date</span>
+                                </div>
+                                <span className="text-sm font-bold text-blue-700">
+                                  {new Date(project.dueDate).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-4 border border-purple-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Users className="w-4 h-4 text-purple-600" />
+                                  <span className="font-bold text-purple-800 text-sm">Team Size</span>
+                                </div>
+                                <span className="text-2xl font-bold text-purple-700">{project.teamSize}</span>
+                              </div>
+                              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-4 border border-indigo-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Award className="w-4 h-4 text-indigo-600" />
+                                  <span className="font-bold text-indigo-800 text-sm">Max Marks</span>
+                                </div>
+                                <span className="text-2xl font-bold text-indigo-700">{project.maxMarks}</span>
+                              </div>
+                              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-4 border border-emerald-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Star className="w-4 h-4 text-emerald-600" />
+                                  <span className="font-bold text-emerald-800 text-sm">Points</span>
+                                </div>
+                                <span className="text-2xl font-bold text-emerald-700">+30</span>
+                              </div>
                             </div>
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Team Size</span>
-                              <span className="text-gray-600">{project.teamSize}</span>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Max Marks</span>
-                              <span className="text-gray-600">{project.maxMarks}</span>
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-800">Points</span>
-                              <span className="text-emerald-600 font-semibold">30</span>
-                            </div>
-                          </div>
 
-                          <div className="flex gap-3 flex-wrap">
-                            <button
-                              onClick={() => {
-                                setSelectedProject(project)
-                                setShowProjectModal(true)
-                              }}
-                              className="bg-blue-50 text-blue-600 py-2 px-4 rounded-xl hover:bg-blue-100 transition-colors flex items-center"
-                            >
-                              <Eye className="w-4 h-4 mr-2" />
-                              View Details
-                            </button>
-                            {status === "Not Submitted" && !isOverdue && (
+                            {/* Action Buttons - Enhanced */}
+                            <div className="flex gap-4 flex-wrap">
                               <button
                                 onClick={() => {
-                                  setSubmissionForm({
-                                    ...submissionForm,
-                                    type: "project",
-                                    id: project._id,
-                                  })
-                                  setShowSubmissionModal(true)
+                                  setSelectedProject(project)
+                                  setShowProjectModal(true)
                                 }}
-                                className="bg-emerald-50 text-emerald-600 py-2 px-4 rounded-xl hover:bg-emerald-100 transition-colors flex items-center"
+                                className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-medium"
                               >
-                                <Upload className="w-4 h-4 mr-2" />
-                                Submit Project
+                                <Eye className="w-4 h-4" />
+                                View Full Details
                               </button>
-                            )}
+                              {status === "Not Submitted" && !isOverdue && (
+                                <button
+                                  onClick={() => {
+                                    setSubmissionForm({
+                                      ...submissionForm,
+                                      type: "project",
+                                      id: project._id,
+                                    })
+                                    setShowSubmissionModal(true)
+                                  }}
+                                  className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-medium"
+                                >
+                                  <Upload className="w-4 h-4" />
+                                  Submit Project
+                                </button>
+                              )}
+                              {status === "Submitted" && (
+                                <div className="flex items-center gap-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700 px-6 py-3 rounded-2xl font-medium">
+                                  <CheckCircle className="w-4 h-4" />
+                                  Project Submitted
+                                </div>
+                              )}
+                              {status === "Graded" && (
+                                <div className="flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-700 px-6 py-3 rounded-2xl font-medium">
+                                  <Award className="w-4 h-4" />
+                                  Graded & Complete
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       )
                     })}
                   </div>
                 ) : (
-                  <div className="text-center py-12 text-gray-500 bg-white rounded-2xl shadow-lg">
-                    <Code className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                    <p className="text-lg">No projects available yet.</p>
+                  <div className="text-center py-16 bg-white rounded-3xl shadow-lg border border-gray-100">
+                    <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                      <Code className="h-12 w-12 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">No Projects Available</h3>
+                    <p className="text-gray-500">Your teacher hasn't posted any projects yet. Check back later!</p>
                   </div>
                 )}
               </div>
@@ -1786,191 +2102,348 @@ const StudentDashboard = () => {
         </div>
       )}
 
-      {/* Assignment Details Modal */}
+      {/* Enhanced Assignment Details Modal */}
       {showAssignmentModal && selectedAssignment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-teal-600 to-cyan-600">
-              <h2 className="text-2xl font-bold text-white">{selectedAssignment.title}</h2>
-              <div className="mt-3 bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <h3 className="text-teal-100 font-medium mb-2">Assignment Description</h3>
-                <div className="space-y-2">
-                  {selectedAssignment.description.split("\n").map((line, index) => (
-                    <p key={index} className="text-white leading-relaxed text-sm">
-                      {line.trim()}
-                    </p>
-                  ))}
+          <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="p-8 border-b border-gray-200 bg-gradient-to-r from-teal-600 to-cyan-600 rounded-t-3xl">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl">
+                  <FileText className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-white">{selectedAssignment.title}</h2>
+                  <p className="text-teal-100 mt-1">Assignment Details & Instructions</p>
                 </div>
               </div>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-4 border border-teal-200">
-                  <div className="text-teal-600 text-sm font-medium">Due Date</div>
-                  <div className="text-xl font-bold text-teal-700">
+
+              {/* Assignment Meta Info */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-teal-100 text-sm">Course</div>
+                  <div className="text-white font-bold">{selectedAssignment.course?.title || "Unknown"}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-teal-100 text-sm">Due Date</div>
+                  <div className="text-white font-bold">
                     {new Date(selectedAssignment.dueDate).toLocaleDateString()}
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                  <div className="text-blue-600 text-sm font-medium">Max Marks</div>
-                  <div className="text-xl font-bold text-blue-700">{selectedAssignment.maxMarks}</div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-teal-100 text-sm">Max Marks</div>
+                  <div className="text-white font-bold">{selectedAssignment.maxMarks}</div>
                 </div>
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
-                  <div className="text-emerald-600 text-sm font-medium">Points</div>
-                  <div className="text-xl font-bold text-emerald-700">20</div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-teal-100 text-sm">Points Reward</div>
+                  <div className="text-white font-bold">+20 Points</div>
                 </div>
               </div>
+            </div>
 
-              {selectedAssignment.instructions && (
-                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                  <h4 className="font-medium text-amber-800 mb-3 flex items-center">
-                    <Clock className="w-4 h-4 mr-2" />
-                    Instructions:
-                  </h4>
-                  <div className="space-y-2">
-                    {selectedAssignment.instructions.split("\n").map((line, index) => (
-                      <p key={index} className="text-amber-700 leading-relaxed">
+            <div className="p-8">
+              {/* Assignment Description */}
+              <div className="mb-8">
+                <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl p-6 border-l-4 border-teal-500">
+                  <h3 className="text-xl font-bold text-teal-800 mb-4 flex items-center">
+                    <div className="w-3 h-3 bg-teal-500 rounded-full mr-3"></div>
+                    Assignment Description
+                  </h3>
+                  <div className="prose prose-lg max-w-none">
+                    {selectedAssignment.description.split("\n").map((line, index) => (
+                      <p key={index} className="text-teal-700 leading-relaxed mb-4 last:mb-0">
                         {line.trim()}
                       </p>
                     ))}
                   </div>
                 </div>
+              </div>
+
+              {/* Instructions */}
+              {selectedAssignment.instructions && (
+                <div className="mb-8">
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border-l-4 border-amber-500">
+                    <h3 className="text-xl font-bold text-amber-800 mb-4 flex items-center">
+                      <Target className="w-6 h-6 mr-3" />
+                      Instructions & Guidelines
+                    </h3>
+                    <div className="space-y-4">
+                      {selectedAssignment.instructions.split("\n").map((line, index) => (
+                        <div key={index} className="flex items-start gap-4">
+                          <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <span className="text-amber-600 font-bold text-sm">{index + 1}</span>
+                          </div>
+                          <p className="text-amber-800 leading-relaxed font-medium">{line.trim()}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               )}
 
-              <div className="flex gap-4">
+              {/* Submission Guidelines */}
+              <div className="mb-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-l-4 border-blue-500">
+                  <h3 className="text-xl font-bold text-blue-800 mb-4 flex items-center">
+                    <Upload className="w-6 h-6 mr-3" />
+                    Submission Guidelines
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold text-blue-700 mb-2">What to Submit:</h4>
+                      <ul className="text-blue-600 space-y-1 text-sm">
+                        <li>• Written content/answers</li>
+                        <li>• Supporting files (optional)</li>
+                        <li>• Additional notes</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-blue-700 mb-2">Submission Format:</h4>
+                      <ul className="text-blue-600 space-y-1 text-sm">
+                        <li>• Text-based responses</li>
+                        <li>• File uploads supported</li>
+                        <li>• Clear and organized content</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 justify-end">
                 <button
                   onClick={() => setShowAssignmentModal(false)}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-xl transition-colors font-medium"
+                  className="px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-2xl transition-colors font-medium"
                 >
                   Close
                 </button>
+                {getSubmissionStatus("assignments", selectedAssignment._id) === "Not Submitted" && (
+                  <button
+                    onClick={() => {
+                      setSubmissionForm({
+                        ...submissionForm,
+                        type: "assignment",
+                        id: selectedAssignment._id,
+                      })
+                      setShowAssignmentModal(false)
+                      setShowSubmissionModal(true)
+                    }}
+                    className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-2xl transition-all duration-300 shadow-lg font-medium"
+                  >
+                    Submit Assignment
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Assessment Details Modal */}
+      {/* ENHANCED Assessment Details Modal */}
       {showAssessmentModal && selectedAssessment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600">
-              <h2 className="text-2xl font-bold text-white">{selectedAssessment.title}</h2>
-              <div className="mt-3 bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <h3 className="text-indigo-100 font-medium mb-2">Assessment Description</h3>
-                <div className="space-y-2">
-                  {selectedAssessment.description.split("\n").map((line, index) => (
-                    <p key={index} className="text-white leading-relaxed text-sm">
-                      {line.trim()}
-                    </p>
-                  ))}
+          <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="p-8 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-3xl">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl">
+                  <Brain className="w-8 h-8 text-white" />
                 </div>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 border border-indigo-200">
-                  <div className="text-indigo-600 text-sm font-medium">Duration</div>
-                  <div className="text-xl font-bold text-indigo-700">{selectedAssessment.duration} min</div>
-                </div>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                  <div className="text-blue-600 text-sm font-medium">Questions</div>
-                  <div className="text-xl font-bold text-blue-700">{selectedAssessment.questions?.length || 0}</div>
-                </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                  <div className="text-purple-600 text-sm font-medium">Max Marks</div>
-                  <div className="text-xl font-bold text-purple-700">{selectedAssessment.maxMarks}</div>
-                </div>
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
-                  <div className="text-emerald-600 text-sm font-medium">Points</div>
-                  <div className="text-xl font-bold text-emerald-700">10-20</div>
+                <div>
+                  <h2 className="text-3xl font-bold text-white">{selectedAssessment.title}</h2>
+                  <p className="text-indigo-100 mt-1">Assessment Details & Instructions</p>
                 </div>
               </div>
 
-              {selectedAssessment.instructions && (
-                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                  <h4 className="font-medium text-amber-800 mb-3 flex items-center">
-                    <Clock className="w-4 h-4 mr-2" />
-                    Instructions:
-                  </h4>
-                  <div className="space-y-2">
-                    {selectedAssessment.instructions.split("\n").map((line, index) => (
-                      <p key={index} className="text-amber-700 leading-relaxed">
+              {/* Assessment Meta Info */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-indigo-100 text-sm">Duration</div>
+                  <div className="text-white font-bold">{selectedAssessment.duration} min</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-indigo-100 text-sm">Questions</div>
+                  <div className="text-white font-bold">{selectedAssessment.questions?.length || 0}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-indigo-100 text-sm">Max Marks</div>
+                  <div className="text-white font-bold">{selectedAssessment.maxMarks}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-indigo-100 text-sm">Points Reward</div>
+                  <div className="text-white font-bold">10-20 Points</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8">
+              {/* Assessment Description */}
+              <div className="mb-8">
+                <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border-l-4 border-indigo-500">
+                  <h3 className="text-xl font-bold text-indigo-800 mb-4 flex items-center">
+                    <div className="w-3 h-3 bg-indigo-500 rounded-full mr-3"></div>
+                    Assessment Description
+                  </h3>
+                  <div className="prose prose-lg max-w-none">
+                    {selectedAssessment.description.split("\n").map((line, index) => (
+                      <p key={index} className="text-indigo-700 leading-relaxed mb-4 last:mb-0">
                         {line.trim()}
                       </p>
                     ))}
                   </div>
                 </div>
+              </div>
+
+              {/* Instructions */}
+              {selectedAssessment.instructions && (
+                <div className="mb-8">
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-l-4 border-blue-500">
+                    <h3 className="text-xl font-bold text-blue-800 mb-4 flex items-center">
+                      <AlertCircle className="w-6 h-6 mr-3" />
+                      Assessment Instructions
+                    </h3>
+                    <div className="space-y-4">
+                      {selectedAssessment.instructions.split("\n").map((line, index) => (
+                        <div key={index} className="flex items-start gap-4">
+                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <span className="text-blue-600 font-bold text-sm">{index + 1}</span>
+                          </div>
+                          <p className="text-blue-800 leading-relaxed font-medium">{line.trim()}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               )}
 
-              <div className="flex gap-4">
+              {/* Assessment Guidelines */}
+              <div className="mb-8">
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border-l-4 border-amber-500">
+                  <h3 className="text-xl font-bold text-amber-800 mb-4 flex items-center">
+                    <Clock className="w-6 h-6 mr-3" />
+                    Assessment Guidelines
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold text-amber-700 mb-2">Time Management:</h4>
+                      <ul className="text-amber-600 space-y-1 text-sm">
+                        <li>• Total time: {selectedAssessment.duration} minutes</li>
+                        <li>• Plan your time wisely</li>
+                        <li>• Review answers before submitting</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-amber-700 mb-2">Question Types:</h4>
+                      <ul className="text-amber-600 space-y-1 text-sm">
+                        <li>• Multiple choice questions</li>
+                        <li>• True/False questions</li>
+                        <li>• Short answer questions</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 justify-end">
                 <button
                   onClick={() => setShowAssessmentModal(false)}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-xl transition-colors font-medium"
+                  className="px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-2xl transition-colors font-medium"
                 >
                   Close
                 </button>
+                {getSubmissionStatus("assessments", selectedAssessment._id) === "Not Submitted" && (
+                  <button
+                    onClick={() => {
+                      setSubmissionForm({
+                        ...submissionForm,
+                        type: "assessment",
+                        id: selectedAssessment._id,
+                        answers: new Array(selectedAssessment.questions?.length || 0).fill({ answer: "" }),
+                      })
+                      setShowAssessmentModal(false)
+                      setShowSubmissionModal(true)
+                    }}
+                    className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-2xl transition-all duration-300 shadow-lg font-medium"
+                  >
+                    Take Assessment
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Project Details Modal */}
+      {/* ENHANCED Project Details Modal */}
       {showProjectModal && selectedProject && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-600">
-              <h2 className="text-2xl font-bold text-white">{selectedProject.title}</h2>
-              <div className="mt-3 bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <h3 className="text-blue-100 font-medium mb-2">Project Description</h3>
-                <div className="space-y-2">
-                  {selectedProject.description.split("\n").map((line, index) => (
-                    <p key={index} className="text-white leading-relaxed text-sm">
-                      {line.trim()}
-                    </p>
-                  ))}
+          <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="p-8 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-3xl">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl">
+                  <Code className="w-8 h-8 text-white" />
                 </div>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                  <div className="text-blue-600 text-sm font-medium">Due Date</div>
-                  <div className="text-xl font-bold text-blue-700">
-                    {new Date(selectedProject.dueDate).toLocaleDateString()}
-                  </div>
-                </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                  <div className="text-purple-600 text-sm font-medium">Team Size</div>
-                  <div className="text-xl font-bold text-purple-700">{selectedProject.teamSize}</div>
-                </div>
-                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 border border-indigo-200">
-                  <div className="text-indigo-600 text-sm font-medium">Max Marks</div>
-                  <div className="text-xl font-bold text-indigo-700">{selectedProject.maxMarks}</div>
-                </div>
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
-                  <div className="text-emerald-600 text-sm font-medium">Points</div>
-                  <div className="text-xl font-bold text-emerald-700">30</div>
+                <div>
+                  <h2 className="text-3xl font-bold text-white">{selectedProject.title}</h2>
+                  <p className="text-blue-100 mt-1">Project Details & Requirements</p>
                 </div>
               </div>
 
+              {/* Project Meta Info */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-blue-100 text-sm">Due Date</div>
+                  <div className="text-white font-bold">{new Date(selectedProject.dueDate).toLocaleDateString()}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-blue-100 text-sm">Team Size</div>
+                  <div className="text-white font-bold">{selectedProject.teamSize}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-blue-100 text-sm">Max Marks</div>
+                  <div className="text-white font-bold">{selectedProject.maxMarks}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="text-blue-100 text-sm">Points Reward</div>
+                  <div className="text-white font-bold">+30 Points</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8">
+              {/* Project Description */}
+              <div className="mb-8">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-l-4 border-blue-500">
+                  <h3 className="text-xl font-bold text-blue-800 mb-4 flex items-center">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                    Project Description
+                  </h3>
+                  <div className="prose prose-lg max-w-none">
+                    {selectedProject.description.split("\n").map((line, index) => (
+                      <p key={index} className="text-blue-700 leading-relaxed mb-4 last:mb-0">
+                        {line.trim()}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Project Requirements */}
               {selectedProject.requirements && selectedProject.requirements.length > 0 && (
-                <div className="mb-6">
-                  <h4 className="font-medium text-gray-800 mb-3 flex items-center">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
-                    Project Requirements
-                  </h4>
-                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4 border-l-4 border-purple-500">
-                    <div className="space-y-3">
+                <div className="mb-8">
+                  <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-6 border-l-4 border-purple-500">
+                    <h3 className="text-xl font-bold text-purple-800 mb-4 flex items-center">
+                      <Target className="w-6 h-6 mr-3" />
+                      Project Requirements
+                    </h3>
+                    <div className="space-y-6">
                       {selectedProject.requirements.map((req, index) => (
-                        <div key={index} className="flex items-start gap-3">
-                          <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <span className="text-purple-600 font-semibold text-xs">{index + 1}</span>
+                        <div key={index} className="flex items-start gap-4">
+                          <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <span className="text-purple-600 font-bold">{index + 1}</span>
                           </div>
-                          <div className="space-y-1">
+                          <div className="flex-1">
                             {req.split("\n").map((line, lineIndex) => (
-                              <p key={lineIndex} className="text-gray-700 leading-relaxed text-sm">
+                              <p key={lineIndex} className="text-purple-800 leading-relaxed font-medium mb-2 last:mb-0">
                                 {line.trim()}
                               </p>
                             ))}
@@ -1982,13 +2455,59 @@ const StudentDashboard = () => {
                 </div>
               )}
 
-              <div className="flex gap-4">
+              {/* Submission Guidelines */}
+              <div className="mb-8">
+                <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border-l-4 border-emerald-500">
+                  <h3 className="text-xl font-bold text-emerald-800 mb-4 flex items-center">
+                    <Upload className="w-6 h-6 mr-3" />
+                    Submission Guidelines
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold text-emerald-700 mb-2">Required Submissions:</h4>
+                      <ul className="text-emerald-600 space-y-1 text-sm">
+                        <li>• Project title and description</li>
+                        <li>• GitHub repository URL</li>
+                        <li>• Live demo URL (if applicable)</li>
+                        <li>• Team member details</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-emerald-700 mb-2">Optional Attachments:</h4>
+                      <ul className="text-emerald-600 space-y-1 text-sm">
+                        <li>• Project documentation</li>
+                        <li>• Screenshots or videos</li>
+                        <li>• Additional resources</li>
+                        <li>• Presentation files</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 justify-end">
                 <button
                   onClick={() => setShowProjectModal(false)}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-xl transition-colors font-medium"
+                  className="px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-2xl transition-colors font-medium"
                 >
                   Close
                 </button>
+                {getSubmissionStatus("projects", selectedProject._id) === "Not Submitted" && (
+                  <button
+                    onClick={() => {
+                      setSubmissionForm({
+                        ...submissionForm,
+                        type: "project",
+                        id: selectedProject._id,
+                      })
+                      setShowSubmissionModal(true)
+                    }}
+                    className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-2xl transition-all duration-300 shadow-lg font-medium"
+                  >
+                    Submit Project
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -2071,17 +2590,41 @@ const StudentDashboard = () => {
                   </div>
                 </div>
 
-                <div className="space-y-4 max-h-96 overflow-y-auto">
+                <div className="space-y-6 max-h-96 overflow-y-auto">
                   {selectedAssessment.questions?.map((question, index) => (
-                    <div key={index} className="border border-gray-200 rounded-xl p-4">
-                      <h4 className="font-medium mb-3">
-                        Question {index + 1}: {question.question}
-                      </h4>
+                    <div key={index} className="border border-gray-200 rounded-xl p-6 bg-gray-50">
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-lg text-gray-800 mb-3">Question {index + 1}:</h4>
+                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          {/* Enhanced question formatting with proper line breaks */}
+                          <div className="text-gray-700 leading-relaxed">
+                            {question.question.split("\n").map((line, lineIndex) => (
+                              <div key={lineIndex} className="mb-2 last:mb-0">
+                                {/* Check if line contains code-like content */}
+                                {line.includes("=") ||
+                                line.includes("(") ||
+                                line.includes("[") ||
+                                line.includes("print") ? (
+                                  <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800 block">
+                                    {line.trim()}
+                                  </code>
+                                ) : (
+                                  <span className="text-gray-700">{line.trim()}</span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
 
                       {question.type === "multiple-choice" && question.options && (
-                        <div className="space-y-2">
+                        <div className="space-y-3">
+                          <h5 className="font-medium text-gray-700 mb-3">Select your answer:</h5>
                           {question.options.map((option, optionIndex) => (
-                            <label key={optionIndex} className="flex items-center gap-2">
+                            <label
+                              key={optionIndex}
+                              className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all duration-200"
+                            >
                               <input
                                 type="radio"
                                 name={`question-${index}`}
@@ -2091,67 +2634,89 @@ const StudentDashboard = () => {
                                   newAnswers[index] = { answer: e.target.value }
                                   setSubmissionForm({ ...submissionForm, answers: newAnswers })
                                 }}
-                                className="text-teal-600"
+                                className="text-teal-600 mt-1 flex-shrink-0"
                               />
-                              <span>{option}</span>
+                              <div className="flex-1">
+                                {/* Enhanced option formatting */}
+                                {option.split("\n").map((optionLine, optionLineIndex) => (
+                                  <div key={optionLineIndex} className="mb-1 last:mb-0">
+                                    {/* Check if option contains code-like content or arrays */}
+                                    {optionLine.includes("[") ||
+                                    optionLine.includes(",") ||
+                                    optionLine.includes("=") ? (
+                                      <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-700">
+                                        {optionLine.trim()}
+                                      </code>
+                                    ) : (
+                                      <span className="text-gray-700">{optionLine.trim()}</span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
                             </label>
                           ))}
                         </div>
                       )}
 
                       {question.type === "true-false" && (
-                        <div className="space-y-2">
-                          <label className="flex items-center gap-2">
-                            <input
-                              type="radio"
-                              name={`question-${index}`}
-                              value="true"
-                              onChange={(e) => {
-                                const newAnswers = [...submissionForm.answers]
-                                newAnswers[index] = { answer: e.target.value }
-                                setSubmissionForm({ ...submissionForm, answers: newAnswers })
-                              }}
-                              className="text-teal-600"
-                            />
-                            <span>True</span>
-                          </label>
-                          <label className="flex items-center gap-2">
-                            <input
-                              type="radio"
-                              name={`question-${index}`}
-                              value="false"
-                              onChange={(e) => {
-                                const newAnswers = [...submissionForm.answers]
-                                newAnswers[index] = { answer: e.target.value }
-                                setSubmissionForm({ ...submissionForm, answers: newAnswers })
-                              }}
-                              className="text-teal-600"
-                            />
-                            <span>False</span>
-                          </label>
+                        <div className="space-y-3">
+                          <h5 className="font-medium text-gray-700 mb-3">Select your answer:</h5>
+                          <div className="grid grid-cols-2 gap-3">
+                            <label className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-300 cursor-pointer transition-all duration-200">
+                              <input
+                                type="radio"
+                                name={`question-${index}`}
+                                value="true"
+                                onChange={(e) => {
+                                  const newAnswers = [...submissionForm.answers]
+                                  newAnswers[index] = { answer: e.target.value }
+                                  setSubmissionForm({ ...submissionForm, answers: newAnswers })
+                                }}
+                                className="text-teal-600"
+                              />
+                              <span className="font-medium text-green-700">True</span>
+                            </label>
+                            <label className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-red-50 hover:border-red-300 cursor-pointer transition-all duration-200">
+                              <input
+                                type="radio"
+                                name={`question-${index}`}
+                                value="false"
+                                onChange={(e) => {
+                                  const newAnswers = [...submissionForm.answers]
+                                  newAnswers[index] = { answer: e.target.value }
+                                  setSubmissionForm({ ...submissionForm, answers: newAnswers })
+                                }}
+                                className="text-teal-600"
+                              />
+                              <span className="font-medium text-red-700">False</span>
+                            </label>
+                          </div>
                         </div>
                       )}
 
                       {(question.type === "short-answer" || question.type === "essay") && (
-                        <textarea
-                          rows={question.type === "essay" ? 4 : 2}
-                          placeholder="Enter your answer..."
-                          onChange={(e) => {
-                            const newAnswers = [...submissionForm.answers]
-                            newAnswers[index] = { answer: e.target.value }
-                            setSubmissionForm({ ...submissionForm, answers: newAnswers })
-                          }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500"
-                        />
+                        <div className="space-y-3">
+                          <h5 className="font-medium text-gray-700 mb-3">Your answer:</h5>
+                          <textarea
+                            rows={question.type === "essay" ? 6 : 3}
+                            placeholder="Enter your answer here..."
+                            onChange={(e) => {
+                              const newAnswers = [...submissionForm.answers]
+                              newAnswers[index] = { answer: e.target.value }
+                              setSubmissionForm({ ...submissionForm, answers: newAnswers })
+                            }}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"
+                          />
+                        </div>
                       )}
                     </div>
                   ))}
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 pt-4 border-t border-gray-200">
                   <button
                     type="submit"
-                    className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white py-3 px-6 rounded-xl transition-all duration-300 font-medium"
+                    className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white py-3 px-6 rounded-xl transition-all duration-300 font-medium shadow-lg"
                   >
                     Submit Assessment (+10-20 points)
                   </button>
