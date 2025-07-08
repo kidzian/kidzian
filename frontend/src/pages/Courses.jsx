@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom"
 
 const Courses = () => {
   const [selectedCourse, setSelectedCourse] = useState(null)
-  const [courseData, setCourseData] = useState([])
+  const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
@@ -82,25 +82,63 @@ const Courses = () => {
     },
   ]
 
+  // Helper function to safely process array or string data
+  const processArrayOrString = (data, fallback = []) => {
+    if (!data) return fallback
+    if (Array.isArray(data)) return data.filter((item) => item && item.trim())
+    if (typeof data === "string") {
+      return data
+        .split(/[\n,]/)
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0)
+    }
+    return fallback
+  }
+
+  // Helper function to safely process string data
+  const processStringData = (data, fallback = "") => {
+    if (!data) return fallback
+    if (typeof data === "string") return data
+    if (Array.isArray(data)) return data.join(" ")
+    return fallback
+  }
+
   // Function to transform backend course data to match frontend structure
   const transformBackendCourse = (backendCourse) => {
+    // Helper function to construct full image URL
+    const getImageUrl = (imagePath) => {
+      if (!imagePath) return "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg"
+
+      // If it's already a full URL (starts with http), return as is
+      if (imagePath.startsWith("http")) return imagePath
+
+      // If it's a relative path, construct full URL
+      // Remove leading slash if present to avoid double slashes
+      const cleanPath = imagePath.startsWith("/") ? imagePath.slice(1) : imagePath
+      return `${API_BASE_URL}/${cleanPath}`
+    }
+
     return {
       id: backendCourse._id,
       title: backendCourse.title,
-      category: "beginner", // You might want to add category field to backend
-      image: backendCourse.image || "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg",
+      category: "beginner",
+      image: getImageUrl(backendCourse.image),
       ageGroup: backendCourse.ageGroup || "8-16 years",
-      studentsEnrolled: Math.floor(Math.random() * 1000) + 50, // Random for now, add to backend if needed
-      duration: "8-12 weeks", // Add to backend if needed
-      rating: 4.5 + Math.random() * 0.5, // Random rating, add to backend if needed
-      reviews: Math.floor(Math.random() * 100) + 20, // Random reviews, add to backend if needed
-      isBestseller: Math.random() > 0.7, // Random bestseller status
+      studentsEnrolled: Math.floor(Math.random() * 1000) + 50,
+      duration: "8-12 weeks",
+      rating: 4.5 + Math.random() * 0.5,
+      reviews: Math.floor(Math.random() * 100) + 20,
+      isBestseller: Math.random() > 0.7,
       description: backendCourse.about || "Learn coding with this amazing course",
       about: backendCourse.about
         ? [backendCourse.about]
         : ["Interactive learning experience", "Expert instruction", "Hands-on projects"],
       learningOutcomes: backendCourse.learningOutcomes
-        ? backendCourse.learningOutcomes.split("\n").filter((outcome) => outcome.trim())
+        ? typeof backendCourse.learningOutcomes === "string"
+          ? backendCourse.learningOutcomes.split("\n").filter((outcome) => outcome.trim())
+          : Array.isArray(backendCourse.learningOutcomes)
+            ? backendCourse.learningOutcomes
+            : ["Master programming concepts", "Build real projects", "Problem-solving skills"]
         : ["Master programming concepts", "Build real projects", "Problem-solving skills"],
       overviewPoints: ["Fundamentals", "Practical Projects", "Problem Solving", "Code Review", "Final Project"],
       isStatic: false,
@@ -115,24 +153,21 @@ const Courses = () => {
 
       if (response.ok) {
         const backendCourses = await response.json()
-
         // Transform backend courses to match frontend structure
         const transformedCourses = backendCourses.map(transformBackendCourse)
-
         // Merge static courses with backend courses
         const allCourses = [...staticCourses, ...transformedCourses]
-
-        setCourseData(allCourses)
+        setCourses(allCourses)
       } else {
         console.error("Failed to fetch courses")
         // If backend fails, use only static courses
-        setCourseData(staticCourses)
+        setCourses(staticCourses)
         setError("Failed to load some courses. Showing available courses.")
       }
     } catch (err) {
       console.error("Error fetching courses:", err)
       // If backend fails, use only static courses
-      setCourseData(staticCourses)
+      setCourses(staticCourses)
       setError("Failed to connect to server. Showing offline courses.")
     } finally {
       setLoading(false)
@@ -147,7 +182,7 @@ const Courses = () => {
     setSearchQuery(event.target.value)
   }
 
-  const filteredCourses = courseData.filter((course) => {
+  const filteredCourses = courses.filter((course) => {
     const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesFilter = activeFilter === "all" || course.category === activeFilter
     return matchesSearch && matchesFilter
@@ -180,6 +215,7 @@ const Courses = () => {
   return (
     <div className="w-full bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       <Heading />
+
       <motion.div
         className="w-full min-h-screen pt-[12.5vh]"
         initial={{ opacity: 0 }}
@@ -282,12 +318,14 @@ const Courses = () => {
                       Featured
                     </div>
                   )}
-
                   <div className="relative h-48">
                     <img
                       src={course.image || "/placeholder.svg"}
                       alt={course.title}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg"
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-teal-800/90 to-transparent" />
                     {course.isBestseller && (
@@ -304,6 +342,7 @@ const Courses = () => {
                       <h3 className="text-white font-semibold text-lg line-clamp-2">{course.title}</h3>
                     </div>
                   </div>
+
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
@@ -318,7 +357,9 @@ const Courses = () => {
                         </span>
                       </div>
                     </div>
+
                     <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">{course.description}</p>
+
                     <div className="flex items-center justify-between">
                       <span className="text-teal-700 dark:text-teal-400 font-semibold">Age: {course.ageGroup}</span>
                       <button
@@ -385,6 +426,7 @@ const Courses = () => {
                   >
                     <FiX size={20} />
                   </button>
+
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <div className="flex flex-wrap gap-2 mb-3">
                       {selectedCourse.isBestseller && (
@@ -524,9 +566,11 @@ const Courses = () => {
           )}
         </AnimatePresence>
       </motion.div>
+
       <Footer />
     </div>
   )
 }
 
 export default Courses
+

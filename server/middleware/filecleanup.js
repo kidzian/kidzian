@@ -1,9 +1,11 @@
 const fs = require("fs").promises
 const path = require("path")
+const nodemailer = require("nodemailer")
 
 /**
  * Enhanced file cleanup middleware for Kidzian Learning Platform
  * Works with the existing submission models and file structure
+ * Now includes email notifications for cleanup operations
  */
 
 // Helper function to safely delete a file
@@ -23,6 +25,62 @@ const deleteFile = async (filePath) => {
   }
 }
 
+// Enhanced function to send cleanup notification emails
+const sendCleanupNotification = async (teacherEmail, cleanupDetails) => {
+  try {
+    const transporter = nodemailer.createTransporter({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    })
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: teacherEmail,
+      subject: `File Cleanup Notification - ${cleanupDetails.type}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #dc3545; border-bottom: 2px solid #dc3545; padding-bottom: 10px;">
+            File Cleanup Notification
+          </h2>
+          
+          <div style="background-color: #f8d7da; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="color: #721c24; margin-top: 0;">Cleanup Summary</h3>
+            <p><strong>Type:</strong> ${cleanupDetails.type}</p>
+            <p><strong>ID:</strong> ${cleanupDetails.id}</p>
+            <p><strong>Files Deleted:</strong> ${cleanupDetails.deletedFiles}</p>
+            <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+          </div>
+          
+          ${cleanupDetails.errors.length > 0 ? `
+          <div style="background-color: #f5c6cb; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="color: #721c24; margin-top: 0;">Errors Encountered</h3>
+            <ul>
+              ${cleanupDetails.errors.map(error => `<li>${error}</li>`).join('')}
+            </ul>
+          </div>
+          ` : ''}
+          
+          <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+            <p style="color: #6c757d; font-size: 14px;">
+              This is an automated notification from the Kidzian Learning Platform.
+            </p>
+          </div>
+        </div>
+      `,
+    }
+
+    const result = await transporter.sendMail(mailOptions)
+    console.log("Cleanup notification sent successfully:", result.messageId)
+    return { success: true, messageId: result.messageId }
+  } catch (error) {
+    console.error("Error sending cleanup notification:", error)
+    return { success: false, error: error.message }
+  }
+}
+
 // Helper function to get all submission files for assignments
 const getAssignmentSubmissionFiles = async (assignmentId, Submission) => {
   try {
@@ -38,17 +96,18 @@ const getAssignmentSubmissionFiles = async (assignmentId, Submission) => {
               filePath: attachment.filePath,
               originalName: attachment.originalName,
               submissionId: submission._id,
+              studentEmail: submission.studentEmail, // Added for notification
             })
           }
         })
       }
-
       // Handle legacy single file submissions (if any)
       if (submission.filePath && submission.fileName) {
         filePaths.push({
           fileName: submission.fileName,
           filePath: submission.filePath,
           submissionId: submission._id,
+          studentEmail: submission.studentEmail,
         })
       }
     })
@@ -75,6 +134,7 @@ const getAssessmentSubmissionFiles = async (assessmentId, AssessmentSubmission) 
               filePath: attachment.filePath,
               originalName: attachment.originalName,
               submissionId: submission._id,
+              studentEmail: submission.studentEmail,
             })
           }
         })
@@ -103,17 +163,18 @@ const getProjectSubmissionFiles = async (projectId, ProjectSubmission) => {
               filePath: attachment.filePath,
               originalName: attachment.originalName,
               submissionId: submission._id,
+              studentEmail: submission.studentEmail,
             })
           }
         })
       }
-
       // Handle legacy single file submissions (if any)
       if (submission.filePath && submission.fileName) {
         filePaths.push({
           fileName: submission.fileName,
           filePath: submission.filePath,
           submissionId: submission._id,
+          studentEmail: submission.studentEmail,
         })
       }
     })
@@ -125,12 +186,13 @@ const getProjectSubmissionFiles = async (projectId, ProjectSubmission) => {
   }
 }
 
-// Main cleanup function for assignments
-const cleanupAssignmentFiles = async (assignmentId, models) => {
+// Enhanced cleanup function for assignments with email notification
+const cleanupAssignmentFiles = async (assignmentId, models, options = {}) => {
   try {
     console.log(`Starting file cleanup for assignment with ID: ${assignmentId}`)
-
     const { Submission } = models
+    const { notifyTeacher = false, teacherEmail = null } = options
+
     const files = await getAssignmentSubmissionFiles(assignmentId, Submission)
 
     if (files.length === 0) {
@@ -153,7 +215,6 @@ const cleanupAssignmentFiles = async (assignmentId, models) => {
       }
 
       const deleted = await deleteFile(fullPath)
-
       if (deleted) {
         results.deletedFiles++
       } else {
@@ -171,6 +232,17 @@ const cleanupAssignmentFiles = async (assignmentId, models) => {
       results.errors.push("Failed to delete submission records from database")
     }
 
+    // Send notification email if requested
+    if (notifyTeacher && teacherEmail) {
+      const cleanupDetails = {
+        type: "Assignment",
+        id: assignmentId,
+        deletedFiles: results.deletedFiles,
+        errors: results.errors,
+      }
+      await sendCleanupNotification(teacherEmail, cleanupDetails)
+    }
+
     console.log(`File cleanup completed for assignment ${assignmentId}:`, results)
     return results
   } catch (error) {
@@ -183,12 +255,13 @@ const cleanupAssignmentFiles = async (assignmentId, models) => {
   }
 }
 
-// Main cleanup function for assessments
-const cleanupAssessmentFiles = async (assessmentId, models) => {
+// Enhanced cleanup function for assessments with email notification
+const cleanupAssessmentFiles = async (assessmentId, models, options = {}) => {
   try {
     console.log(`Starting file cleanup for assessment with ID: ${assessmentId}`)
-
     const { AssessmentSubmission } = models
+    const { notifyTeacher = false, teacherEmail = null } = options
+
     const files = await getAssessmentSubmissionFiles(assessmentId, AssessmentSubmission)
 
     if (files.length === 0) {
@@ -210,7 +283,6 @@ const cleanupAssessmentFiles = async (assessmentId, models) => {
       }
 
       const deleted = await deleteFile(fullPath)
-
       if (deleted) {
         results.deletedFiles++
       } else {
@@ -228,6 +300,17 @@ const cleanupAssessmentFiles = async (assessmentId, models) => {
       results.errors.push("Failed to delete submission records from database")
     }
 
+    // Send notification email if requested
+    if (notifyTeacher && teacherEmail) {
+      const cleanupDetails = {
+        type: "Assessment",
+        id: assessmentId,
+        deletedFiles: results.deletedFiles,
+        errors: results.errors,
+      }
+      await sendCleanupNotification(teacherEmail, cleanupDetails)
+    }
+
     console.log(`File cleanup completed for assessment ${assessmentId}:`, results)
     return results
   } catch (error) {
@@ -240,12 +323,13 @@ const cleanupAssessmentFiles = async (assessmentId, models) => {
   }
 }
 
-// Main cleanup function for projects
-const cleanupProjectFiles = async (projectId, models) => {
+// Enhanced cleanup function for projects with email notification
+const cleanupProjectFiles = async (projectId, models, options = {}) => {
   try {
     console.log(`Starting file cleanup for project with ID: ${projectId}`)
-
     const { ProjectSubmission } = models
+    const { notifyTeacher = false, teacherEmail = null } = options
+
     const files = await getProjectSubmissionFiles(projectId, ProjectSubmission)
 
     if (files.length === 0) {
@@ -267,7 +351,6 @@ const cleanupProjectFiles = async (projectId, models) => {
       }
 
       const deleted = await deleteFile(fullPath)
-
       if (deleted) {
         results.deletedFiles++
       } else {
@@ -285,6 +368,17 @@ const cleanupProjectFiles = async (projectId, models) => {
       results.errors.push("Failed to delete submission records from database")
     }
 
+    // Send notification email if requested
+    if (notifyTeacher && teacherEmail) {
+      const cleanupDetails = {
+        type: "Project",
+        id: projectId,
+        deletedFiles: results.deletedFiles,
+        errors: results.errors,
+      }
+      await sendCleanupNotification(teacherEmail, cleanupDetails)
+    }
+
     console.log(`File cleanup completed for project ${projectId}:`, results)
     return results
   } catch (error) {
@@ -297,10 +391,11 @@ const cleanupProjectFiles = async (projectId, models) => {
   }
 }
 
-// Utility function to clean up orphaned files
-const cleanupOrphanedFiles = async (models) => {
+// Enhanced utility function to clean up orphaned files
+const cleanupOrphanedFiles = async (models, options = {}) => {
   try {
     const { Submission, AssessmentSubmission, ProjectSubmission } = models
+    const { notifyAdmin = false, adminEmail = null, deleteOrphaned = false } = options
     const uploadsDir = path.join(process.cwd(), "uploads", "assignments")
 
     // Check if uploads directory exists
@@ -314,6 +409,7 @@ const cleanupOrphanedFiles = async (models) => {
     const files = await fs.readdir(uploadsDir)
     const orphanedFiles = []
     let checkedFiles = 0
+    let deletedFiles = 0
 
     for (const file of files) {
       // Check if file exists in any submission record
@@ -329,15 +425,36 @@ const cleanupOrphanedFiles = async (models) => {
 
       if (!assignmentSubmission && !assessmentSubmission && !projectSubmission) {
         orphanedFiles.push(file)
+        
+        // Delete orphaned file if requested
+        if (deleteOrphaned) {
+          const filePath = path.join(uploadsDir, file)
+          const deleted = await deleteFile(filePath)
+          if (deleted) {
+            deletedFiles++
+          }
+        }
       }
       checkedFiles++
+    }
+
+    // Send notification email if requested
+    if (notifyAdmin && adminEmail && orphanedFiles.length > 0) {
+      const cleanupDetails = {
+        type: "Orphaned Files Cleanup",
+        id: "System",
+        deletedFiles: deletedFiles,
+        errors: [],
+        orphanedCount: orphanedFiles.length,
+      }
+      await sendCleanupNotification(adminEmail, cleanupDetails)
     }
 
     return {
       success: true,
       orphanedFiles,
       checkedFiles,
-      deletedFiles: 0,
+      deletedFiles,
     }
   } catch (error) {
     console.error("Error in cleanup orphaned files:", error)
@@ -351,10 +468,51 @@ const cleanupOrphanedFiles = async (models) => {
   }
 }
 
+// Batch cleanup function for multiple items
+const batchCleanup = async (items, type, models, options = {}) => {
+  const results = []
+  
+  for (const item of items) {
+    let result
+    switch (type) {
+      case 'assignment':
+        result = await cleanupAssignmentFiles(item.id, models, {
+          notifyTeacher: options.notifyTeacher,
+          teacherEmail: item.teacherEmail,
+        })
+        break
+      case 'assessment':
+        result = await cleanupAssessmentFiles(item.id, models, {
+          notifyTeacher: options.notifyTeacher,
+          teacherEmail: item.teacherEmail,
+        })
+        break
+      case 'project':
+        result = await cleanupProjectFiles(item.id, models, {
+          notifyTeacher: options.notifyTeacher,
+          teacherEmail: item.teacherEmail,
+        })
+        break
+      default:
+        result = { success: false, error: 'Invalid cleanup type' }
+    }
+    
+    results.push({
+      id: item.id,
+      type: type,
+      ...result,
+    })
+  }
+  
+  return results
+}
+
 module.exports = {
   cleanupAssignmentFiles,
   cleanupAssessmentFiles,
   cleanupProjectFiles,
   cleanupOrphanedFiles,
   deleteFile,
+  sendCleanupNotification,
+  batchCleanup,
 }

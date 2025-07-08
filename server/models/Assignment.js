@@ -43,6 +43,7 @@ const assignmentSchema = new mongoose.Schema(
       {
         fileName: String,
         filePath: String,
+        originalName: String,
         uploadedAt: {
           type: Date,
           default: Date.now,
@@ -98,7 +99,6 @@ assignmentSchema.virtual("daysRemaining").get(function () {
 // Method to update submission statistics
 assignmentSchema.methods.updateStats = async function () {
   const Submission = mongoose.model("Submission")
-
   const stats = await Submission.aggregate([
     { $match: { assignment: this._id } },
     {
@@ -109,7 +109,6 @@ assignmentSchema.methods.updateStats = async function () {
       },
     },
   ])
-
   if (stats.length > 0) {
     this.totalSubmissions = stats[0].totalSubmissions
     this.averageGrade = Math.round(stats[0].averageGrade * 100) / 100 // Round to 2 decimal places
@@ -117,7 +116,6 @@ assignmentSchema.methods.updateStats = async function () {
     this.totalSubmissions = 0
     this.averageGrade = 0
   }
-
   await this.save()
 }
 

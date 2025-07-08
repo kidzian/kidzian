@@ -1,8 +1,21 @@
 "use client"
-
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import axios from "axios"
-import { Download, Eye, Trash2, Users, BookOpen, Calendar, FileText, Brain, Code, Sparkles, Award } from "lucide-react"
+import {
+  Download,
+  Eye,
+  Trash2,
+  Users,
+  BookOpen,
+  Calendar,
+  FileText,
+  Brain,
+  Code,
+  Award,
+  Edit,
+  Save,
+  X,
+} from "lucide-react"
 import jsPDF from "jspdf"
 
 const TeacherDashboard = () => {
@@ -20,6 +33,13 @@ const TeacherDashboard = () => {
   const [selectedBatch, setSelectedBatch] = useState("")
   const [selectedAssignment, setSelectedAssignment] = useState(null)
   const [selectedBatchDetails, setSelectedBatchDetails] = useState(null)
+  const [courseLearnings, setCourseLearnings] = useState([])
+  const [generatingPDF, setGeneratingPDF] = useState(false)
+
+  // Chart refs for PDF generation
+  const performanceChartRef = useRef(null)
+  const activityChartRef = useRef(null)
+  const pieChartRef = useRef(null)
 
   // Modal states
   const [showAttendanceModal, setShowAttendanceModal] = useState(false)
@@ -30,6 +50,12 @@ const TeacherDashboard = () => {
   const [showSubmissionsModal, setShowSubmissionsModal] = useState(false)
   const [showStudentReportModal, setShowStudentReportModal] = useState(false)
   const [showBatchDetailsModal, setShowBatchDetailsModal] = useState(false)
+
+  // Edit states
+  const [editingAssignment, setEditingAssignment] = useState(null)
+  const [editingAssessment, setEditingAssessment] = useState(null)
+  const [editingProject, setEditingProject] = useState(null)
+  const [isEditMode, setIsEditMode] = useState(false)
 
   const [attendanceData, setAttendanceData] = useState({})
   const [attendanceDate, setAttendanceDate] = useState(new Date().toISOString().split("T")[0])
@@ -101,7 +127,6 @@ const TeacherDashboard = () => {
     try {
       setLoading(true)
       const token = getAuthToken()
-
       if (!token) {
         setError("No authentication token found")
         setLoading(false)
@@ -130,6 +155,7 @@ const TeacherDashboard = () => {
       setAssessments(assessmentsRes.data)
       setProjects(projectsRes.data)
       setError("")
+      fetchCourseLearnings()
     } catch (err) {
       setError("Failed to load teacher data")
       console.error("Error fetching teacher data:", err)
@@ -138,11 +164,27 @@ const TeacherDashboard = () => {
     }
   }
 
-  // Enhanced PDF Report Generation for Teachers
+  // Fetch course learnings with actual course data
+  const fetchCourseLearnings = async () => {
+    try {
+      const headers = getHeaders()
+      const response = await axios.get(`${API_BASE_URL}/api/students/course-learnings`, { headers })
+      setCourseLearnings(response.data || [])
+    } catch (err) {
+      console.error("Error fetching course learnings:", err)
+    }
+  }
+
+  // ENHANCED: PDF Report Generation with Charts and Course Learnings - FIXED CHART RENDERING
   const downloadStudentPDFReport = async (student) => {
     if (!studentReport) return
 
     try {
+      setGeneratingPDF(true)
+      // Wait for charts to render properly
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      // Create a PDF document
       const pdf = new jsPDF("p", "mm", "a4")
       const pageWidth = pdf.internal.pageSize.getWidth()
       const pageHeight = pdf.internal.pageSize.getHeight()
@@ -169,7 +211,6 @@ const TeacherDashboard = () => {
       pdf.setFontSize(24)
       pdf.setFont("helvetica", "bold")
       pdf.text("KIDZIAN LEARNING PLATFORM", 45, 20)
-
       pdf.setFontSize(12)
       pdf.setFont("helvetica", "normal")
       pdf.text("Founded by Rashmi", 45, 28)
@@ -189,7 +230,6 @@ const TeacherDashboard = () => {
       // Student Information Section
       pdf.setFillColor(...lightTeal)
       pdf.rect(15, 75, pageWidth - 30, 35, "F")
-
       pdf.setTextColor(...darkTeal)
       pdf.setFontSize(14)
       pdf.setFont("helvetica", "bold")
@@ -207,7 +247,6 @@ const TeacherDashboard = () => {
       let yPos = 125
       pdf.setFillColor(...tealColor)
       pdf.rect(15, yPos, pageWidth - 30, 8, "F")
-
       pdf.setTextColor(255, 255, 255)
       pdf.setFontSize(12)
       pdf.setFont("helvetica", "bold")
@@ -239,11 +278,123 @@ const TeacherDashboard = () => {
         yPos += 7
       })
 
-      // Batch Enrollments
+      // Activities Breakdown
       yPos += 10
       pdf.setFillColor(...tealColor)
       pdf.rect(15, yPos, pageWidth - 30, 8, "F")
+      pdf.setTextColor(255, 255, 255)
+      pdf.setFontSize(12)
+      pdf.setFont("helvetica", "bold")
+      pdf.text("ACTIVITIES BREAKDOWN", 20, yPos + 6)
 
+      yPos += 15
+      pdf.setTextColor(0, 0, 0)
+      pdf.setFontSize(10)
+
+      const activities = [
+        [
+          `Assignments: ${studentReport.submissions?.assignments || 0}`,
+          `Assessments: ${studentReport.submissions?.assessments || 0}`,
+        ],
+        [
+          `Projects: ${studentReport.submissions?.projects || 0}`,
+          `Attendance Days: ${studentReport.performance?.attendanceDays || 0}`,
+        ],
+      ]
+
+      activities.forEach(([left, right]) => {
+        pdf.text(left, 20, yPos)
+        pdf.text(right, 120, yPos)
+        yPos += 7
+      })
+
+      // Course Learnings Section - ENHANCED WITH ACTUAL COURSE DATA
+      yPos += 15
+      pdf.setFillColor(...tealColor)
+      pdf.rect(15, yPos, pageWidth - 30, 8, "F")
+      pdf.setTextColor(255, 255, 255)
+      pdf.setFontSize(12)
+      pdf.setFont("helvetica", "bold")
+      pdf.text("WHAT STUDENT HAS LEARNED IN COURSES", 20, yPos + 6)
+
+      yPos += 15
+      pdf.setTextColor(0, 0, 0)
+      pdf.setFontSize(10)
+
+      if (courseLearnings.length > 0) {
+        courseLearnings.forEach((course) => {
+          // Check if we need a new page
+          if (yPos > pageHeight - 60) {
+            pdf.addPage()
+            yPos = 20
+          }
+
+          // Course title
+          pdf.setFont("helvetica", "bold")
+          pdf.text(`${course.title}:`, 20, yPos)
+          yPos += 7
+
+          // Age Group
+          if (course.ageGroup) {
+            pdf.setFont("helvetica", "normal")
+            pdf.text(`Age Group: ${course.ageGroup}`, 25, yPos)
+            yPos += 5
+          }
+
+          // About section
+          if (course.about && course.about.length > 0) {
+            pdf.setFont("helvetica", "bold")
+            pdf.text("About this course:", 25, yPos)
+            yPos += 5
+            pdf.setFont("helvetica", "normal")
+            course.about.forEach((aboutItem) => {
+              const lines = pdf.splitTextToSize(`• ${aboutItem}`, pageWidth - 50)
+              lines.forEach((line) => {
+                if (yPos > pageHeight - 20) {
+                  pdf.addPage()
+                  yPos = 20
+                }
+                pdf.text(line, 30, yPos)
+                yPos += 5
+              })
+            })
+            yPos += 3
+          }
+
+          // Learning outcomes
+          if (course.learningOutcomes && course.learningOutcomes.length > 0) {
+            pdf.setFont("helvetica", "bold")
+            pdf.text("Learning Outcomes:", 25, yPos)
+            yPos += 5
+            pdf.setFont("helvetica", "normal")
+            course.learningOutcomes.forEach((outcome) => {
+              const lines = pdf.splitTextToSize(`• ${outcome}`, pageWidth - 50)
+              lines.forEach((line) => {
+                if (yPos > pageHeight - 20) {
+                  pdf.addPage()
+                  yPos = 20
+                }
+                pdf.text(line, 30, yPos)
+                yPos += 5
+              })
+            })
+          }
+
+          yPos += 8 // Space between courses
+        })
+      } else {
+        pdf.text("No course learning data available", 20, yPos)
+        yPos += 10
+      }
+
+      // Batch Enrollments
+      yPos += 10
+      if (yPos > pageHeight - 40) {
+        pdf.addPage()
+        yPos = 20
+      }
+      pdf.setFillColor(...tealColor)
+      pdf.rect(15, yPos, pageWidth - 30, 8, "F")
       pdf.setTextColor(255, 255, 255)
       pdf.setFontSize(12)
       pdf.setFont("helvetica", "bold")
@@ -265,9 +416,12 @@ const TeacherDashboard = () => {
 
       // Recent Activities
       yPos += 10
+      if (yPos > pageHeight - 40) {
+        pdf.addPage()
+        yPos = 20
+      }
       pdf.setFillColor(...tealColor)
       pdf.rect(15, yPos, pageWidth - 30, 8, "F")
-
       pdf.setTextColor(255, 255, 255)
       pdf.setFontSize(12)
       pdf.setFont("helvetica", "bold")
@@ -279,6 +433,10 @@ const TeacherDashboard = () => {
 
       if (studentReport.activities?.length > 0) {
         studentReport.activities.slice(0, 10).forEach((activity) => {
+          if (yPos > pageHeight - 20) {
+            pdf.addPage()
+            yPos = 20
+          }
           pdf.text(
             `• ${new Date(activity.date).toLocaleDateString()}: ${activity.pointsEarned} points, ${activity.activitiesCount} activities`,
             20,
@@ -293,7 +451,6 @@ const TeacherDashboard = () => {
       // Footer
       pdf.setFillColor(...tealColor)
       pdf.rect(0, pageHeight - 20, pageWidth, 20, "F")
-
       pdf.setTextColor(255, 255, 255)
       pdf.setFontSize(8)
       pdf.setFont("helvetica", "normal")
@@ -307,25 +464,24 @@ const TeacherDashboard = () => {
     } catch (error) {
       console.error("Error generating PDF:", error)
       alert("Error generating PDF report. Please try again.")
+    } finally {
+      setGeneratingPDF(false)
     }
   }
 
   // Get students for selected batch
   const getStudentsForBatch = () => {
     if (!selectedBatch) return []
-
     const filteredStudents = students.filter((student) => {
       if (!student.batches || !Array.isArray(student.batches)) {
         return false
       }
-
       return student.batches.some((enrollment) => {
         const enrollmentBatchId = enrollment.batch?.toString() || enrollment.batch
         const selectedBatchId = selectedBatch.toString()
         return enrollmentBatchId === selectedBatchId
       })
     })
-
     return filteredStudents
   }
 
@@ -338,7 +494,6 @@ const TeacherDashboard = () => {
       }
 
       const studentsInBatch = getStudentsForBatch()
-
       if (studentsInBatch.length === 0) {
         alert("No students found in the selected batch")
         return
@@ -377,6 +532,54 @@ const TeacherDashboard = () => {
     }
   }
 
+  // Edit Assignment Functions
+  const startEditingAssignment = (assignment) => {
+    setEditingAssignment(assignment)
+    setAssignmentData({
+      title: assignment.title,
+      description: assignment.description,
+      dueDate: assignment.dueDate ? new Date(assignment.dueDate).toISOString().split("T")[0] : "",
+      course: assignment.course?._id || assignment.course,
+      batch: assignment.batch?._id || assignment.batch,
+      maxMarks: assignment.maxMarks,
+    })
+    setIsEditMode(true)
+    setShowAssignmentModal(true)
+  }
+
+  const updateAssignment = async () => {
+    try {
+      if (!assignmentData.title || !assignmentData.course || !assignmentData.batch) {
+        alert("Please fill in all required fields")
+        return
+      }
+
+      await axios.put(`${API_BASE_URL}/api/teachers/assignments/${editingAssignment._id}`, assignmentData, {
+        headers: getHeaders(),
+      })
+
+      setShowAssignmentModal(false)
+      setIsEditMode(false)
+      setEditingAssignment(null)
+      setAssignmentData({
+        title: "",
+        description: "",
+        dueDate: "",
+        course: "",
+        batch: "",
+        maxMarks: 100,
+      })
+
+      // Refresh assignments
+      const assignmentsRes = await axios.get(`${API_BASE_URL}/api/teachers/assignments`, { headers: getHeaders() })
+      setAssignments(assignmentsRes.data)
+      alert("Assignment updated successfully!")
+    } catch (err) {
+      console.error("Error updating assignment:", err)
+      alert("Failed to update assignment: " + (err.response?.data?.message || err.message))
+    }
+  }
+
   // Create assignment
   const createAssignment = async () => {
     try {
@@ -402,11 +605,69 @@ const TeacherDashboard = () => {
       // Refresh assignments
       const assignmentsRes = await axios.get(`${API_BASE_URL}/api/teachers/assignments`, { headers: getHeaders() })
       setAssignments(assignmentsRes.data)
-
       alert("Assignment created successfully!")
     } catch (err) {
       console.error("Error creating assignment:", err)
       alert("Failed to create assignment: " + (err.response?.data?.message || err.message))
+    }
+  }
+
+  // Edit Assessment Functions
+  const startEditingAssessment = (assessment) => {
+    setEditingAssessment(assessment)
+    setAssessmentData({
+      title: assessment.title,
+      description: assessment.description,
+      type: assessment.type,
+      course: assessment.course?._id || assessment.course,
+      batch: assessment.batch?._id || assessment.batch,
+      dueDate: assessment.dueDate ? new Date(assessment.dueDate).toISOString().split("T")[0] : "",
+      duration: assessment.duration,
+      maxMarks: assessment.maxMarks,
+      questions: assessment.questions || [],
+    })
+    setIsEditMode(true)
+    setShowAssessmentModal(true)
+  }
+
+  const updateAssessment = async () => {
+    try {
+      if (
+        !assessmentData.title ||
+        !assessmentData.course ||
+        !assessmentData.batch ||
+        assessmentData.questions.length === 0
+      ) {
+        alert("Please fill in all required fields and add at least one question")
+        return
+      }
+
+      await axios.put(`${API_BASE_URL}/api/teachers/assessments/${editingAssessment._id}`, assessmentData, {
+        headers: getHeaders(),
+      })
+
+      setShowAssessmentModal(false)
+      setIsEditMode(false)
+      setEditingAssessment(null)
+      setAssessmentData({
+        title: "",
+        description: "",
+        type: "quiz",
+        course: "",
+        batch: "",
+        dueDate: "",
+        duration: 60,
+        maxMarks: 100,
+        questions: [],
+      })
+
+      // Refresh assessments
+      const assessmentsRes = await axios.get(`${API_BASE_URL}/api/teachers/assessments`, { headers: getHeaders() })
+      setAssessments(assessmentsRes.data)
+      alert("Assessment updated successfully!")
+    } catch (err) {
+      console.error("Error updating assessment:", err)
+      alert("Failed to update assessment: " + (err.response?.data?.message || err.message))
     }
   }
 
@@ -443,11 +704,70 @@ const TeacherDashboard = () => {
       // Refresh assessments
       const assessmentsRes = await axios.get(`${API_BASE_URL}/api/teachers/assessments`, { headers: getHeaders() })
       setAssessments(assessmentsRes.data)
-
       alert("Assessment created successfully!")
     } catch (err) {
       console.error("Error creating assessment:", err)
       alert("Failed to create assessment: " + (err.response?.data?.message || err.message))
+    }
+  }
+
+  // Edit Project Functions
+  const startEditingProject = (project) => {
+    setEditingProject(project)
+    setProjectData({
+      title: project.title,
+      description: project.description,
+      requirements: project.requirements || [],
+      deliverables: project.deliverables || [],
+      course: project.course?._id || project.course,
+      batch: project.batch?._id || project.batch,
+      dueDate: project.dueDate ? new Date(project.dueDate).toISOString().split("T")[0] : "",
+      maxMarks: project.maxMarks,
+      teamSize: project.teamSize,
+    })
+    setIsEditMode(true)
+    setShowProjectModal(true)
+  }
+
+  const updateProject = async () => {
+    try {
+      if (
+        !projectData.title ||
+        !projectData.description ||
+        !projectData.course ||
+        !projectData.batch ||
+        !projectData.dueDate
+      ) {
+        alert("Please fill in all required fields")
+        return
+      }
+
+      await axios.put(`${API_BASE_URL}/api/teachers/projects/${editingProject._id}`, projectData, {
+        headers: getHeaders(),
+      })
+
+      setShowProjectModal(false)
+      setIsEditMode(false)
+      setEditingProject(null)
+      setProjectData({
+        title: "",
+        description: "",
+        requirements: [],
+        deliverables: [],
+        course: "",
+        batch: "",
+        dueDate: "",
+        maxMarks: 100,
+        teamSize: 1,
+      })
+
+      // Refresh projects
+      const projectsRes = await axios.get(`${API_BASE_URL}/api/teachers/projects`, { headers: getHeaders() })
+      setProjects(projectsRes.data)
+      alert("Project updated successfully!")
+    } catch (err) {
+      console.error("Error updating project:", err)
+      alert("Failed to update project: " + (err.response?.data?.message || err.message))
     }
   }
 
@@ -485,7 +805,6 @@ const TeacherDashboard = () => {
       // Refresh projects
       const projectsRes = await axios.get(`${API_BASE_URL}/api/teachers/projects`, { headers: getHeaders() })
       setProjects(projectsRes.data)
-
       alert("Project created successfully!")
     } catch (err) {
       console.error("Error creating project:", err)
@@ -649,6 +968,7 @@ const TeacherDashboard = () => {
         ...batch,
         attendanceRecords: response.data,
       })
+
       setShowBatchDetailsModal(true)
     } catch (err) {
       console.error("Error fetching batch details:", err)
@@ -661,6 +981,51 @@ const TeacherDashboard = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
     window.location.href = "/lms"
+  }
+
+  // Cancel edit mode
+  const cancelEdit = () => {
+    setIsEditMode(false)
+    setEditingAssignment(null)
+    setEditingAssessment(null)
+    setEditingProject(null)
+    setAssignmentData({
+      title: "",
+      description: "",
+      dueDate: "",
+      course: "",
+      batch: "",
+      maxMarks: 100,
+    })
+    setAssessmentData({
+      title: "",
+      description: "",
+      type: "quiz",
+      course: "",
+      batch: "",
+      dueDate: "",
+      duration: 60,
+      maxMarks: 100,
+      questions: [],
+    })
+    setProjectData({
+      title: "",
+      description: "",
+      requirements: [],
+      deliverables: [],
+      course: "",
+      batch: "",
+      dueDate: "",
+      maxMarks: 100,
+      teamSize: 1,
+    })
+    setCurrentQuestion({
+      question: "",
+      type: "multiple-choice",
+      options: ["", "", "", ""],
+      correctAnswer: "",
+      points: 1,
+    })
   }
 
   if (loading) {
@@ -697,20 +1062,20 @@ const TeacherDashboard = () => {
       <header className="bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-600 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-               <div className="flex items-center space-x-4">
-  <div className="bg-white/20 backdrop-blur-sm rounded-full p-1">
-    <img
-   src={teacher?.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+            <div className="flex items-center space-x-4">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full p-1">
+                <img
+                  src={teacher?.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white">Kidzian Learning Platform</h1>
+                <p className="text-teal-100 mt-1">Welcome back, {teacher?.name || "teacher"}</p>
+              </div>
+            </div>
 
-      alt="Profile"
-      className="w-12 h-12 rounded-full object-cover"
-    />
-  </div>
-  <div>
-    <h1 className="text-3xl font-bold text-white">Kidzian Learning Platform</h1>
-    <p className="text-teal-100 mt-1">Welcome back, {teacher?.name || "teacher"} </p>
-  </div>
-</div>
             <div className="flex items-center gap-6">
               <button
                 onClick={() => setShowAttendanceModal(true)}
@@ -719,19 +1084,28 @@ const TeacherDashboard = () => {
                 Mark Attendance
               </button>
               <button
-                onClick={() => setShowAssignmentModal(true)}
+                onClick={() => {
+                  setIsEditMode(false)
+                  setShowAssignmentModal(true)
+                }}
                 className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl transition-all duration-300 font-medium shadow-lg"
               >
                 Create Assignment
               </button>
               <button
-                onClick={() => setShowAssessmentModal(true)}
+                onClick={() => {
+                  setIsEditMode(false)
+                  setShowAssessmentModal(true)
+                }}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl transition-all duration-300 font-medium shadow-lg"
               >
                 Create Assessment
               </button>
               <button
-                onClick={() => setShowProjectModal(true)}
+                onClick={() => {
+                  setIsEditMode(false)
+                  setShowProjectModal(true)
+                }}
                 className="bg-slate-400 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-all duration-300 font-medium shadow-lg"
               >
                 Create Project
@@ -860,22 +1234,34 @@ const TeacherDashboard = () => {
                       <div className="text-emerald-600 font-semibold text-lg">Mark Attendance</div>
                       <div className="text-emerald-500 text-sm mt-1">Record student attendance</div>
                     </button>
+
                     <button
-                      onClick={() => setShowAssignmentModal(true)}
+                      onClick={() => {
+                        setIsEditMode(false)
+                        setShowAssignmentModal(true)
+                      }}
                       className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-2xl hover:from-purple-100 hover:to-purple-200 transition-all duration-300 hover:-translate-y-1 shadow-lg"
                     >
                       <div className="text-purple-600 font-semibold text-lg">Create Assignment</div>
                       <div className="text-purple-500 text-sm mt-1">Add new assignment</div>
                     </button>
+
                     <button
-                      onClick={() => setShowAssessmentModal(true)}
+                      onClick={() => {
+                        setIsEditMode(false)
+                        setShowAssessmentModal(true)
+                      }}
                       className="p-6 bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-2xl hover:from-indigo-100 hover:to-indigo-200 transition-all duration-300 hover:-translate-y-1 shadow-lg"
                     >
                       <div className="text-indigo-600 font-semibold text-lg">Create Assessment</div>
                       <div className="text-indigo-500 text-sm mt-1">Add new assessment</div>
                     </button>
+
                     <button
-                      onClick={() => setShowProjectModal(true)}
+                      onClick={() => {
+                        setIsEditMode(false)
+                        setShowProjectModal(true)
+                      }}
                       className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-2xl hover:from-blue-100 hover:to-blue-200 transition-all duration-300 hover:-translate-y-1 shadow-lg"
                     >
                       <div className="text-blue-600 font-semibold text-lg">Create Project</div>
@@ -988,9 +1374,6 @@ const TeacherDashboard = () => {
                           <th className="px-6 py-4 text-left text-xs font-medium text-teal-700 uppercase tracking-wider">
                             Batches
                           </th>
-                          {/* <th className="px-6 py-4 text-left text-xs font-medium text-teal-700 uppercase tracking-wider">
-                            Total Points
-                          </th> */}
                           <th className="px-6 py-4 text-left text-xs font-medium text-teal-700 uppercase tracking-wider">
                             Actions
                           </th>
@@ -1015,11 +1398,6 @@ const TeacherDashboard = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               {student.batches?.length || 0} batch(es)
                             </td>
-                            {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                                {student.totalPoints || 0} points
-                              </span> */}
-                            {/* </td> */}
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <button
                                 onClick={() => {
@@ -1060,7 +1438,10 @@ const TeacherDashboard = () => {
                     Your Assignments
                   </h3>
                   <button
-                    onClick={() => setShowAssignmentModal(true)}
+                    onClick={() => {
+                      setIsEditMode(false)
+                      setShowAssignmentModal(true)
+                    }}
                     className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 py-3 rounded-xl transition-all duration-300 font-medium shadow-lg"
                   >
                     Create New Assignment
@@ -1078,23 +1459,32 @@ const TeacherDashboard = () => {
                           <h4 className="text-lg font-semibold text-gray-900">{assignment.title}</h4>
                           <p className="text-sm text-gray-500 mt-1">{assignment.description}</p>
                         </div>
+
                         <div className="space-y-2 text-sm text-gray-600">
                           <div>Course: {assignment.course?.title || "N/A"}</div>
                           <div>Batch: {assignment.batch?.name || "N/A"}</div>
                           <div>Due Date: {new Date(assignment.dueDate).toLocaleDateString()}</div>
                           <div>Max Marks: {assignment.maxMarks}</div>
                         </div>
-                        <div className="mt-6 flex gap-3">
+
+                        <div className="mt-6 flex gap-2">
+                          <button
+                            onClick={() => startEditingAssignment(assignment)}
+                            className="flex-1 bg-blue-50 text-blue-600 py-2 px-3 rounded-xl hover:bg-blue-100 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
+                          >
+                            <Edit className="w-4 h-4" />
+                            Edit
+                          </button>
                           <button
                             onClick={() => viewSubmissions("assignment", assignment._id)}
-                            className="flex-1 bg-teal-50 text-teal-600 py-2 px-4 rounded-xl hover:bg-teal-100 transition-colors flex items-center justify-center gap-2 font-medium"
+                            className="flex-1 bg-teal-50 text-teal-600 py-2 px-3 rounded-xl hover:bg-teal-100 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
                           >
                             <Eye className="w-4 h-4" />
-                            View Submissions
+                            View
                           </button>
                           <button
                             onClick={() => deleteAssignment(assignment._id)}
-                            className="flex-1 bg-red-50 text-red-600 py-2 px-4 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2 font-medium"
+                            className="flex-1 bg-red-50 text-red-600 py-2 px-3 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
                           >
                             <Trash2 className="w-4 h-4" />
                             Delete
@@ -1108,7 +1498,10 @@ const TeacherDashboard = () => {
                     <FileText className="h-16 w-16 mx-auto mb-4 text-gray-300" />
                     <p className="text-lg mb-4">No assignments created yet.</p>
                     <button
-                      onClick={() => setShowAssignmentModal(true)}
+                      onClick={() => {
+                        setIsEditMode(false)
+                        setShowAssignmentModal(true)
+                      }}
                       className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 py-3 rounded-xl transition-all duration-300 font-medium shadow-lg"
                     >
                       Create Your First Assignment
@@ -1127,7 +1520,10 @@ const TeacherDashboard = () => {
                     Your Assessments
                   </h3>
                   <button
-                    onClick={() => setShowAssessmentModal(true)}
+                    onClick={() => {
+                      setIsEditMode(false)
+                      setShowAssessmentModal(true)
+                    }}
                     className="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-6 py-3 rounded-xl transition-all duration-300 font-medium shadow-lg"
                   >
                     Create New Assessment
@@ -1145,6 +1541,7 @@ const TeacherDashboard = () => {
                           <h4 className="text-lg font-semibold text-gray-900">{assessment.title}</h4>
                           <p className="text-sm text-gray-500 mt-1">{assessment.description}</p>
                         </div>
+
                         <div className="space-y-2 text-sm text-gray-600">
                           <div>Type: {assessment.type}</div>
                           <div>Course: {assessment.course?.title || "N/A"}</div>
@@ -1153,17 +1550,25 @@ const TeacherDashboard = () => {
                           <div>Questions: {assessment.questions?.length || 0}</div>
                           <div>Max Marks: {assessment.maxMarks}</div>
                         </div>
-                        <div className="mt-6 flex gap-3">
+
+                        <div className="mt-6 flex gap-2">
+                          <button
+                            onClick={() => startEditingAssessment(assessment)}
+                            className="flex-1 bg-blue-50 text-blue-600 py-2 px-3 rounded-xl hover:bg-blue-100 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
+                          >
+                            <Edit className="w-4 h-4" />
+                            Edit
+                          </button>
                           <button
                             onClick={() => viewSubmissions("assessment", assessment._id)}
-                            className="flex-1 bg-indigo-50 text-indigo-600 py-2 px-4 rounded-xl hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2 font-medium"
+                            className="flex-1 bg-indigo-50 text-indigo-600 py-2 px-3 rounded-xl hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
                           >
                             <Eye className="w-4 h-4" />
-                            View Submissions
+                            View
                           </button>
                           <button
                             onClick={() => deleteAssessment(assessment._id)}
-                            className="flex-1 bg-red-50 text-red-600 py-2 px-4 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2 font-medium"
+                            className="flex-1 bg-red-50 text-red-600 py-2 px-3 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
                           >
                             <Trash2 className="w-4 h-4" />
                             Delete
@@ -1177,7 +1582,10 @@ const TeacherDashboard = () => {
                     <Brain className="h-16 w-16 mx-auto mb-4 text-gray-300" />
                     <p className="text-lg mb-4">No assessments created yet.</p>
                     <button
-                      onClick={() => setShowAssessmentModal(true)}
+                      onClick={() => {
+                        setIsEditMode(false)
+                        setShowAssessmentModal(true)
+                      }}
                       className="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-6 py-3 rounded-xl transition-all duration-300 font-medium shadow-lg"
                     >
                       Create Your First Assessment
@@ -1196,7 +1604,10 @@ const TeacherDashboard = () => {
                     Your Projects
                   </h3>
                   <button
-                    onClick={() => setShowProjectModal(true)}
+                    onClick={() => {
+                      setIsEditMode(false)
+                      setShowProjectModal(true)
+                    }}
                     className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl transition-all duration-300 font-medium shadow-lg"
                   >
                     Create New Project
@@ -1214,6 +1625,7 @@ const TeacherDashboard = () => {
                           <h4 className="text-lg font-semibold text-gray-900">{project.title}</h4>
                           <p className="text-sm text-gray-500 mt-1">{project.description}</p>
                         </div>
+
                         <div className="space-y-2 text-sm text-gray-600">
                           <div>Course: {project.course?.title || "N/A"}</div>
                           <div>Batch: {project.batch?.name || "N/A"}</div>
@@ -1221,17 +1633,25 @@ const TeacherDashboard = () => {
                           <div>Team Size: {project.teamSize}</div>
                           <div>Max Marks: {project.maxMarks}</div>
                         </div>
-                        <div className="mt-6 flex gap-3">
+
+                        <div className="mt-6 flex gap-2">
+                          <button
+                            onClick={() => startEditingProject(project)}
+                            className="flex-1 bg-blue-50 text-blue-600 py-2 px-3 rounded-xl hover:bg-blue-100 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
+                          >
+                            <Edit className="w-4 h-4" />
+                            Edit
+                          </button>
                           <button
                             onClick={() => viewSubmissions("project", project._id)}
-                            className="flex-1 bg-blue-50 text-blue-600 py-2 px-4 rounded-xl hover:bg-blue-100 transition-colors flex items-center justify-center gap-2 font-medium"
+                            className="flex-1 bg-blue-50 text-blue-600 py-2 px-3 rounded-xl hover:bg-blue-100 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
                           >
                             <Eye className="w-4 h-4" />
-                            View Submissions
+                            View
                           </button>
                           <button
                             onClick={() => deleteProject(project._id)}
-                            className="flex-1 bg-red-50 text-red-600 py-2 px-4 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2 font-medium"
+                            className="flex-1 bg-red-50 text-red-600 py-2 px-3 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
                           >
                             <Trash2 className="w-4 h-4" />
                             Delete
@@ -1245,7 +1665,10 @@ const TeacherDashboard = () => {
                     <Code className="h-16 w-16 mx-auto mb-4 text-gray-300" />
                     <p className="text-lg mb-4">No projects created yet.</p>
                     <button
-                      onClick={() => setShowProjectModal(true)}
+                      onClick={() => {
+                        setIsEditMode(false)
+                        setShowProjectModal(true)
+                      }}
                       className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl transition-all duration-300 font-medium shadow-lg"
                     >
                       Create Your First Project
@@ -1262,6 +1685,7 @@ const TeacherDashboard = () => {
                   <BookOpen className="w-6 h-6 mr-2" />
                   Your Courses
                 </h3>
+
                 {courses.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {courses.map((course) => (
@@ -1278,11 +1702,13 @@ const TeacherDashboard = () => {
                             <p className="text-sm text-gray-500">{course.description}</p>
                           </div>
                         </div>
+
                         <div className="space-y-2 text-sm text-gray-600">
                           <div>Batches: {course.batches?.length || 0}</div>
                           <div>Duration: {course.duration || "Not specified"}</div>
                           <div>Upcoming Classes: {course.upcomingClasses || 0}</div>
                         </div>
+
                         <button className="mt-6 w-full bg-teal-50 text-teal-600 py-3 px-4 rounded-xl hover:bg-teal-100 transition-colors font-medium">
                           Manage Course
                         </button>
@@ -1305,6 +1731,7 @@ const TeacherDashboard = () => {
                   <Calendar className="w-6 h-6 mr-2" />
                   Your Batches
                 </h3>
+
                 {batches.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {batches.map((batch) => (
@@ -1321,6 +1748,7 @@ const TeacherDashboard = () => {
                             Active
                           </span>
                         </div>
+
                         <div className="space-y-2 text-sm text-gray-600">
                           <div>
                             Students: {batch.students?.length || 0}/{batch.maxStudents || "N/A"}
@@ -1328,6 +1756,7 @@ const TeacherDashboard = () => {
                           <div>Start Date: {new Date(batch.startDate).toLocaleDateString()}</div>
                           <div>End Date: {new Date(batch.endDate).toLocaleDateString()}</div>
                         </div>
+
                         <div className="mt-6 flex gap-3">
                           <button
                             onClick={() => viewBatchDetails(batch._id)}
@@ -1372,13 +1801,26 @@ const TeacherDashboard = () => {
                 </div>
                 <button
                   onClick={() => downloadStudentPDFReport(selectedStudent)}
-                  className="bg-white hover:bg-gray-100 text-teal-700 px-6 py-3 rounded-xl transition-colors flex items-center gap-2 font-medium shadow-lg"
+                  disabled={generatingPDF}
+                  className={`${
+                    generatingPDF ? "bg-gray-300 cursor-not-allowed" : "bg-white hover:bg-gray-100"
+                  } text-teal-700 px-6 py-3 rounded-xl transition-colors flex items-center gap-2 font-medium shadow-lg`}
                 >
-                  <Download className="w-5 h-5" />
-                  Download PDF Report
+                  {generatingPDF ? (
+                    <>
+                      <div className="animate-spin h-5 w-5 border-2 border-teal-700 border-t-transparent rounded-full"></div>
+                      Generating PDF...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-5 h-5" />
+                      Download PDF Report
+                    </>
+                  )}
                 </button>
               </div>
             </div>
+
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl p-6 border border-teal-200">
@@ -1387,18 +1829,21 @@ const TeacherDashboard = () => {
                     {studentReport.performance?.totalPointsEarned || 0}
                   </div>
                 </div>
+
                 <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-6 border border-emerald-200">
                   <div className="text-emerald-600 text-sm font-medium">Assignments</div>
                   <div className="text-3xl font-bold text-emerald-700">
                     {studentReport.submissions?.assignments || 0}
                   </div>
                 </div>
+
                 <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 border border-purple-200">
                   <div className="text-purple-600 text-sm font-medium">Assessments</div>
                   <div className="text-3xl font-bold text-purple-700">
                     {studentReport.submissions?.assessments || 0}
                   </div>
                 </div>
+
                 <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 border border-amber-200">
                   <div className="text-amber-600 text-sm font-medium">Attendance</div>
                   <div className="text-3xl font-bold text-amber-700">{studentReport.performance?.attendance || 0}%</div>
@@ -1482,11 +1927,21 @@ const TeacherDashboard = () => {
 
       {/* Enhanced Assessment Creation Modal */}
       {showAssessmentModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4  z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b bg-gradient-to-r from-indigo-600 to-purple-600">
-              <h2 className="text-2xl font-bold text-white">Create Assessment</h2>
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-white">
+                  {isEditMode ? "Edit Assessment" : "Create Assessment"}
+                </h2>
+                {isEditMode && (
+                  <button onClick={cancelEdit} className="text-white hover:text-gray-200 transition-colors">
+                    <X className="w-6 h-6" />
+                  </button>
+                )}
+              </div>
             </div>
+
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -1607,7 +2062,6 @@ const TeacherDashboard = () => {
                 {/* Add Question Form */}
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 mb-4">
                   <h4 className="font-medium text-gray-700 mb-3">Add New Question</h4>
-
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Question *</label>
@@ -1724,32 +2178,16 @@ const TeacherDashboard = () => {
 
               <div className="flex gap-4">
                 <button
-                  onClick={createAssessment}
-                  className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-4 rounded-xl transition-colors font-medium"
+                  onClick={isEditMode ? updateAssessment : createAssessment}
+                  className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-4 rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
                 >
-                  Create Assessment
+                  {isEditMode ? <Save className="w-5 h-5" /> : <></>}
+                  {isEditMode ? "Update Assessment" : "Create Assessment"}
                 </button>
                 <button
                   onClick={() => {
                     setShowAssessmentModal(false)
-                    setAssessmentData({
-                      title: "",
-                      description: "",
-                      type: "quiz",
-                      course: "",
-                      batch: "",
-                      dueDate: "",
-                      duration: 60,
-                      maxMarks: 100,
-                      questions: [],
-                    })
-                    setCurrentQuestion({
-                      question: "",
-                      type: "multiple-choice",
-                      options: ["", "", "", ""],
-                      correctAnswer: "",
-                      points: 1,
-                    })
+                    cancelEdit()
                   }}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl transition-colors font-medium"
                 >
@@ -1766,8 +2204,16 @@ const TeacherDashboard = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b bg-gradient-to-r from-blue-600 to-cyan-600">
-              <h2 className="text-2xl font-bold text-white">Create Project</h2>
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-white">{isEditMode ? "Edit Project" : "Create Project"}</h2>
+                {isEditMode && (
+                  <button onClick={cancelEdit} className="text-white hover:text-gray-200 transition-colors">
+                    <X className="w-6 h-6" />
+                  </button>
+                )}
+              </div>
             </div>
+
             <div className="p-6 space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Project Title *</label>
@@ -1894,25 +2340,16 @@ const TeacherDashboard = () => {
 
               <div className="flex gap-4">
                 <button
-                  onClick={createProject}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white py-3 px-4 rounded-xl transition-colors font-medium"
+                  onClick={isEditMode ? updateProject : createProject}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white py-3 px-4 rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
                 >
-                  Create Project
+                  {isEditMode ? <Save className="w-5 h-5" /> : <></>}
+                  {isEditMode ? "Update Project" : "Create Project"}
                 </button>
                 <button
                   onClick={() => {
                     setShowProjectModal(false)
-                    setProjectData({
-                      title: "",
-                      description: "",
-                      requirements: [],
-                      deliverables: [],
-                      course: "",
-                      batch: "",
-                      dueDate: "",
-                      maxMarks: 100,
-                      teamSize: 1,
-                    })
+                    cancelEdit()
                   }}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl transition-colors font-medium"
                 >
@@ -1933,6 +2370,7 @@ const TeacherDashboard = () => {
                 Submissions for: {selectedAssignment.title} ({selectedAssignment.type})
               </h2>
             </div>
+
             <div className="p-6">
               {submissions.length > 0 ? (
                 <div className="space-y-4">
@@ -1959,6 +2397,7 @@ const TeacherDashboard = () => {
                           )}
                         </div>
                       </div>
+
                       <div className="mt-2">
                         {submission.content && <p className="text-sm text-gray-700 mb-2">{submission.content}</p>}
                         {submission.title && (
@@ -2014,6 +2453,7 @@ const TeacherDashboard = () => {
                   <p>No submissions yet for this {selectedAssignment.type}.</p>
                 </div>
               )}
+
               <div className="mt-6 flex justify-end">
                 <button
                   onClick={() => setShowSubmissionsModal(false)}
@@ -2035,18 +2475,21 @@ const TeacherDashboard = () => {
               <h2 className="text-2xl font-bold text-white">Batch Details - {selectedBatchDetails.name}</h2>
               <p className="text-teal-100 mt-1">{selectedBatchDetails.course?.title}</p>
             </div>
+
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4">
                   <div className="text-blue-600 text-sm font-medium">Total Students</div>
                   <div className="text-2xl font-bold text-blue-700">{selectedBatchDetails.students?.length || 0}</div>
                 </div>
+
                 <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4">
                   <div className="text-green-600 text-sm font-medium">Start Date</div>
                   <div className="text-lg font-bold text-green-700">
                     {new Date(selectedBatchDetails.startDate).toLocaleDateString()}
                   </div>
                 </div>
+
                 <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4">
                   <div className="text-purple-600 text-sm font-medium">End Date</div>
                   <div className="text-lg font-bold text-purple-700">
@@ -2121,6 +2564,7 @@ const TeacherDashboard = () => {
             <div className="p-6 border-b bg-gradient-to-r from-emerald-600 to-green-600">
               <h2 className="text-2xl font-bold text-white">Mark Attendance</h2>
             </div>
+
             <div className="p-6">
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Select Batch</label>
@@ -2231,8 +2675,18 @@ const TeacherDashboard = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b bg-gradient-to-r from-purple-600 to-indigo-600">
-              <h2 className="text-2xl font-bold text-white">Create Assignment</h2>
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-white">
+                  {isEditMode ? "Edit Assignment" : "Create Assignment"}
+                </h2>
+                {isEditMode && (
+                  <button onClick={cancelEdit} className="text-white hover:text-gray-200 transition-colors">
+                    <X className="w-6 h-6" />
+                  </button>
+                )}
+              </div>
             </div>
+
             <div className="p-6 space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Assignment Title *</label>
@@ -2290,49 +2744,39 @@ const TeacherDashboard = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
-                  <input
-                    type="date"
-                    value={assignmentData.dueDate}
-                    onChange={(e) => setAssignmentData({ ...assignmentData, dueDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
+                <input
+                  type="date"
+                  value={assignmentData.dueDate}
+                  onChange={(e) => setAssignmentData({ ...assignmentData, dueDate: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Max Marks</label>
-                  <input
-                    type="number"
-                    value={assignmentData.maxMarks}
-                    onChange={(e) =>
-                      setAssignmentData({ ...assignmentData, maxMarks: Number.parseInt(e.target.value) })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    placeholder="100"
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Max Marks</label>
+                <input
+                  type="number"
+                  value={assignmentData.maxMarks}
+                  onChange={(e) => setAssignmentData({ ...assignmentData, maxMarks: Number.parseInt(e.target.value) })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="100"
+                />
               </div>
 
               <div className="flex gap-4">
                 <button
-                  onClick={createAssignment}
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-3 px-4 rounded-xl transition-colors font-medium"
+                  onClick={isEditMode ? updateAssignment : createAssignment}
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-3 px-4 rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
                 >
-                  Create Assignment
+                  {isEditMode ? <Save className="w-5 h-5" /> : <></>}
+                  {isEditMode ? "Update Assignment" : "Create Assignment"}
                 </button>
                 <button
                   onClick={() => {
                     setShowAssignmentModal(false)
-                    setAssignmentData({
-                      title: "",
-                      description: "",
-                      dueDate: "",
-                      course: "",
-                      batch: "",
-                      maxMarks: 100,
-                    })
+                    cancelEdit()
                   }}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl transition-colors font-medium"
                 >
@@ -2347,74 +2791,44 @@ const TeacherDashboard = () => {
       {/* Enhanced Student Profile Modal */}
       {showStudentModal && selectedStudent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
             <div className="p-6 border-b bg-gradient-to-r from-teal-600 to-cyan-600">
               <h2 className="text-2xl font-bold text-white">Student Profile</h2>
             </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <span className="text-sm text-gray-600">Name:</span>
-                      <span className="ml-2 font-medium">{selectedStudent.name}</span>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-600">Email:</span>
-                      <span className="ml-2 font-medium">{selectedStudent.email}</span>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-600">Phone:</span>
-                      <span className="ml-2 font-medium">{selectedStudent.phone || "Not provided"}</span>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-600">Total Points:</span>
-                      <span className="ml-2 font-medium">{selectedStudent.totalPoints || 0}</span>
-                    </div>
-                  </div>
-                </div>
 
+            <div className="p-6 space-y-4">
+              <div className="flex items-center space-x-4">
+                <div className="h-16 w-16 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-sm font-bold text-white">{selectedStudent.name?.charAt(0)?.toUpperCase()}</span>
+                </div>
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Enrollment Details</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <span className="text-sm text-gray-600">Total Batches:</span>
-                      <span className="ml-2 font-medium">{selectedStudent.batches?.length || 0}</span>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-600">Joined:</span>
-                      <span className="ml-2 font-medium">
-                        {selectedStudent.createdAt ? new Date(selectedStudent.createdAt).toLocaleDateString() : "N/A"}
-                      </span>
-                    </div>
-                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">{selectedStudent.name}</h3>
+                  <p className="text-sm text-gray-500">{selectedStudent.email}</p>
                 </div>
               </div>
 
-              <div className="mt-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Batch Enrollments</h3>
-                {selectedStudent.batches && selectedStudent.batches.length > 0 ? (
-                  <div className="space-y-2">
-                    {selectedStudent.batches.map((enrollment, index) => (
-                      <div key={index} className="p-3 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
-                        <div className="font-medium">{enrollment.batchName || "Unknown Batch"}</div>
-                        <div className="text-sm text-gray-600">{enrollment.courseName || "Unknown Course"}</div>
-                      </div>
+              <div>
+                <h4 className="font-medium text-gray-700">Contact Information</h4>
+                <p className="text-sm text-gray-600">Email: {selectedStudent.email}</p>
+                <p className="text-sm text-gray-600">Phone: {selectedStudent.phone || "Not provided"}</p>
+              </div>
+
+              <div>
+                <h4 className="font-medium text-gray-700">Batch Enrollments</h4>
+                {selectedStudent.batches?.length > 0 ? (
+                  <ul className="list-disc pl-5 space-y-1">
+                    {selectedStudent.batches.map((enrollment) => (
+                      <li key={enrollment._id} className="text-sm text-gray-600">
+                        {enrollment.batch?.name || "N/A"} ({enrollment.course?.title || "N/A"})
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 ) : (
-                  <p className="text-gray-500">No batch enrollments found.</p>
+                  <p className="text-sm text-gray-500">No batch enrollments</p>
                 )}
               </div>
 
-              <div className="mt-6 flex gap-4">
-                <button
-                  onClick={() => generateStudentReport(selectedStudent._id)}
-                  className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white py-3 px-6 rounded-xl transition-colors font-medium"
-                >
-                  Generate Report
-                </button>
+              <div className="flex justify-end">
                 <button
                   onClick={() => setShowStudentModal(false)}
                   className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-6 rounded-xl transition-colors font-medium"

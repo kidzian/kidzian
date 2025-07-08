@@ -14,6 +14,23 @@ const Attendance = require("../models/Attendence")
 const StudentActivity = require("../models/StudentActivity")
 const auth = require("../middleware/auth")
 
+// // Import file cleanup functions
+// const express = require("express")
+// const router = express.Router()
+// const Teacher = require("../models/Teacher")
+// const User = require("../models/User")
+// const Batch = require("../models/Batch")
+// const Course = require("../models/Course")
+// const Assignment = require("../models/Assignment")
+// const Assessment = require("../models/Assessment")
+// const Project = require("../models/Project")
+// const Submission = require("../models/Submission")
+// const AssessmentSubmission = require("../models/AssessmentSubmission")
+// const ProjectSubmission = require("../models/ProjectSubmission")
+// const Attendance = require("../models/Attendence")
+// const StudentActivity = require("../models/StudentActivity")
+// const auth = require("../middleware/auth")
+
 // Import file cleanup functions
 const {
   cleanupAssignmentFiles,
@@ -27,6 +44,9 @@ const {
   notifyAssignmentCreated,
   notifyAssessmentCreated,
   notifyProjectCreated,
+  notifyAssignmentUpdated,
+  notifyAssessmentUpdated,
+  notifyProjectUpdated,
 } = require("../middleware/email-notifications")
 
 // Get teacher profile
@@ -48,7 +68,6 @@ router.get("/courses", auth(["teacher"]), async (req, res) => {
   try {
     const batches = await Batch.find({ teacher: req.user.id }).populate("course")
     const coursesMap = {}
-
     batches.forEach((batch) => {
       if (batch.course) {
         const courseId = batch.course._id.toString()
@@ -66,7 +85,6 @@ router.get("/courses", auth(["teacher"]), async (req, res) => {
         }
       }
     })
-
     const courses = Object.values(coursesMap)
     res.json(courses)
   } catch (err) {
@@ -95,7 +113,6 @@ router.get("/students", auth(["teacher"]), async (req, res) => {
       "students",
       "name email phoneNumber grade createdAt totalPoints",
     )
-
     const studentsMap = {}
     batches.forEach((batch) => {
       if (batch.students && Array.isArray(batch.students)) {
@@ -117,7 +134,6 @@ router.get("/students", auth(["teacher"]), async (req, res) => {
         })
       }
     })
-
     const students = Object.values(studentsMap)
     res.json(students)
   } catch (err) {
@@ -144,7 +160,6 @@ router.get("/assignments", auth(["teacher"]), async (req, res) => {
 router.post("/assignments", auth(["teacher"]), async (req, res) => {
   try {
     const { title, description, dueDate, course, batch, maxMarks } = req.body
-
     if (!title || !course || !batch) {
       return res.status(400).json({ message: "Title, course, and batch are required" })
     }
@@ -178,18 +193,63 @@ router.post("/assignments", auth(["teacher"]), async (req, res) => {
   }
 })
 
-// Enhanced Delete Assignment Route with File Cleanup
-router.delete("/assignments/:id", auth(["teacher"]), async (req, res) => {
+// Update assignment
+router.put("/assignments/:id", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
+    const { title, description, dueDate, course, batch, maxMarks } = req.body
+
+    if (!title || !course || !batch) {
+      return res.status(400).json({ message: "Title, course, and batch are required" })
+    }
 
     const assignment = await Assignment.findOne({ _id: id, teacher: req.user.id })
     if (!assignment) {
       return res.status(404).json({ message: "Assignment not found or not authorized" })
     }
 
-    console.log(`Cleaning up files for assignment: ${assignment.title}`)
+    // Check if the new batch belongs to the teacher
+    const batchDoc = await Batch.findOne({ _id: batch, teacher: req.user.id })
+    if (!batchDoc) {
+      return res.status(403).json({ message: "Not authorized to assign to this batch" })
+    }
 
+    // Update assignment fields
+    assignment.title = title
+    assignment.description = description
+    assignment.dueDate = dueDate ? new Date(dueDate) : assignment.dueDate
+    assignment.course = course
+    assignment.batch = batch
+    assignment.maxMarks = maxMarks || assignment.maxMarks
+    assignment.updatedAt = new Date()
+
+    await assignment.save()
+    await assignment.populate("course", "title")
+    await assignment.populate("batch", "name")
+
+    // Send email notifications to students about the update
+    await notifyAssignmentUpdated(assignment)
+
+    res.json({
+      message: "Assignment updated successfully",
+      assignment,
+    })
+  } catch (err) {
+    console.error("Error updating assignment:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Enhanced Delete Assignment Route with File Cleanup
+router.delete("/assignments/:id", auth(["teacher"]), async (req, res) => {
+  try {
+    const { id } = req.params
+    const assignment = await Assignment.findOne({ _id: id, teacher: req.user.id })
+    if (!assignment) {
+      return res.status(404).json({ message: "Assignment not found or not authorized" })
+    }
+
+    console.log(`Cleaning up files for assignment: ${assignment.title}`)
     // Clean up associated files before deleting the assignment
     const cleanupResult = await cleanupAssignmentFiles(id, { Submission })
 
@@ -219,7 +279,6 @@ router.delete("/assignments/:id", auth(["teacher"]), async (req, res) => {
 router.get("/assignments/:id/submissions", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
-
     const assignment = await Assignment.findOne({ _id: id, teacher: req.user.id })
     if (!assignment) {
       return res.status(404).json({ message: "Assignment not found or not authorized" })
@@ -261,7 +320,6 @@ router.put("/assignments/submissions/:id/grade", auth(["teacher"]), async (req, 
     submission.feedback = feedback
     submission.gradedAt = new Date()
     submission.gradedBy = req.user.id
-
     await submission.save()
 
     res.json({ message: "Submission graded successfully", submission })
@@ -289,7 +347,6 @@ router.get("/assessments", auth(["teacher"]), async (req, res) => {
 router.post("/assessments", auth(["teacher"]), async (req, res) => {
   try {
     const { title, description, type, questions, course, batch, dueDate, duration, maxMarks } = req.body
-
     if (!title || !course || !batch || !questions || questions.length === 0) {
       return res.status(400).json({ message: "Title, course, batch, and questions are required" })
     }
@@ -326,18 +383,66 @@ router.post("/assessments", auth(["teacher"]), async (req, res) => {
   }
 })
 
-// Enhanced Delete Assessment Route with File Cleanup
-router.delete("/assessments/:id", auth(["teacher"]), async (req, res) => {
+// Update assessment
+router.put("/assessments/:id", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
+    const { title, description, type, questions, course, batch, dueDate, duration, maxMarks } = req.body
+
+    if (!title || !course || !batch || !questions || questions.length === 0) {
+      return res.status(400).json({ message: "Title, course, batch, and questions are required" })
+    }
 
     const assessment = await Assessment.findOne({ _id: id, teacher: req.user.id })
     if (!assessment) {
       return res.status(404).json({ message: "Assessment not found or not authorized" })
     }
 
-    console.log(`Cleaning up files for assessment: ${assessment.title}`)
+    // Check if the new batch belongs to the teacher
+    const batchDoc = await Batch.findOne({ _id: batch, teacher: req.user.id })
+    if (!batchDoc) {
+      return res.status(403).json({ message: "Not authorized to assign to this batch" })
+    }
 
+    // Update assessment fields
+    assessment.title = title
+    assessment.description = description
+    assessment.type = type
+    assessment.questions = questions
+    assessment.course = course
+    assessment.batch = batch
+    assessment.dueDate = dueDate ? new Date(dueDate) : assessment.dueDate
+    assessment.duration = duration || assessment.duration
+    assessment.maxMarks = maxMarks || questions.reduce((sum, q) => sum + (q.points || 1), 0)
+    assessment.updatedAt = new Date()
+
+    await assessment.save()
+    await assessment.populate("course", "title")
+    await assessment.populate("batch", "name")
+
+    // Send email notifications to students about the update
+    await notifyAssessmentUpdated(assessment)
+
+    res.json({
+      message: "Assessment updated successfully",
+      assessment,
+    })
+  } catch (err) {
+    console.error("Error updating assessment:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Enhanced Delete Assessment Route with File Cleanup
+router.delete("/assessments/:id", auth(["teacher"]), async (req, res) => {
+  try {
+    const { id } = req.params
+    const assessment = await Assessment.findOne({ _id: id, teacher: req.user.id })
+    if (!assessment) {
+      return res.status(404).json({ message: "Assessment not found or not authorized" })
+    }
+
+    console.log(`Cleaning up files for assessment: ${assessment.title}`)
     // Clean up associated files before deleting the assessment
     const cleanupResult = await cleanupAssessmentFiles(id, { AssessmentSubmission })
 
@@ -367,7 +472,6 @@ router.delete("/assessments/:id", auth(["teacher"]), async (req, res) => {
 router.get("/assessments/:id/submissions", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
-
     const assessment = await Assessment.findOne({ _id: id, teacher: req.user.id })
     if (!assessment) {
       return res.status(404).json({ message: "Assessment not found or not authorized" })
@@ -406,7 +510,6 @@ router.get("/projects", auth(["teacher"]), async (req, res) => {
 router.post("/projects", auth(["teacher"]), async (req, res) => {
   try {
     const { title, description, requirements, deliverables, course, batch, dueDate, maxMarks, teamSize } = req.body
-
     if (!title || !description || !course || !batch || !dueDate) {
       return res.status(400).json({ message: "Title, description, course, batch, and due date are required" })
     }
@@ -443,18 +546,66 @@ router.post("/projects", auth(["teacher"]), async (req, res) => {
   }
 })
 
-// Enhanced Delete Project Route with File Cleanup
-router.delete("/projects/:id", auth(["teacher"]), async (req, res) => {
+// Update project
+router.put("/projects/:id", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
+    const { title, description, requirements, deliverables, course, batch, dueDate, maxMarks, teamSize } = req.body
+
+    if (!title || !description || !course || !batch || !dueDate) {
+      return res.status(400).json({ message: "Title, description, course, batch, and due date are required" })
+    }
 
     const project = await Project.findOne({ _id: id, teacher: req.user.id })
     if (!project) {
       return res.status(404).json({ message: "Project not found or not authorized" })
     }
 
-    console.log(`Cleaning up files for project: ${project.title}`)
+    // Check if the new batch belongs to the teacher
+    const batchDoc = await Batch.findOne({ _id: batch, teacher: req.user.id })
+    if (!batchDoc) {
+      return res.status(403).json({ message: "Not authorized to assign to this batch" })
+    }
 
+    // Update project fields
+    project.title = title
+    project.description = description
+    project.requirements = requirements || project.requirements
+    project.deliverables = deliverables || project.deliverables
+    project.course = course
+    project.batch = batch
+    project.dueDate = new Date(dueDate)
+    project.maxMarks = maxMarks || project.maxMarks
+    project.teamSize = teamSize || project.teamSize
+    project.updatedAt = new Date()
+
+    await project.save()
+    await project.populate("course", "title")
+    await project.populate("batch", "name")
+
+    // Send email notifications to students about the update
+    await notifyProjectUpdated(project)
+
+    res.json({
+      message: "Project updated successfully",
+      project,
+    })
+  } catch (err) {
+    console.error("Error updating project:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Enhanced Delete Project Route with File Cleanup
+router.delete("/projects/:id", auth(["teacher"]), async (req, res) => {
+  try {
+    const { id } = req.params
+    const project = await Project.findOne({ _id: id, teacher: req.user.id })
+    if (!project) {
+      return res.status(404).json({ message: "Project not found or not authorized" })
+    }
+
+    console.log(`Cleaning up files for project: ${project.title}`)
     // Clean up associated files before deleting the project
     const cleanupResult = await cleanupProjectFiles(id, { ProjectSubmission })
 
@@ -484,7 +635,6 @@ router.delete("/projects/:id", auth(["teacher"]), async (req, res) => {
 router.get("/projects/:id/submissions", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
-
     const project = await Project.findOne({ _id: id, teacher: req.user.id })
     if (!project) {
       return res.status(404).json({ message: "Project not found or not authorized" })
@@ -509,7 +659,6 @@ router.get("/projects/:id/submissions", auth(["teacher"]), async (req, res) => {
 router.post("/attendance", auth(["teacher"]), async (req, res) => {
   try {
     const { batch, date, records } = req.body
-
     if (!batch || !date || !records || !Array.isArray(records)) {
       return res.status(400).json({ message: "Batch, date, and records are required" })
     }
@@ -520,7 +669,6 @@ router.post("/attendance", auth(["teacher"]), async (req, res) => {
     }
 
     let attendance = await Attendance.findOne({ batch, date: new Date(date) })
-
     if (attendance) {
       attendance.records = records.map((record) => ({
         student: record.student,
@@ -612,6 +760,7 @@ router.get("/attendance/:batchId", auth(["teacher"]), async (req, res) => {
     }
 
     const attendance = await Attendance.find(query).populate("records.student", "name email").sort({ date: -1 })
+
     res.json(attendance)
   } catch (err) {
     console.error("Error fetching attendance:", err)

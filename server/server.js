@@ -55,6 +55,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // ✅ ensure preflight uses same options
+
 // enable CORS preflight
 
 app.use(cookieParser());
