@@ -32,6 +32,7 @@ import BatchManagement from "./components/BatchManagements"
 import CourseManagement from "./components/CourseManagements"
 import DataFixHelper from "./components/Data-fixhelper"
 import EnrollmentToolPage from "./pages/EnrollmentToolPage"
+import ReturnAndCancellation from "./pages/ReturnAndCancellation"
 
 function App() {
   return (
@@ -221,6 +222,8 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/return-cancellation" element={<ReturnAndCancellation/>} />
+
         </Routes>
       </Layout>
     </>

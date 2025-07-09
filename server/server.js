@@ -60,6 +60,7 @@ app.options('*', cors(corsOptions)); // ✅ ensure preflight uses same options
 
 app.use(cookieParser());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',

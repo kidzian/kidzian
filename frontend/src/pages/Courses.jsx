@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Heading from "../components/Heading"
@@ -18,70 +17,6 @@ const Courses = () => {
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"
 
-  // Static courses that will be merged with backend courses
-  const staticCourses = [
-    {
-      id: "static-1",
-      title: "Python for Kids: Game Development",
-      category: "beginner",
-      image: "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg",
-      ageGroup: "8-12 years",
-      studentsEnrolled: 2547,
-      duration: "8 weeks",
-      rating: 4.8,
-      reviews: 127,
-      isBestseller: true,
-      description: "Learn Python programming through fun game development projects",
-      about: [
-        "Build 5 exciting games from scratch",
-        "Learn fundamental programming concepts",
-        "No prior experience needed",
-        "Interactive learning with live support",
-      ],
-      learningOutcomes: [
-        "Master Python basics",
-        "Understand game development logic",
-        "Create custom games independently",
-        "Problem-solving skills development",
-      ],
-      overviewPoints: [
-        "Python Basics",
-        "Game Logic",
-        "Graphics & Animation",
-        "User Input Handling",
-        "Project Building",
-      ],
-      isStatic: true,
-    },
-    {
-      id: "static-2",
-      title: "Web Development Fundamentals",
-      category: "beginner",
-      image: "https://images.pexels.com/photos/1181677/pexels-photo-1181677.jpeg",
-      ageGroup: "10-14 years",
-      studentsEnrolled: 183,
-      duration: "10 weeks",
-      rating: 4.6,
-      reviews: 89,
-      isBestseller: false,
-      description: "Start your journey in web development with HTML, CSS, and JavaScript",
-      about: [
-        "Create responsive websites",
-        "Learn modern web technologies",
-        "Build portfolio projects",
-        "Industry-standard practices",
-      ],
-      learningOutcomes: [
-        "Build responsive websites",
-        "Understand web development basics",
-        "Create interactive web applications",
-        "Deploy websites live",
-      ],
-      overviewPoints: ["HTML Structure", "CSS Styling", "JavaScript Basics", "Responsive Design", "Web Deployment"],
-      isStatic: true,
-    },
-  ]
-
   // Helper function to safely process array or string data
   const processArrayOrString = (data, fallback = []) => {
     if (!data) return fallback
@@ -95,23 +30,15 @@ const Courses = () => {
     return fallback
   }
 
-  // Helper function to safely process string data
-  const processStringData = (data, fallback = "") => {
-    if (!data) return fallback
-    if (typeof data === "string") return data
-    if (Array.isArray(data)) return data.join(" ")
-    return fallback
-  }
-
   // Function to transform backend course data to match frontend structure
   const transformBackendCourse = (backendCourse) => {
     // Helper function to construct full image URL
     const getImageUrl = (imagePath) => {
       if (!imagePath) return "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg"
-
+      
       // If it's already a full URL (starts with http), return as is
       if (imagePath.startsWith("http")) return imagePath
-
+      
       // If it's a relative path, construct full URL
       // Remove leading slash if present to avoid double slashes
       const cleanPath = imagePath.startsWith("/") ? imagePath.slice(1) : imagePath
@@ -120,8 +47,8 @@ const Courses = () => {
 
     return {
       id: backendCourse._id,
-      title: backendCourse.title,
-      category: "beginner",
+      title: backendCourse.title || "Untitled Course",
+      category: "beginner", // You can modify this based on your backend data
       image: getImageUrl(backendCourse.image),
       ageGroup: backendCourse.ageGroup || "8-16 years",
       studentsEnrolled: Math.floor(Math.random() * 1000) + 50,
@@ -129,17 +56,19 @@ const Courses = () => {
       rating: 4.5 + Math.random() * 0.5,
       reviews: Math.floor(Math.random() * 100) + 20,
       isBestseller: Math.random() > 0.7,
-      description: backendCourse.about || "Learn coding with this amazing course",
-      about: backendCourse.about
-        ? [backendCourse.about]
-        : ["Interactive learning experience", "Expert instruction", "Hands-on projects"],
-      learningOutcomes: backendCourse.learningOutcomes
-        ? typeof backendCourse.learningOutcomes === "string"
-          ? backendCourse.learningOutcomes.split("\n").filter((outcome) => outcome.trim())
-          : Array.isArray(backendCourse.learningOutcomes)
-            ? backendCourse.learningOutcomes
-            : ["Master programming concepts", "Build real projects", "Problem-solving skills"]
-        : ["Master programming concepts", "Build real projects", "Problem-solving skills"],
+      description: backendCourse.about 
+        ? (Array.isArray(backendCourse.about) ? backendCourse.about[0] : backendCourse.about)
+        : "Learn coding with this amazing course",
+      about: processArrayOrString(backendCourse.about, [
+        "Interactive learning experience", 
+        "Expert instruction", 
+        "Hands-on projects"
+      ]),
+      learningOutcomes: processArrayOrString(backendCourse.learningOutcomes, [
+        "Master programming concepts", 
+        "Build real projects", 
+        "Problem-solving skills"
+      ]),
       overviewPoints: ["Fundamentals", "Practical Projects", "Problem Solving", "Code Review", "Final Project"],
       isStatic: false,
     }
@@ -149,26 +78,31 @@ const Courses = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${API_BASE_URL}/api/courses`)
-
+      setError("")
+      
+      const response = await fetch(`${API_BASE_URL}/api/courses`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      
       if (response.ok) {
         const backendCourses = await response.json()
+        console.log("Backend courses:", backendCourses) // Debug log
+        
         // Transform backend courses to match frontend structure
         const transformedCourses = backendCourses.map(transformBackendCourse)
-        // Merge static courses with backend courses
-        const allCourses = [...staticCourses, ...transformedCourses]
-        setCourses(allCourses)
+        setCourses(transformedCourses)
       } else {
-        console.error("Failed to fetch courses")
-        // If backend fails, use only static courses
-        setCourses(staticCourses)
-        setError("Failed to load some courses. Showing available courses.")
+        console.error("Failed to fetch courses, status:", response.status)
+        setError("Failed to load courses. Please try again later.")
+        setCourses([])
       }
     } catch (err) {
       console.error("Error fetching courses:", err)
-      // If backend fails, use only static courses
-      setCourses(staticCourses)
-      setError("Failed to connect to server. Showing offline courses.")
+      setError("Failed to connect to server. Please check your connection.")
+      setCourses([])
     } finally {
       setLoading(false)
     }
@@ -215,7 +149,6 @@ const Courses = () => {
   return (
     <div className="w-full bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       <Heading />
-
       <motion.div
         className="w-full min-h-screen pt-[12.5vh]"
         initial={{ opacity: 0 }}
@@ -257,16 +190,21 @@ const Courses = () => {
                 onChange={handleSearchChange}
               />
             </motion.div>
-
             {/* Error message */}
             {error && (
               <motion.div
-                className="mt-4 p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-lg text-yellow-200 text-sm max-w-xl mx-auto"
+                className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-200 text-sm max-w-xl mx-auto"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
               >
                 {error}
+                <button 
+                  onClick={fetchCourses}
+                  className="ml-2 underline hover:no-underline"
+                >
+                  Retry
+                </button>
               </motion.div>
             )}
           </div>
@@ -312,19 +250,17 @@ const Courses = () => {
                   transition={{ delay: index * 0.1 }}
                   onClick={() => handleCardClick(course)}
                 >
-                  {/* Static course indicator */}
-                  {course.isStatic && (
-                    <div className="absolute top-2 right-2 z-10 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                      Featured
-                    </div>
-                  )}
                   <div className="relative h-48">
                     <img
                       src={course.image || "/placeholder.svg"}
                       alt={course.title}
                       className="w-full h-full object-cover"
                       onError={(e) => {
+                        console.log("Image failed to load:", course.image)
                         e.target.src = "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg"
+                      }}
+                      onLoad={() => {
+                        console.log("Image loaded successfully:", course.image)
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-teal-800/90 to-transparent" />
@@ -342,7 +278,6 @@ const Courses = () => {
                       <h3 className="text-white font-semibold text-lg line-clamp-2">{course.title}</h3>
                     </div>
                   </div>
-
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
@@ -357,9 +292,7 @@ const Courses = () => {
                         </span>
                       </div>
                     </div>
-
                     <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">{course.description}</p>
-
                     <div className="flex items-center justify-between">
                       <span className="text-teal-700 dark:text-teal-400 font-semibold">Age: {course.ageGroup}</span>
                       <button
@@ -385,16 +318,27 @@ const Courses = () => {
                 <FiSearch className="w-16 h-16 mx-auto mb-4" />
               </div>
               <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">No courses found</h3>
-              <p className="text-gray-500 dark:text-gray-500">Try adjusting your search or filter criteria</p>
-              <button
-                onClick={() => {
-                  setSearchQuery("")
-                  setActiveFilter("all")
-                }}
-                className="mt-4 px-6 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-800 transition-colors duration-300"
-              >
-                Clear Filters
-              </button>
+              <p className="text-gray-500 dark:text-gray-500">
+                {error ? "Unable to load courses from server." : "Try adjusting your search or filter criteria"}
+              </p>
+              {error ? (
+                <button
+                  onClick={fetchCourses}
+                  className="mt-4 px-6 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-800 transition-colors duration-300"
+                >
+                  Retry Loading
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setSearchQuery("")
+                    setActiveFilter("all")
+                  }}
+                  className="mt-4 px-6 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-800 transition-colors duration-300"
+                >
+                  Clear Filters
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -426,7 +370,6 @@ const Courses = () => {
                   >
                     <FiX size={20} />
                   </button>
-
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <div className="flex flex-wrap gap-2 mb-3">
                       {selectedCourse.isBestseller && (
@@ -441,11 +384,6 @@ const Courses = () => {
                       <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs">
                         {selectedCourse.ageGroup}
                       </span>
-                      {selectedCourse.isStatic && (
-                        <span className="px-3 py-1 bg-blue-500 backdrop-blur-sm rounded-full text-xs">
-                          Featured Course
-                        </span>
-                      )}
                     </div>
                     <h2 className="text-2xl font-bold mb-2">{selectedCourse.title}</h2>
                     <div className="flex items-center gap-4 text-white/90 text-xs">
@@ -471,7 +409,6 @@ const Courses = () => {
                     </div>
                   </div>
                 </div>
-
                 <div className="p-6 overflow-y-auto max-h-[calc(80vh-12rem)]">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Course Overview */}
@@ -486,14 +423,12 @@ const Courses = () => {
                             </span>
                           </div>
                         </div>
-
                         {/* Circular points */}
                         {selectedCourse.overviewPoints.map((point, index) => {
                           const angle = (index * 360) / selectedCourse.overviewPoints.length
                           const radius = 75
                           const x = Math.cos((angle - 90) * (Math.PI / 180)) * radius
                           const y = Math.sin((angle - 90) * (Math.PI / 180)) * radius
-
                           return (
                             <motion.div
                               key={index}
@@ -513,7 +448,6 @@ const Courses = () => {
                           )
                         })}
                       </div>
-
                       {/* Compact Enrollment CTA */}
                       <div className="bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/30 dark:to-cyan-900/30 rounded-xl p-4 border border-teal-200 dark:border-teal-700 w-full">
                         <div className="text-center">
@@ -531,7 +465,6 @@ const Courses = () => {
                         </div>
                       </div>
                     </div>
-
                     {/* Course Details */}
                     <div className="space-y-6">
                       <div>
@@ -546,7 +479,6 @@ const Courses = () => {
                           ))}
                         </ul>
                       </div>
-
                       <div>
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Learning Outcomes</h3>
                         <ul className="space-y-2">
@@ -566,11 +498,9 @@ const Courses = () => {
           )}
         </AnimatePresence>
       </motion.div>
-
       <Footer />
     </div>
   )
 }
 
 export default Courses
-

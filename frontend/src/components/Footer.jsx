@@ -17,7 +17,7 @@ const Footer = () => {
               <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'>
                 <Link to={'/privacy-policy'}>  Privacy Policy   </Link> </li>
               <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'><Link to={'/terms'}>Terms & Conditions</Link></li>
-              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'><Link to={'/contact-us'}>Refund/Cancellation Policy</Link></li>
+              <li className='cursor-pointer hover:text-black dark:hover:text-white transition-transform'><Link to={'/return-cancellation'}>Refund/Cancellation Policy</Link></li>
             </ul>
           </div>
         </div>
