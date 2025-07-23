@@ -12,24 +12,8 @@ const AssessmentSubmission = require("../models/AssessmentSubmission")
 const ProjectSubmission = require("../models/ProjectSubmission")
 const Attendance = require("../models/Attendence")
 const StudentActivity = require("../models/StudentActivity")
+const TeacherNote = require("../models/TeacherNote")
 const auth = require("../middleware/auth")
-
-// // Import file cleanup functions
-// const express = require("express")
-// const router = express.Router()
-// const Teacher = require("../models/Teacher")
-// const User = require("../models/User")
-// const Batch = require("../models/Batch")
-// const Course = require("../models/Course")
-// const Assignment = require("../models/Assignment")
-// const Assessment = require("../models/Assessment")
-// const Project = require("../models/Project")
-// const Submission = require("../models/Submission")
-// const AssessmentSubmission = require("../models/AssessmentSubmission")
-// const ProjectSubmission = require("../models/ProjectSubmission")
-// const Attendance = require("../models/Attendence")
-// const StudentActivity = require("../models/StudentActivity")
-// const auth = require("../middleware/auth")
 
 // Import file cleanup functions
 const {
@@ -68,6 +52,7 @@ router.get("/courses", auth(["teacher"]), async (req, res) => {
   try {
     const batches = await Batch.find({ teacher: req.user.id }).populate("course")
     const coursesMap = {}
+
     batches.forEach((batch) => {
       if (batch.course) {
         const courseId = batch.course._id.toString()
@@ -85,6 +70,7 @@ router.get("/courses", auth(["teacher"]), async (req, res) => {
         }
       }
     })
+
     const courses = Object.values(coursesMap)
     res.json(courses)
   } catch (err) {
@@ -114,6 +100,7 @@ router.get("/students", auth(["teacher"]), async (req, res) => {
       "name email phoneNumber grade createdAt totalPoints",
     )
     const studentsMap = {}
+
     batches.forEach((batch) => {
       if (batch.students && Array.isArray(batch.students)) {
         batch.students.forEach((student) => {
@@ -134,6 +121,7 @@ router.get("/students", auth(["teacher"]), async (req, res) => {
         })
       }
     })
+
     const students = Object.values(studentsMap)
     res.json(students)
   } catch (err) {
@@ -160,6 +148,7 @@ router.get("/assignments", auth(["teacher"]), async (req, res) => {
 router.post("/assignments", auth(["teacher"]), async (req, res) => {
   try {
     const { title, description, dueDate, course, batch, maxMarks } = req.body
+
     if (!title || !course || !batch) {
       return res.status(400).json({ message: "Title, course, and batch are required" })
     }
@@ -244,12 +233,14 @@ router.put("/assignments/:id", auth(["teacher"]), async (req, res) => {
 router.delete("/assignments/:id", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
+
     const assignment = await Assignment.findOne({ _id: id, teacher: req.user.id })
     if (!assignment) {
       return res.status(404).json({ message: "Assignment not found or not authorized" })
     }
 
     console.log(`Cleaning up files for assignment: ${assignment.title}`)
+
     // Clean up associated files before deleting the assignment
     const cleanupResult = await cleanupAssignmentFiles(id, { Submission })
 
@@ -279,6 +270,7 @@ router.delete("/assignments/:id", auth(["teacher"]), async (req, res) => {
 router.get("/assignments/:id/submissions", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
+
     const assignment = await Assignment.findOne({ _id: id, teacher: req.user.id })
     if (!assignment) {
       return res.status(404).json({ message: "Assignment not found or not authorized" })
@@ -320,6 +312,7 @@ router.put("/assignments/submissions/:id/grade", auth(["teacher"]), async (req, 
     submission.feedback = feedback
     submission.gradedAt = new Date()
     submission.gradedBy = req.user.id
+
     await submission.save()
 
     res.json({ message: "Submission graded successfully", submission })
@@ -347,6 +340,7 @@ router.get("/assessments", auth(["teacher"]), async (req, res) => {
 router.post("/assessments", auth(["teacher"]), async (req, res) => {
   try {
     const { title, description, type, questions, course, batch, dueDate, duration, maxMarks } = req.body
+
     if (!title || !course || !batch || !questions || questions.length === 0) {
       return res.status(400).json({ message: "Title, course, batch, and questions are required" })
     }
@@ -437,12 +431,14 @@ router.put("/assessments/:id", auth(["teacher"]), async (req, res) => {
 router.delete("/assessments/:id", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
+
     const assessment = await Assessment.findOne({ _id: id, teacher: req.user.id })
     if (!assessment) {
       return res.status(404).json({ message: "Assessment not found or not authorized" })
     }
 
     console.log(`Cleaning up files for assessment: ${assessment.title}`)
+
     // Clean up associated files before deleting the assessment
     const cleanupResult = await cleanupAssessmentFiles(id, { AssessmentSubmission })
 
@@ -472,6 +468,7 @@ router.delete("/assessments/:id", auth(["teacher"]), async (req, res) => {
 router.get("/assessments/:id/submissions", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
+
     const assessment = await Assessment.findOne({ _id: id, teacher: req.user.id })
     if (!assessment) {
       return res.status(404).json({ message: "Assessment not found or not authorized" })
@@ -510,6 +507,7 @@ router.get("/projects", auth(["teacher"]), async (req, res) => {
 router.post("/projects", auth(["teacher"]), async (req, res) => {
   try {
     const { title, description, requirements, deliverables, course, batch, dueDate, maxMarks, teamSize } = req.body
+
     if (!title || !description || !course || !batch || !dueDate) {
       return res.status(400).json({ message: "Title, description, course, batch, and due date are required" })
     }
@@ -600,12 +598,14 @@ router.put("/projects/:id", auth(["teacher"]), async (req, res) => {
 router.delete("/projects/:id", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
+
     const project = await Project.findOne({ _id: id, teacher: req.user.id })
     if (!project) {
       return res.status(404).json({ message: "Project not found or not authorized" })
     }
 
     console.log(`Cleaning up files for project: ${project.title}`)
+
     // Clean up associated files before deleting the project
     const cleanupResult = await cleanupProjectFiles(id, { ProjectSubmission })
 
@@ -635,6 +635,7 @@ router.delete("/projects/:id", auth(["teacher"]), async (req, res) => {
 router.get("/projects/:id/submissions", auth(["teacher"]), async (req, res) => {
   try {
     const { id } = req.params
+
     const project = await Project.findOne({ _id: id, teacher: req.user.id })
     if (!project) {
       return res.status(404).json({ message: "Project not found or not authorized" })
@@ -659,6 +660,7 @@ router.get("/projects/:id/submissions", auth(["teacher"]), async (req, res) => {
 router.post("/attendance", auth(["teacher"]), async (req, res) => {
   try {
     const { batch, date, records } = req.body
+
     if (!batch || !date || !records || !Array.isArray(records)) {
       return res.status(400).json({ message: "Batch, date, and records are required" })
     }
@@ -669,6 +671,7 @@ router.post("/attendance", auth(["teacher"]), async (req, res) => {
     }
 
     let attendance = await Attendance.findOne({ batch, date: new Date(date) })
+
     if (attendance) {
       attendance.records = records.map((record) => ({
         student: record.student,
@@ -753,6 +756,7 @@ router.get("/attendance/:batchId", auth(["teacher"]), async (req, res) => {
     }
 
     const query = { batch: batchId }
+
     if (startDate || endDate) {
       query.date = {}
       if (startDate) query.date.$gte = new Date(startDate)
@@ -918,6 +922,254 @@ router.get("/analytics", auth(["teacher"]), async (req, res) => {
     })
   } catch (err) {
     console.error("Error fetching teacher analytics:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// TEACHER NOTES ROUTES
+
+// Get all teacher notes
+router.get("/notes", auth(["teacher"]), async (req, res) => {
+  try {
+    const notes = await TeacherNote.find({ teacher: req.user.id })
+      .populate("student", "name email")
+      .sort({ createdAt: -1 })
+    res.json(notes)
+  } catch (err) {
+    console.error("Error fetching teacher notes:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Create new teacher note
+router.post("/notes", auth(["teacher"]), async (req, res) => {
+  try {
+    const { studentId, title, content, rating, suggestions, strengths, areasForImprovement } = req.body
+
+    if (!studentId || !title || !content) {
+      return res.status(400).json({ message: "Student ID, title, and content are required" })
+    }
+
+    // Check if student is in teacher's batches
+    const batches = await Batch.find({ teacher: req.user.id, students: studentId })
+    if (batches.length === 0) {
+      return res.status(403).json({ message: "Not authorized to add notes for this student" })
+    }
+
+    // Check if note already exists for this student
+    const existingNote = await TeacherNote.findOne({
+      teacher: req.user.id,
+      studentId: studentId,
+    })
+    if (existingNote) {
+      return res.status(400).json({ message: "Note already exists for this student. Use PUT to update." })
+    }
+
+    const teacherNote = new TeacherNote({
+      teacher: req.user.id,
+      student: studentId,
+      studentId: studentId, // Ensure studentId is set correctly
+      title,
+      content,
+      rating: rating || 5,
+      suggestions: suggestions || "",
+      strengths: strengths || "",
+      areasForImprovement: areasForImprovement || "",
+    })
+
+    await teacherNote.save()
+    await teacherNote.populate("student", "name email")
+
+    res.status(201).json(teacherNote)
+  } catch (err) {
+    console.error("Error creating teacher note:", err)
+    res.status(500).json({ message: "Server error", error: err.message })
+  }
+})
+
+// Update teacher note
+router.put("/notes/:id", auth(["teacher"]), async (req, res) => {
+  try {
+    const { id } = req.params
+    const { title, content, rating, suggestions, strengths, areasForImprovement } = req.body
+
+    if (!title || !content) {
+      return res.status(400).json({ message: "Title and content are required" })
+    }
+
+    const teacherNote = await TeacherNote.findOne({ _id: id, teacher: req.user.id })
+    if (!teacherNote) {
+      return res.status(404).json({ message: "Teacher note not found or not authorized" })
+    }
+
+    // Update note fields
+    teacherNote.title = title
+    teacherNote.content = content
+    teacherNote.rating = rating || teacherNote.rating
+    teacherNote.suggestions = suggestions || teacherNote.suggestions
+    teacherNote.strengths = strengths || teacherNote.strengths
+    teacherNote.areasForImprovement = areasForImprovement || teacherNote.areasForImprovement
+    teacherNote.updatedAt = new Date()
+
+    await teacherNote.save()
+    await teacherNote.populate("student", "name email")
+
+    res.json({
+      message: "Teacher note updated successfully",
+      teacherNote,
+    })
+  } catch (err) {
+    console.error("Error updating teacher note:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Delete teacher note
+router.delete("/notes/:id", auth(["teacher"]), async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const teacherNote = await TeacherNote.findOne({ _id: id, teacher: req.user.id })
+    if (!teacherNote) {
+      return res.status(404).json({ message: "Teacher note not found or not authorized" })
+    }
+
+    await TeacherNote.findByIdAndDelete(id)
+
+    res.json({ message: "Teacher note deleted successfully" })
+  } catch (err) {
+    console.error("Error deleting teacher note:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Get teacher note for specific student
+router.get("/notes/student/:studentId", auth(["teacher"]), async (req, res) => {
+  try {
+    const { studentId } = req.params
+
+    // Check if student is in teacher's batches
+    const batches = await Batch.find({ teacher: req.user.id, students: studentId })
+    if (batches.length === 0) {
+      return res.status(403).json({ message: "Not authorized to view notes for this student" })
+    }
+
+    const teacherNote = await TeacherNote.findOne({
+      teacher: req.user.id,
+      student: studentId,
+    }).populate("student", "name email")
+
+    if (!teacherNote) {
+      return res.status(404).json({ message: "No note found for this student" })
+    }
+
+    res.json(teacherNote)
+  } catch (err) {
+    console.error("Error fetching teacher note for student:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// DETAILED SUBMISSION ROUTES FOR PDF REPORTS
+
+// Get student's assignment submissions with details
+router.get("/students/:studentId/assignment-submissions", auth(["teacher"]), async (req, res) => {
+  try {
+    const { studentId } = req.params
+    const { startDate, endDate } = req.query
+
+    // Check if student is in teacher's batches
+    const batches = await Batch.find({ teacher: req.user.id, students: studentId })
+    if (batches.length === 0) {
+      return res.status(403).json({ message: "Not authorized to view this student's submissions" })
+    }
+
+    const query = { student: studentId }
+
+    if (startDate && endDate) {
+      query.submittedAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      }
+    }
+
+    const submissions = await Submission.find(query)
+      .populate("assignment", "title maxMarks dueDate course batch")
+      .populate("assignment.course", "title")
+      .populate("assignment.batch", "name")
+      .sort({ submittedAt: -1 })
+
+    res.json(submissions)
+  } catch (err) {
+    console.error("Error fetching student assignment submissions:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Get student's assessment submissions with details
+router.get("/students/:studentId/assessment-submissions", auth(["teacher"]), async (req, res) => {
+  try {
+    const { studentId } = req.params
+    const { startDate, endDate } = req.query
+
+    // Check if student is in teacher's batches
+    const batches = await Batch.find({ teacher: req.user.id, students: studentId })
+    if (batches.length === 0) {
+      return res.status(403).json({ message: "Not authorized to view this student's submissions" })
+    }
+
+    const query = { student: studentId }
+
+    if (startDate && endDate) {
+      query.submittedAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      }
+    }
+
+    const submissions = await AssessmentSubmission.find(query)
+      .populate("assessment", "title type maxMarks questions duration course batch")
+      .populate("assessment.course", "title")
+      .populate("assessment.batch", "name")
+      .sort({ submittedAt: -1 })
+
+    res.json(submissions)
+  } catch (err) {
+    console.error("Error fetching student assessment submissions:", err)
+    res.status(500).json({ message: "Server error" })
+  }
+})
+
+// Get student's project submissions with details
+router.get("/students/:studentId/project-submissions", auth(["teacher"]), async (req, res) => {
+  try {
+    const { studentId } = req.params
+    const { startDate, endDate } = req.query
+
+    // Check if student is in teacher's batches
+    const batches = await Batch.find({ teacher: req.user.id, students: studentId })
+    if (batches.length === 0) {
+      return res.status(403).json({ message: "Not authorized to view this student's submissions" })
+    }
+
+    const query = { student: studentId }
+
+    if (startDate && endDate) {
+      query.submittedAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      }
+    }
+
+    const submissions = await ProjectSubmission.find(query)
+      .populate("project", "title maxMarks teamSize dueDate course batch")
+      .populate("project.course", "title")
+      .populate("project.batch", "name")
+      .sort({ submittedAt: -1 })
+
+    res.json(submissions)
+  } catch (err) {
+    console.error("Error fetching student project submissions:", err)
     res.status(500).json({ message: "Server error" })
   }
 })
