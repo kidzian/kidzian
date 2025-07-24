@@ -747,11 +747,11 @@ const TeacherDashboard = () => {
           const assignment = submission.assignment || {}
           pdf.text(`• ${assignment.title || "Unknown Assignment"}`, 25, yPos)
           pdf.text(`  Submitted: ${new Date(submission.submittedAt).toLocaleDateString()}`, 25, yPos + 4)
-          pdf.text(
-            `  Score: ${submission.grade || "Not graded"}/${assignment.maxMarks || "N/A"} | Status: ${submission.status || "Submitted"}`,
-            25,
-            yPos + 8,
-          )
+          // pdf.text(
+          //   `  Score: ${submission.grade || "Not graded"}/${assignment.maxMarks || "N/A"} | Status: ${submission.status || "Submitted"}`,
+          //   25,
+          //   yPos + 8,
+          // )
           yPos += 12
         })
         yPos += 5
@@ -779,7 +779,7 @@ const TeacherDashboard = () => {
           pdf.text(`• ${assessment.title || "Unknown Assessment"} (${assessment.type || "Quiz"})`, 25, yPos)
           pdf.text(`  Completed: ${new Date(submission.submittedAt).toLocaleDateString()}`, 25, yPos + 4)
           pdf.text(
-            `  Score: ${submission.percentage || 0}% | Time Taken: ${submission.timeTaken || "N/A"} minutes`,
+            `  Score: ${submission.percentage || 0}% | `,
             25,
             yPos + 8,
           )
@@ -814,9 +814,9 @@ const TeacherDashboard = () => {
           const project = submission.project || {}
           pdf.text(`• ${project.title || "Unknown Project"}`, 25, yPos)
           pdf.text(`  Submitted: ${new Date(submission.submittedAt).toLocaleDateString()}`, 25, yPos + 4)
-          pdf.text(`  Team Size: ${project.teamSize || 1} | Max Marks: ${project.maxMarks || "N/A"}`, 25, yPos + 8)
+          pdf.text(`   Max Marks: ${project.maxMarks || "N/A"}`, 25, yPos + 8)
           pdf.text(
-            `  Grade: ${submission.grade || "Not graded"} | Status: ${submission.status || "Submitted"}`,
+            `   Status: ${submission.status || "Submitted"}`,
             25,
             yPos + 12,
           )
