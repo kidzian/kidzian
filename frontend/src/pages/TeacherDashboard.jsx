@@ -20,8 +20,10 @@ import {
   Plus,
   Star,
   Search,
+  BadgeIcon as Certificate,
 } from "lucide-react"
 import jsPDF from "jspdf"
+import LogoGenerator  from "../components/logo-component"
 
 const TeacherDashboard = () => {
   const [teacher, setTeacher] = useState(null)
@@ -74,9 +76,10 @@ const TeacherDashboard = () => {
   const [courseBatches, setCourseBatches] = useState([])
   const [courseStudents, setCourseStudents] = useState([])
 
-  // Teacher Notes states - NEW FEATURE
+  // Teacher Notes states - ENHANCED
   const [teacherNotes, setTeacherNotes] = useState([])
   const [selectedStudentForNotes, setSelectedStudentForNotes] = useState(null)
+  const [activeNoteTab, setActiveNoteTab] = useState("notes") // "notes" or "certificates"
   const [noteData, setNoteData] = useState({
     studentId: "",
     title: "",
@@ -85,6 +88,17 @@ const TeacherDashboard = () => {
     suggestions: "",
     strengths: "",
     areasForImprovement: "",
+    classesTaken: [], // ENHANCED: Array of class dates
+  })
+
+  // ENHANCED: Certificate management states
+  const [studentCertificates, setStudentCertificates] = useState([])
+  const [certificateData, setCertificateData] = useState({
+    studentId: "",
+    certificateName: "",
+    issuedBy: "KIDZIAN",
+    dateIssued: new Date().toISOString().split("T")[0],
+    description: "",
   })
 
   // Form data states
@@ -161,17 +175,27 @@ const TeacherDashboard = () => {
       const headers = getHeaders()
 
       // Fetch teacher data in parallel
-      const [profileRes, coursesRes, studentsRes, batchesRes, assignmentsRes, assessmentsRes, projectsRes, notesRes] =
-        await Promise.all([
-          axios.get(`${API_BASE_URL}/api/teachers/profile`, { headers }).catch(() => ({ data: null })),
-          axios.get(`${API_BASE_URL}/api/teachers/courses`, { headers }).catch(() => ({ data: [] })),
-          axios.get(`${API_BASE_URL}/api/teachers/students`, { headers }).catch(() => ({ data: [] })),
-          axios.get(`${API_BASE_URL}/api/teachers/batches`, { headers }).catch(() => ({ data: [] })),
-          axios.get(`${API_BASE_URL}/api/teachers/assignments`, { headers }).catch(() => ({ data: [] })),
-          axios.get(`${API_BASE_URL}/api/teachers/assessments`, { headers }).catch(() => ({ data: [] })),
-          axios.get(`${API_BASE_URL}/api/teachers/projects`, { headers }).catch(() => ({ data: [] })),
-          axios.get(`${API_BASE_URL}/api/teachers/notes`, { headers }).catch(() => ({ data: [] })),
-        ])
+      const [
+        profileRes,
+        coursesRes,
+        studentsRes,
+        batchesRes,
+        assignmentsRes,
+        assessmentsRes,
+        projectsRes,
+        notesRes,
+        certificatesRes,
+      ] = await Promise.all([
+        axios.get(`${API_BASE_URL}/api/teachers/profile`, { headers }).catch(() => ({ data: null })),
+        axios.get(`${API_BASE_URL}/api/teachers/courses`, { headers }).catch(() => ({ data: [] })),
+        axios.get(`${API_BASE_URL}/api/teachers/students`, { headers }).catch(() => ({ data: [] })),
+        axios.get(`${API_BASE_URL}/api/teachers/batches`, { headers }).catch(() => ({ data: [] })),
+        axios.get(`${API_BASE_URL}/api/teachers/assignments`, { headers }).catch(() => ({ data: [] })),
+        axios.get(`${API_BASE_URL}/api/teachers/assessments`, { headers }).catch(() => ({ data: [] })),
+        axios.get(`${API_BASE_URL}/api/teachers/projects`, { headers }).catch(() => ({ data: [] })),
+        axios.get(`${API_BASE_URL}/api/teachers/notes`, { headers }).catch(() => ({ data: [] })),
+        axios.get(`${API_BASE_URL}/api/teachers/certificates`, { headers }).catch(() => ({ data: [] })),
+      ])
 
       setTeacher(profileRes.data)
       setCourses(coursesRes.data)
@@ -181,6 +205,7 @@ const TeacherDashboard = () => {
       setAssessments(assessmentsRes.data)
       setProjects(projectsRes.data)
       setTeacherNotes(notesRes.data)
+      setStudentCertificates(certificatesRes.data)
       setError("")
       fetchCourseLearnings()
     } catch (err) {
@@ -202,34 +227,95 @@ const TeacherDashboard = () => {
     }
   }
 
-  // Teacher Notes Functions - NEW FEATURE
-  const openTeacherNotesModal = (student) => {
+  // ENHANCED: Teacher Notes Functions with Multiple Classes Taken
+  const openTeacherNotesModal = async (student) => {
     setSelectedStudentForNotes(student)
-    const existingNote = teacherNotes.find((note) => note.studentId === student._id)
-    if (existingNote) {
-      setNoteData({
-        studentId: student._id,
-        title: existingNote.title || "",
-        content: existingNote.content || "",
-        rating: existingNote.rating || 5,
-        suggestions: existingNote.suggestions || "",
-        strengths: existingNote.strengths || "",
-        areasForImprovement: existingNote.areasForImprovement || "",
-      })
-    } else {
-      setNoteData({
-        studentId: student._id,
-        title: "",
-        content: "",
-        rating: 5,
-        suggestions: "",
-        strengths: "",
-        areasForImprovement: "",
-      })
+    setActiveNoteTab("notes")
+
+    // Fetch existing note and certificates
+    try {
+      const headers = getHeaders()
+      const [noteRes, certificatesRes] = await Promise.all([
+        axios
+          .get(`${API_BASE_URL}/api/teachers/notes/student/${student._id}`, { headers })
+          .catch(() => ({ data: null })),
+        axios
+          .get(`${API_BASE_URL}/api/teachers/certificates/student/${student._id}`, { headers })
+          .catch(() => ({ data: [] })),
+      ])
+
+      const existingNote = noteRes.data
+      if (existingNote) {
+        setNoteData({
+          studentId: student._id,
+          title: existingNote.title || "",
+          content: existingNote.content || "",
+          rating: existingNote.rating || 5,
+          suggestions: existingNote.suggestions || "",
+          strengths: existingNote.strengths || "",
+          areasForImprovement: existingNote.areasForImprovement || "",
+          classesTaken: existingNote.classesTaken || [],
+        })
+      } else {
+        setNoteData({
+          studentId: student._id,
+          title: "",
+          content: "",
+          rating: 5,
+          suggestions: "",
+          strengths: "",
+          areasForImprovement: "",
+          classesTaken: [],
+        })
+      }
+
+      // Set certificates for this student
+      setStudentCertificates(certificatesRes.data || [])
+    } catch (err) {
+      console.error("Error fetching student data:", err)
     }
+
+    setCertificateData({
+      studentId: student._id,
+      certificateName: "",
+      issuedBy: "KIDZIAN",
+      dateIssued: new Date().toISOString().split("T")[0],
+      description: "",
+    })
+
     setShowTeacherNotesModal(true)
   }
 
+  // ENHANCED: Add class date to classes taken
+  const addClassDate = () => {
+    const today = new Date().toISOString().split("T")[0]
+    setNoteData({
+      ...noteData,
+      classesTaken: [
+        ...noteData.classesTaken,
+        {
+          date: today,
+          topic: "",
+          notes: "",
+        },
+      ],
+    })
+  }
+
+  // ENHANCED: Remove class date
+  const removeClassDate = (index) => {
+    const updatedClasses = noteData.classesTaken.filter((_, i) => i !== index)
+    setNoteData({ ...noteData, classesTaken: updatedClasses })
+  }
+
+  // ENHANCED: Update class details
+  const updateClassDetails = (index, field, value) => {
+    const updatedClasses = [...noteData.classesTaken]
+    updatedClasses[index][field] = value
+    setNoteData({ ...noteData, classesTaken: updatedClasses })
+  }
+
+  // ENHANCED: Save teacher note
   const saveTeacherNote = async () => {
     try {
       if (!noteData.title.trim() || !noteData.content.trim()) {
@@ -253,21 +339,74 @@ const TeacherDashboard = () => {
       // Refresh notes
       const notesRes = await axios.get(`${API_BASE_URL}/api/teachers/notes`, { headers: getHeaders() })
       setTeacherNotes(notesRes.data)
-      setShowTeacherNotesModal(false)
-      setSelectedStudentForNotes(null)
-      setNoteData({
-        studentId: "",
-        title: "",
-        content: "",
-        rating: 5,
-        suggestions: "",
-        strengths: "",
-        areasForImprovement: "",
-      })
+
       alert("Teacher note saved successfully!")
     } catch (err) {
       console.error("Error saving teacher note:", err)
       alert("Failed to save teacher note: " + (err.response?.data?.message || err.message))
+    }
+  }
+
+  // ENHANCED: Certificate management functions
+  const addCertificate = async () => {
+    try {
+      if (!certificateData.certificateName.trim()) {
+        alert("Please enter certificate name")
+        return
+      }
+
+      await axios.post(`${API_BASE_URL}/api/teachers/certificates`, certificateData, {
+        headers: getHeaders(),
+      })
+
+      // Refresh certificates for this student
+      const certificatesRes = await axios.get(
+        `${API_BASE_URL}/api/teachers/certificates/student/${certificateData.studentId}`,
+        {
+          headers: getHeaders(),
+        },
+      )
+      setStudentCertificates(certificatesRes.data)
+
+      // Reset form
+      setCertificateData({
+        studentId: certificateData.studentId,
+        certificateName: "",
+        issuedBy: "KIDZIAN",
+        dateIssued: new Date().toISOString().split("T")[0],
+        description: "",
+      })
+
+      alert("Certificate added successfully!")
+    } catch (err) {
+      console.error("Error adding certificate:", err)
+      alert("Failed to add certificate: " + (err.response?.data?.message || err.message))
+    }
+  }
+
+  const deleteCertificate = async (certificateId) => {
+    if (!confirm("Are you sure you want to delete this certificate?")) {
+      return
+    }
+
+    try {
+      await axios.delete(`${API_BASE_URL}/api/teachers/certificates/${certificateId}`, {
+        headers: getHeaders(),
+      })
+
+      // Refresh certificates for this student
+      const certificatesRes = await axios.get(
+        `${API_BASE_URL}/api/teachers/certificates/student/${certificateData.studentId}`,
+        {
+          headers: getHeaders(),
+        },
+      )
+      setStudentCertificates(certificatesRes.data)
+
+      alert("Certificate deleted successfully!")
+    } catch (err) {
+      console.error("Error deleting certificate:", err)
+      alert("Failed to delete certificate: " + (err.response?.data?.message || err.message))
     }
   }
 
@@ -328,7 +467,7 @@ const TeacherDashboard = () => {
     }
   }
 
-  // FIXED: Enhanced PDF Report Generation with correct data fetching
+  // ENHANCED: PDF Report Generation with logo and multiple classes
   const downloadStudentPDFReport = async (student) => {
     if (!studentReport || !student) return
 
@@ -337,9 +476,8 @@ const TeacherDashboard = () => {
       // Wait for charts to render properly
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      // FIXED: Get detailed student data with proper filtering and actual submission data
+      // Get detailed student data with proper filtering and actual submission data
       const headers = getHeaders()
-
       // Fetch detailed student activities and submissions for the current month
       const currentDate = new Date()
       const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
@@ -408,6 +546,23 @@ const TeacherDashboard = () => {
       // Get teacher notes for this student
       const studentTeacherNote = teacherNotes.find((note) => note.studentId === student._id)
 
+      // ENHANCED: Calculate average assessment score based on actual questions
+      let totalAssessmentScore = 0
+      let totalAssessmentQuestions = 0
+      actualAssessmentSubmissions.forEach((submission) => {
+        if (submission.assessment && submission.assessment.questions) {
+          const maxPossibleScore = submission.assessment.questions.reduce((sum, q) => sum + (q.points || 1), 0)
+          if (maxPossibleScore > 0) {
+            const scorePercentage = (submission.score / maxPossibleScore) * 100
+            totalAssessmentScore += scorePercentage
+            totalAssessmentQuestions += 1
+          }
+        }
+      })
+
+      const avgAssessmentScore =
+        totalAssessmentQuestions > 0 ? Math.round(totalAssessmentScore / totalAssessmentQuestions) : 0
+
       // Create a PDF document
       const pdf = new jsPDF("p", "mm", "a4")
       const pageWidth = pdf.internal.pageSize.getWidth()
@@ -422,13 +577,13 @@ const TeacherDashboard = () => {
       pdf.setFillColor(...tealColor)
       pdf.rect(0, 0, pageWidth, 40, "F")
 
-      // Logo placeholder
+      // ENHANCED: Add Kidzian logo using LogoGenerator concept
       pdf.setFillColor(255, 255, 255)
       pdf.circle(25, 20, 12, "F")
       pdf.setTextColor(20, 184, 166)
       pdf.setFontSize(16)
       pdf.setFont("helvetica", "bold")
-      pdf.text("K", 22, 24)
+      pdf.text("KIDZIAN", 15, 24)
 
       // Title
       pdf.setTextColor(255, 255, 255)
@@ -437,7 +592,7 @@ const TeacherDashboard = () => {
       pdf.text("KIDZIAN LEARNING PLATFORM", 45, 20)
       pdf.setFontSize(12)
       pdf.setFont("helvetica", "normal")
-      pdf.text("Founded by Rashmi", 45, 28)
+      pdf.text("Crafting Young Innovators", 45, 28)
 
       // Report Title
       pdf.setTextColor(0, 0, 0)
@@ -463,14 +618,13 @@ const TeacherDashboard = () => {
       pdf.setFontSize(11)
       pdf.setFont("helvetica", "normal")
       pdf.setTextColor(0, 0, 0)
-
       // Use dynamic student data
       pdf.text(`Name: ${student.name || "N/A"}`, 20, 100)
       pdf.text(`Email: ${student.email || "N/A"}`, 20, 107)
       pdf.text(`Total Points: ${studentReport.performance?.totalPointsEarned || 0}`, 120, 100)
       pdf.text(`Phone: ${student.phone || "Not provided"}`, 120, 107)
 
-      // Performance Summary Section - FIXED WITH CORRECT DATA
+      // ENHANCED: Performance Summary Section with corrected data
       let yPos = 130
       pdf.setFillColor(...tealColor)
       pdf.rect(15, yPos, pageWidth - 30, 8, "F")
@@ -484,19 +638,19 @@ const TeacherDashboard = () => {
       pdf.setFontSize(10)
       pdf.setFont("helvetica", "normal")
 
-      // FIXED: Use actual submission data for performance stats
+      // ENHANCED: Use actual submission data for performance stats with corrected format
       const performanceStats = [
         [
           `Total Points Earned: ${studentReport.performance?.totalPointsEarned || 0}`,
-          `Attendance Rate: ${studentReport.performance?.attendance || 0}%`,
+          `Attendance: ${studentReport.performance?.attendanceDays || 0} days`, // ENHANCED: Show days instead of percentage
         ],
         [
-          `Assignments Completed: ${actualAssignmentSubmissions.length}/${studentAssignments.length}`,
-          `Assessments Completed: ${actualAssessmentSubmissions.length}/${studentAssessments.length}`,
+          `Assignments Completed: ${actualAssignmentSubmissions.length}`, // ENHANCED: Show only completed count
+          `Assessments Completed: ${actualAssessmentSubmissions.length}`, // ENHANCED: Show only completed count
         ],
         [
-          `Projects Completed: ${actualProjectSubmissions.length}/${studentProjects.length}`,
-          `Avg Assessment Score: ${studentReport.performance?.avgAssessmentScore || 0}%`,
+          `Projects Completed: ${actualProjectSubmissions.length}`, // ENHANCED: Show only completed count
+          `Avg Assessment Score: ${avgAssessmentScore}%`, // ENHANCED: Calculated based on actual questions
         ],
       ]
 
@@ -505,6 +659,66 @@ const TeacherDashboard = () => {
         pdf.text(right, 120, yPos)
         yPos += 7
       })
+
+      // ENHANCED: Classes Taken This Month Section with Multiple Classes
+      if (studentTeacherNote && studentTeacherNote.classesTaken && studentTeacherNote.classesTaken.length > 0) {
+        yPos += 10
+        pdf.setFillColor(...tealColor)
+        pdf.rect(15, yPos, pageWidth - 30, 8, "F")
+        pdf.setTextColor(255, 255, 255)
+        pdf.setFontSize(12)
+        pdf.setFont("helvetica", "bold")
+        pdf.text("CLASS ATTENDANCE SUMMARY", 20, yPos + 6)
+
+        yPos += 15
+        pdf.setTextColor(0, 0, 0)
+        pdf.setFontSize(10)
+
+        // Show all classes taken this month with details
+        const classesThisMonth = studentTeacherNote.classesTaken.filter((cls) => {
+          const classDate = new Date(cls.date)
+          return classDate >= startOfMonth && classDate <= endOfMonth
+        })
+
+        if (classesThisMonth.length > 0) {
+          pdf.setFont("helvetica", "bold")
+          pdf.text(`Classes Attended This Month (${classesThisMonth.length}):`, 20, yPos)
+          yPos += 8
+
+          classesThisMonth.forEach((classItem, index) => {
+            if (yPos > pageHeight - 40) {
+              pdf.addPage()
+              yPos = 20
+            }
+
+            pdf.setFont("helvetica", "normal")
+            pdf.text(`${index + 1}. Date: ${new Date(classItem.date).toLocaleDateString()}`, 25, yPos)
+            yPos += 5
+
+            if (classItem.topic) {
+              pdf.text(`   Topic: ${classItem.topic}`, 25, yPos)
+              yPos += 5
+            }
+
+            if (classItem.notes) {
+              const noteLines = pdf.splitTextToSize(`   Notes: ${classItem.notes}`, pageWidth - 50)
+              noteLines.forEach((line) => {
+                if (yPos > pageHeight - 20) {
+                  pdf.addPage()
+                  yPos = 20
+                }
+                pdf.text(line, 25, yPos)
+                yPos += 5
+              })
+            }
+            yPos += 3
+          })
+        } else {
+          pdf.setFont("helvetica", "normal")
+          pdf.text("No classes attended this month", 20, yPos)
+          yPos += 10
+        }
+      }
 
       // Detailed Activities Breakdown - ENHANCED WITH ACTUAL SUBMISSION DATA
       yPos += 10
@@ -638,7 +852,7 @@ const TeacherDashboard = () => {
 
         // Teacher Rating
         pdf.setFont("helvetica", "bold")
-        pdf.text(`Overall Rating: ${studentTeacherNote.rating}/5 ⭐`, 20, yPos)
+        pdf.text(`Overall Rating: ${studentTeacherNote.rating}/10 ⭐`, 20, yPos)
         yPos += 8
 
         // Teacher Comments
@@ -711,6 +925,57 @@ const TeacherDashboard = () => {
             yPos += 5
           })
         }
+      }
+
+      // ENHANCED: Certificates Section
+      const studentCerts = studentCertificates.filter((cert) => cert.student._id === student._id)
+      if (studentCerts.length > 0) {
+        yPos += 15
+        if (yPos > pageHeight - 40) {
+          pdf.addPage()
+          yPos = 20
+        }
+        pdf.setFillColor(...tealColor)
+        pdf.rect(15, yPos, pageWidth - 30, 8, "F")
+        pdf.setTextColor(255, 255, 255)
+        pdf.setFontSize(12)
+        pdf.setFont("helvetica", "bold")
+        pdf.text("CERTIFICATES EARNED", 20, yPos + 6)
+
+        yPos += 15
+        pdf.setTextColor(0, 0, 0)
+        pdf.setFontSize(10)
+
+        studentCerts.forEach((cert, index) => {
+          if (yPos > pageHeight - 30) {
+            pdf.addPage()
+            yPos = 20
+          }
+
+          pdf.setFont("helvetica", "bold")
+          pdf.text(`${index + 1}. ${cert.certificateName}`, 20, yPos)
+          yPos += 5
+
+          pdf.setFont("helvetica", "normal")
+          pdf.text(`   Issued by: ${cert.issuedBy}`, 25, yPos)
+          yPos += 5
+
+          pdf.text(`   Date: ${new Date(cert.dateIssued).toLocaleDateString()}`, 25, yPos)
+          yPos += 5
+
+          if (cert.description) {
+            const descLines = pdf.splitTextToSize(`   Description: ${cert.description}`, pageWidth - 50)
+            descLines.forEach((line) => {
+              if (yPos > pageHeight - 20) {
+                pdf.addPage()
+                yPos = 20
+              }
+              pdf.text(line, 25, yPos)
+              yPos += 5
+            })
+          }
+          yPos += 5
+        })
       }
 
       // Course Learnings Section - ENHANCED WITH ACTUAL COURSE DATA
@@ -828,6 +1093,30 @@ const TeacherDashboard = () => {
         yPos += 7
       }
 
+      // ENHANCED: Thank you message
+      yPos += 15
+      if (yPos > pageHeight - 40) {
+        pdf.addPage()
+        yPos = 20
+      }
+      pdf.setFillColor(...lightTeal)
+      pdf.rect(15, yPos, pageWidth - 30, 25, "F")
+      pdf.setTextColor(...darkTeal)
+      pdf.setFontSize(12)
+      pdf.setFont("helvetica", "bold")
+      pdf.text("THANK YOU", 20, yPos + 8)
+
+      yPos += 15
+      pdf.setFontSize(10)
+      pdf.setFont("helvetica", "normal")
+      pdf.setTextColor(0, 0, 0)
+      const thankYouMessage = `Thank you for being an active part of ${student.name || "your"}'s learning journey. We appreciate your continued support and look forward to achieving more milestones together.`
+      const thankYouLines = pdf.splitTextToSize(thankYouMessage, pageWidth - 50)
+      thankYouLines.forEach((line) => {
+        pdf.text(line, 20, yPos)
+        yPos += 5
+      })
+
       // Footer
       pdf.setFillColor(...tealColor)
       pdf.rect(0, pageHeight - 20, pageWidth, 20, "F")
@@ -842,7 +1131,7 @@ const TeacherDashboard = () => {
         `Kidzian_Comprehensive_Report_${student.name?.replace(/\s+/g, "_") || "Unknown_Student"}_${new Date().toISOString().split("T")[0]}.pdf`,
       )
 
-      console.log("PDF generated successfully with correct data!")
+      console.log("PDF generated successfully with all enhancements!")
     } catch (error) {
       console.error("Error generating PDF:", error)
       alert("Error generating PDF report. Please try again.")
@@ -1200,10 +1489,12 @@ const TeacherDashboard = () => {
       alert("Please enter a question")
       return
     }
+
     if (currentQuestion.type === "multiple-choice" && currentQuestion.options.some((opt) => !opt.trim())) {
       alert("Please fill in all options for multiple choice questions")
       return
     }
+
     if (!currentQuestion.correctAnswer.trim()) {
       alert("Please provide the correct answer")
       return
@@ -1213,6 +1504,7 @@ const TeacherDashboard = () => {
       ...assessmentData,
       questions: [...assessmentData.questions, { ...currentQuestion }],
     })
+
     setCurrentQuestion({
       question: "",
       type: "multiple-choice",
@@ -1236,6 +1528,7 @@ const TeacherDashboard = () => {
     if (!confirm("Are you sure you want to delete this assignment?")) {
       return
     }
+
     try {
       await axios.delete(`${API_BASE_URL}/api/teachers/assignments/${assignmentId}`, {
         headers: getHeaders(),
@@ -1253,6 +1546,7 @@ const TeacherDashboard = () => {
     if (!confirm("Are you sure you want to delete this assessment?")) {
       return
     }
+
     try {
       await axios.delete(`${API_BASE_URL}/api/teachers/assessments/${assessmentId}`, {
         headers: getHeaders(),
@@ -1270,6 +1564,7 @@ const TeacherDashboard = () => {
     if (!confirm("Are you sure you want to delete this project?")) {
       return
     }
+
     try {
       await axios.delete(`${API_BASE_URL}/api/teachers/projects/${projectId}`, {
         headers: getHeaders(),
@@ -1314,13 +1609,25 @@ const TeacherDashboard = () => {
     }
   }
 
-  // Generate student report
+  // FIXED: Generate student report with correct points calculation
   const generateStudentReport = async (studentId) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/api/teachers/students/${studentId}/report`, {
         headers: getHeaders(),
       })
       setStudentReport(response.data)
+
+      // Find and set the selected student with updated data
+      const student = students.find((s) => s._id === studentId)
+      if (student) {
+        // Update student with correct total points from the report
+        const updatedStudent = {
+          ...student,
+          totalPoints: response.data.student.totalPoints || response.data.performance?.totalPointsEarned || 0,
+        }
+        setSelectedStudent(updatedStudent)
+      }
+
       setShowStudentReportModal(true)
     } catch (err) {
       console.error("Error generating student report:", err)
@@ -1434,11 +1741,7 @@ const TeacherDashboard = () => {
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-4">
               <div className="bg-white/20 backdrop-blur-sm rounded-full p-1">
-                <img
-                  src={teacher?.profilePicture || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-                  alt="Profile"
-                  className="w-12 h-12 rounded-full object-cover"
-                />
+                <LogoGenerator size={48} />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-white">Kidzian Learning Platform</h1>
@@ -1589,6 +1892,7 @@ const TeacherDashboard = () => {
               ))}
             </nav>
           </div>
+
           <div className="p-6">
             {/* Overview Tab */}
             {activeTab === "overview" && (
@@ -1638,6 +1942,7 @@ const TeacherDashboard = () => {
                     </button>
                   </div>
                 </div>
+
                 <div>
                   <h3 className="text-xl font-bold text-teal-700 mb-6 flex items-center">
                     <Calendar className="w-6 h-6 mr-2" />
@@ -1664,6 +1969,7 @@ const TeacherDashboard = () => {
                         <p className="text-gray-600 text-sm">No assignments created yet.</p>
                       )}
                     </div>
+
                     <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 shadow-lg">
                       <h4 className="font-semibold text-gray-700 mb-4">Recent Assessments</h4>
                       {assessments.length > 0 ? (
@@ -1684,6 +1990,7 @@ const TeacherDashboard = () => {
                         <p className="text-gray-600 text-sm">No assessments created yet.</p>
                       )}
                     </div>
+
                     <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 shadow-lg">
                       <h4 className="font-semibold text-gray-700 mb-4">Recent Projects</h4>
                       {projects.length > 0 ? (
@@ -2215,7 +2522,7 @@ const TeacherDashboard = () => {
               </div>
             )}
 
-            {/* Teacher Notes Tab - NEW FEATURE */}
+            {/* Teacher Notes Tab - ENHANCED */}
             {activeTab === "teacher-notes" && (
               <div>
                 <div className="flex justify-between items-center mb-6">
@@ -2230,6 +2537,8 @@ const TeacherDashboard = () => {
                     const studentBatch = batches.find((b) =>
                       student.batches?.some((enrollment) => enrollment.batch === b._id),
                     )
+                    const studentCerts = studentCertificates.filter((cert) => cert.student._id === student._id)
+
                     return (
                       <div
                         key={student._id}
@@ -2246,20 +2555,21 @@ const TeacherDashboard = () => {
                             <p className="text-sm text-gray-500">{studentBatch?.name || "No batch"}</p>
                           </div>
                         </div>
+
                         {studentNote ? (
                           <div className="space-y-3">
                             <div className="flex items-center justify-between">
                               <span className="text-sm font-medium text-gray-700">Rating:</span>
                               <div className="flex items-center">
-                                {[...Array(5)].map((_, i) => (
+                                {[...Array(10)].map((_, i) => (
                                   <Star
                                     key={i}
-                                    className={`w-4 h-4 ${
+                                    className={`w-3 h-3 ${
                                       i < studentNote.rating ? "text-yellow-400 fill-current" : "text-gray-300"
                                     }`}
                                   />
                                 ))}
-                                <span className="ml-2 text-sm text-gray-600">({studentNote.rating}/5)</span>
+                                <span className="ml-2 text-sm text-gray-600">({studentNote.rating}/10)</span>
                               </div>
                             </div>
                             <div>
@@ -2270,6 +2580,25 @@ const TeacherDashboard = () => {
                               <span className="text-sm font-medium text-gray-700">Notes:</span>
                               <p className="text-sm text-gray-600 mt-1 line-clamp-3">{studentNote.content}</p>
                             </div>
+                            {/* ENHANCED: Show classes taken this month */}
+                            {studentNote.classesTaken && studentNote.classesTaken.length > 0 && (
+                              <div>
+                                <span className="text-sm font-medium text-blue-700">Classes This Month:</span>
+                                <p className="text-sm text-blue-600 mt-1">
+                                  {studentNote.classesTaken
+                                    .filter((cls) => {
+                                      const classDate = new Date(cls.date)
+                                      const now = new Date()
+                                      return (
+                                        classDate.getMonth() === now.getMonth() &&
+                                        classDate.getFullYear() === now.getFullYear()
+                                      )
+                                    })
+                                    .map((cls) => new Date(cls.date).getDate())
+                                    .join(", ") || "No classes this month"}
+                                </p>
+                              </div>
+                            )}
                             {studentNote.strengths && (
                               <div>
                                 <span className="text-sm font-medium text-green-700">Strengths:</span>
@@ -2283,6 +2612,19 @@ const TeacherDashboard = () => {
                             <p className="text-sm text-gray-500">No notes added yet</p>
                           </div>
                         )}
+
+                        {/* ENHANCED: Show certificates count */}
+                        {studentCerts.length > 0 && (
+                          <div className="mt-3 p-2 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <div className="flex items-center text-sm text-yellow-700">
+                              <Certificate className="w-4 h-4 mr-1" />
+                              <span>
+                                {studentCerts.length} Certificate{studentCerts.length > 1 ? "s" : ""} Earned
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
                         <div className="mt-4 flex gap-2">
                           <button
                             onClick={() => openTeacherNotesModal(student)}
@@ -2309,11 +2651,10 @@ const TeacherDashboard = () => {
         </div>
       </div>
 
-      {/* All modals remain the same as before... */}
-      {/* Teacher Notes Modal */}
+      {/* ENHANCED: Teacher Notes Modal with Classes Taken and Certificates */}
       {showTeacherNotesModal && selectedStudentForNotes && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl">
+          <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-indigo-600">
               <div className="flex justify-between items-center">
                 <div>
@@ -2328,97 +2669,299 @@ const TeacherDashboard = () => {
                 </button>
               </div>
             </div>
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Note Title *</label>
-                  <input
-                    type="text"
-                    value={noteData.title}
-                    onChange={(e) => setNoteData({ ...noteData, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    placeholder="Enter note title"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Overall Rating</label>
-                  <div className="flex items-center space-x-2">
-                    {[1, 2, 3, 4, 5].map((rating) => (
+
+            {/* Tab Navigation */}
+            <div className="border-b border-gray-200">
+              <nav className="flex space-x-8 px-6">
+                <button
+                  onClick={() => setActiveNoteTab("notes")}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-all duration-300 ${
+                    activeNoteTab === "notes"
+                      ? "border-purple-500 text-purple-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  Notes & Evaluation
+                </button>
+                <button
+                  onClick={() => setActiveNoteTab("certificates")}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-all duration-300 ${
+                    activeNoteTab === "certificates"
+                      ? "border-purple-500 text-purple-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  Certificates ({studentCertificates.length})
+                </button>
+              </nav>
+            </div>
+
+            <div className="p-6">
+              {/* Notes Tab */}
+              {activeNoteTab === "notes" && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Note Title *</label>
+                      <input
+                        type="text"
+                        value={noteData.title}
+                        onChange={(e) => setNoteData({ ...noteData, title: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        placeholder="Enter note title"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Overall Rating (1-10)</label>
+                      <div className="flex items-center space-x-2">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
+                          <button
+                            key={rating}
+                            onClick={() => setNoteData({ ...noteData, rating })}
+                            className={`p-1 rounded transition-colors ${
+                              rating <= noteData.rating ? "text-yellow-400" : "text-gray-300"
+                            }`}
+                          >
+                            <Star className="w-4 h-4 fill-current" />
+                          </button>
+                        ))}
+                        <span className="ml-2 text-sm text-gray-600">({noteData.rating}/10)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ENHANCED: Classes Taken Section with Multiple Classes */}
+                  <div>
+                    <div className="flex justify-between items-center mb-3">
+                      <label className="block text-sm font-medium text-gray-700">Classes Taken</label>
                       <button
-                        key={rating}
-                        onClick={() => setNoteData({ ...noteData, rating })}
-                        className={`p-1 rounded transition-colors ${
-                          rating <= noteData.rating ? "text-yellow-400" : "text-gray-300"
-                        }`}
+                        onClick={addClassDate}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm flex items-center gap-1"
                       >
-                        <Star className="w-6 h-6 fill-current" />
+                        <Plus className="w-4 h-4" />
+                        Add Class
                       </button>
-                    ))}
-                    <span className="ml-2 text-sm text-gray-600">({noteData.rating}/5)</span>
+                    </div>
+                    {noteData.classesTaken.length > 0 ? (
+                      <div className="space-y-3 max-h-60 overflow-y-auto">
+                        {noteData.classesTaken.map((classItem, index) => (
+                          <div key={index} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            <div className="flex justify-between items-start mb-2">
+                              <input
+                                type="date"
+                                value={classItem.date}
+                                onChange={(e) => updateClassDetails(index, "date", e.target.value)}
+                                className="px-2 py-1 border border-gray-300 rounded text-sm"
+                              />
+                              <button
+                                onClick={() => removeClassDate(index)}
+                                className="text-red-600 hover:text-red-800 transition-colors"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="Topic covered"
+                              value={classItem.topic}
+                              onChange={(e) => updateClassDetails(index, "topic", e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2"
+                            />
+                            <textarea
+                              placeholder="Class notes"
+                              value={classItem.notes}
+                              onChange={(e) => updateClassDetails(index, "notes", e.target.value)}
+                              rows={2}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <Calendar className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                        <p className="text-sm text-gray-500">No classes added yet</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">General Notes *</label>
+                    <textarea
+                      value={noteData.content}
+                      onChange={(e) => setNoteData({ ...noteData, content: e.target.value })}
+                      rows={4}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="Enter your observations and notes about the student..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Student Strengths</label>
+                    <textarea
+                      value={noteData.strengths}
+                      onChange={(e) => setNoteData({ ...noteData, strengths: e.target.value })}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="What are the student's key strengths and positive qualities?"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Areas for Improvement</label>
+                    <textarea
+                      value={noteData.areasForImprovement}
+                      onChange={(e) => setNoteData({ ...noteData, areasForImprovement: e.target.value })}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="What areas could the student work on to improve?"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Suggestions & Recommendations
+                    </label>
+                    <textarea
+                      value={noteData.suggestions}
+                      onChange={(e) => setNoteData({ ...noteData, suggestions: e.target.value })}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="Your suggestions for the student's continued growth and development..."
+                    />
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button
+                      onClick={saveTeacherNote}
+                      className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-3 px-4 rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
+                    >
+                      <Save className="w-5 h-5" />
+                      Save Teacher Note
+                    </button>
+                    <button
+                      onClick={() => setShowTeacherNotesModal(false)}
+                      className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl transition-colors font-medium"
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">General Notes *</label>
-                <textarea
-                  value={noteData.content}
-                  onChange={(e) => setNoteData({ ...noteData, content: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Enter your observations and notes about the student..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Student Strengths</label>
-                <textarea
-                  value={noteData.strengths}
-                  onChange={(e) => setNoteData({ ...noteData, strengths: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="What are the student's key strengths and positive qualities?"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Areas for Improvement</label>
-                <textarea
-                  value={noteData.areasForImprovement}
-                  onChange={(e) => setNoteData({ ...noteData, areasForImprovement: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="What areas could the student work on to improve?"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Suggestions & Recommendations</label>
-                <textarea
-                  value={noteData.suggestions}
-                  onChange={(e) => setNoteData({ ...noteData, suggestions: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Your suggestions for the student's continued growth and development..."
-                />
-              </div>
-              <div className="flex gap-4">
-                <button
-                  onClick={saveTeacherNote}
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-3 px-4 rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
-                >
-                  <Save className="w-5 h-5" />
-                  Save Teacher Note
-                </button>
-                <button
-                  onClick={() => setShowTeacherNotesModal(false)}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl transition-colors font-medium"
-                >
-                  Cancel
-                </button>
-              </div>
+              )}
+
+              {/* Certificates Tab */}
+              {activeNoteTab === "certificates" && (
+                <div className="space-y-6">
+                  {/* Add Certificate Form */}
+                  <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-6 border border-yellow-200">
+                    <h4 className="font-semibold text-amber-700 mb-4 flex items-center">
+                      <Certificate className="w-5 h-5 mr-2" />
+                      Add New Certificate
+                    </h4>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Certificate Name *</label>
+                        <input
+                          type="text"
+                          value={certificateData.certificateName}
+                          onChange={(e) => setCertificateData({ ...certificateData, certificateName: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                          placeholder="e.g., Python Programming Certificate"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Issued By</label>
+                        <input
+                          type="text"
+                          value={certificateData.issuedBy}
+                          onChange={(e) => setCertificateData({ ...certificateData, issuedBy: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                          placeholder="KIDZIAN"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Date Issued</label>
+                        <input
+                          type="date"
+                          value={certificateData.dateIssued}
+                          onChange={(e) => setCertificateData({ ...certificateData, dateIssued: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </div>
+                      <div className="flex items-end">
+                        <button
+                          onClick={addCertificate}
+                          className="w-full bg-amber-600 hover:bg-amber-700 text-white py-2 px-4 rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Add Certificate
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                      <textarea
+                        value={certificateData.description}
+                        onChange={(e) => setCertificateData({ ...certificateData, description: e.target.value })}
+                        rows={2}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        placeholder="Brief description of the achievement..."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Certificates List */}
+                  <div>
+                    <h4 className="font-semibold text-gray-700 mb-4">
+                      Student Certificates ({studentCertificates.length})
+                    </h4>
+                    {studentCertificates.length > 0 ? (
+                      <div className="space-y-3 max-h-60 overflow-y-auto">
+                        {studentCertificates.map((certificate) => (
+                          <div
+                            key={certificate._id}
+                            className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm"
+                          >
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <div className="flex items-center mb-2">
+                                  <Certificate className="w-5 h-5 text-amber-600 mr-2" />
+                                  <h5 className="font-medium text-gray-900">{certificate.certificateName}</h5>
+                                </div>
+                                <div className="text-sm text-gray-600 space-y-1">
+                                  <div>Issued by: {certificate.issuedBy}</div>
+                                  <div>Date: {new Date(certificate.dateIssued).toLocaleDateString()}</div>
+                                  {certificate.description && <div>Description: {certificate.description}</div>}
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => deleteCertificate(certificate._id)}
+                                className="text-red-600 hover:text-red-800 transition-colors ml-4"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 bg-gray-50 rounded-xl border border-gray-200">
+                        <Certificate className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                        <p className="text-gray-500">No certificates added yet</p>
+                        <p className="text-sm text-gray-400 mt-1">Add certificates to recognize student achievements</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Student Report Modal with PDF download and Teacher Notes */}
+      {/* ENHANCED: Student Report Modal with PDF download and Teacher Notes */}
       {showStudentReportModal && studentReport && selectedStudent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
@@ -2426,7 +2969,7 @@ const TeacherDashboard = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-2xl font-bold text-white">Student Report - {selectedStudent.name}</h2>
-                  <p className="text-teal-100 mt-1">Kidzian Learning Platform • Founded by Rashmi</p>
+                  <p className="text-teal-100 mt-1">Kidzian Learning Platform</p>
                 </div>
                 <button
                   onClick={() => downloadStudentPDFReport(selectedStudent)}
@@ -2450,6 +2993,7 @@ const TeacherDashboard = () => {
               </div>
             </div>
             <div className="p-6">
+              {/* ENHANCED: Performance Summary with corrected data display */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl p-6 border border-teal-200">
                   <div className="text-teal-600 text-sm font-medium">Total Points</div>
@@ -2458,20 +3002,22 @@ const TeacherDashboard = () => {
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-6 border border-emerald-200">
-                  <div className="text-emerald-600 text-sm font-medium">Assignments</div>
+                  <div className="text-emerald-600 text-sm font-medium">Assignments Completed</div>
                   <div className="text-3xl font-bold text-emerald-700">
                     {studentReport.submissions?.assignments || 0}
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 border border-purple-200">
-                  <div className="text-purple-600 text-sm font-medium">Assessments</div>
+                  <div className="text-purple-600 text-sm font-medium">Assessments Completed</div>
                   <div className="text-3xl font-bold text-purple-700">
                     {studentReport.submissions?.assessments || 0}
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 border border-amber-200">
                   <div className="text-amber-600 text-sm font-medium">Attendance</div>
-                  <div className="text-3xl font-bold text-amber-700">{studentReport.performance?.attendance || 0}%</div>
+                  <div className="text-3xl font-bold text-amber-700">
+                    {studentReport.performance?.attendanceDays || 0} days
+                  </div>
                 </div>
               </div>
 
@@ -2489,7 +3035,7 @@ const TeacherDashboard = () => {
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium text-gray-700">Overall Rating:</span>
                           <div className="flex items-center">
-                            {[...Array(5)].map((_, i) => (
+                            {[...Array(10)].map((_, i) => (
                               <Star
                                 key={i}
                                 className={`w-4 h-4 ${
@@ -2497,7 +3043,7 @@ const TeacherDashboard = () => {
                                 }`}
                               />
                             ))}
-                            <span className="ml-2 text-sm text-gray-600">({teacherNote.rating}/5)</span>
+                            <span className="ml-2 text-sm text-gray-600">({teacherNote.rating}/10)</span>
                           </div>
                         </div>
                         <div>
@@ -2508,6 +3054,25 @@ const TeacherDashboard = () => {
                           <span className="text-sm font-medium text-gray-700">Teacher Comments:</span>
                           <p className="text-gray-900 mt-1">{teacherNote.content}</p>
                         </div>
+                        {/* ENHANCED: Show classes taken this month */}
+                        {teacherNote.classesTaken && teacherNote.classesTaken.length > 0 && (
+                          <div>
+                            <span className="text-sm font-medium text-blue-700">Classes This Month:</span>
+                            <p className="text-blue-600 mt-1">
+                              {teacherNote.classesTaken
+                                .filter((cls) => {
+                                  const classDate = new Date(cls.date)
+                                  const now = new Date()
+                                  return (
+                                    classDate.getMonth() === now.getMonth() &&
+                                    classDate.getFullYear() === now.getFullYear()
+                                  )
+                                })
+                                .map((cls) => new Date(cls.date).getDate())
+                                .join(", ") || "No classes this month"}
+                            </p>
+                          </div>
+                        )}
                         {teacherNote.strengths && (
                           <div>
                             <span className="text-sm font-medium text-green-700">Student Strengths:</span>
@@ -2554,6 +3119,7 @@ const TeacherDashboard = () => {
                     )}
                   </div>
                 </div>
+
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 shadow-lg">
                   <h4 className="font-semibold text-gray-700 mb-4">Performance Summary</h4>
                   <div className="space-y-4">
@@ -2606,72 +3172,6 @@ const TeacherDashboard = () => {
         </div>
       )}
 
-      {/* Enhanced Student Profile Modal */}
-      {showStudentModal && selectedStudent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
-            <div className="p-6 border-b bg-gradient-to-r from-teal-600 to-cyan-600">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-white">Student Profile</h2>
-                <button
-                  onClick={() => setShowStudentModal(false)}
-                  className="text-white hover:text-gray-200 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="flex items-center space-x-4">
-                <div className="h-16 w-16 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
-                  <span className="text-xl font-bold text-white">{selectedStudent.name?.charAt(0)?.toUpperCase()}</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{selectedStudent.name}</h3>
-                  <p className="text-sm text-gray-500">{selectedStudent.email}</p>
-                </div>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-700">Contact Information</h4>
-                <p className="text-sm text-gray-600">Email: {selectedStudent.email}</p>
-                <p className="text-sm text-gray-600">Phone: {selectedStudent.phone || "Not provided"}</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-700">Batch Enrollments</h4>
-                {selectedStudent.batches?.length > 0 ? (
-                  <ul className="list-disc pl-5 space-y-1">
-                    {selectedStudent.batches.map((enrollment, index) => {
-                      const batch = batches.find((b) => b._id === enrollment.batch)
-                      return (
-                        <li key={index} className="text-sm text-gray-600">
-                          {batch?.name || "Unknown Batch"} ({batch?.course?.title || "Unknown Course"})
-                        </li>
-                      )
-                    })}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-gray-500">No batch enrollments</p>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => openTeacherNotesModal(selectedStudent)}
-                  className="flex-1 bg-purple-50 text-purple-600 py-3 px-4 rounded-xl hover:bg-purple-100 transition-colors font-medium"
-                >
-                  Add Teacher Note
-                </button>
-                <button
-                  onClick={() => setShowStudentModal(false)}
-                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl transition-colors font-medium"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Enhanced Attendance Modal */}
       {showAttendanceModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -2698,6 +3198,7 @@ const TeacherDashboard = () => {
                   ))}
                 </select>
               </div>
+
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
                 <input
@@ -2707,6 +3208,7 @@ const TeacherDashboard = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
+
               {selectedBatch && (
                 <div className="mb-6">
                   <h3 className="text-lg font-medium text-gray-900 mb-4">
@@ -2755,6 +3257,7 @@ const TeacherDashboard = () => {
                   )}
                 </div>
               )}
+
               <div className="flex gap-4">
                 <button
                   onClick={submitAttendance}
@@ -2781,25 +3284,16 @@ const TeacherDashboard = () => {
         </div>
       )}
 
-      {/* Enhanced Assignment Modal */}
+      {/* Assignment Modal */}
       {showAssignmentModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b bg-gradient-to-r from-purple-600 to-indigo-600">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-white">
-                  {isEditMode ? "Edit Assignment" : "Create Assignment"}
-                </h2>
-                {isEditMode && (
-                  <button onClick={cancelEdit} className="text-white hover:text-gray-200 transition-colors">
-                    <X className="w-6 h-6" />
-                  </button>
-                )}
-              </div>
+              <h2 className="text-2xl font-bold text-white">{isEditMode ? "Edit Assignment" : "Create Assignment"}</h2>
             </div>
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Assignment Title *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
                 <input
                   type="text"
                   value={assignmentData.title}
@@ -2808,6 +3302,7 @@ const TeacherDashboard = () => {
                   placeholder="Enter assignment title"
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea
@@ -2818,6 +3313,7 @@ const TeacherDashboard = () => {
                   placeholder="Enter assignment description"
                 />
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Course *</label>
@@ -2826,7 +3322,7 @@ const TeacherDashboard = () => {
                     onChange={(e) => setAssignmentData({ ...assignmentData, course: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                   >
-                    <option value="">Select course</option>
+                    <option value="">Select a course</option>
                     {courses.map((course) => (
                       <option key={course._id} value={course._id}>
                         {course.title || course.name}
@@ -2841,7 +3337,7 @@ const TeacherDashboard = () => {
                     onChange={(e) => setAssignmentData({ ...assignmentData, batch: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                   >
-                    <option value="">Select batch</option>
+                    <option value="">Select a batch</option>
                     {batches.map((batch) => (
                       <option key={batch._id} value={batch._id}>
                         {batch.name}
@@ -2850,25 +3346,31 @@ const TeacherDashboard = () => {
                   </select>
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
-                <input
-                  type="date"
-                  value={assignmentData.dueDate}
-                  onChange={(e) => setAssignmentData({ ...assignmentData, dueDate: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
+                  <input
+                    type="date"
+                    value={assignmentData.dueDate}
+                    onChange={(e) => setAssignmentData({ ...assignmentData, dueDate: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Max Marks</label>
+                  <input
+                    type="number"
+                    value={assignmentData.maxMarks}
+                    onChange={(e) =>
+                      setAssignmentData({ ...assignmentData, maxMarks: Number.parseInt(e.target.value) })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="100"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Max Marks</label>
-                <input
-                  type="number"
-                  value={assignmentData.maxMarks}
-                  onChange={(e) => setAssignmentData({ ...assignmentData, maxMarks: Number.parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="100"
-                />
-              </div>
+
               <div className="flex gap-4">
                 <button
                   onClick={isEditMode ? updateAssignment : createAssignment}
@@ -2879,7 +3381,7 @@ const TeacherDashboard = () => {
                 <button
                   onClick={() => {
                     setShowAssignmentModal(false)
-                    if (isEditMode) cancelEdit()
+                    cancelEdit()
                   }}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl transition-colors font-medium"
                 >
@@ -2891,26 +3393,17 @@ const TeacherDashboard = () => {
         </div>
       )}
 
-      {/* Enhanced Assessment Modal */}
+      {/* Assessment Modal */}
       {showAssessmentModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b bg-gradient-to-r from-indigo-600 to-purple-600">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-white">
-                  {isEditMode ? "Edit Assessment" : "Create Assessment"}
-                </h2>
-                {isEditMode && (
-                  <button onClick={cancelEdit} className="text-white hover:text-gray-200 transition-colors">
-                    <X className="w-6 h-6" />
-                  </button>
-                )}
-              </div>
+              <h2 className="text-2xl font-bold text-white">{isEditMode ? "Edit Assessment" : "Create Assessment"}</h2>
             </div>
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Assessment Title *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
                   <input
                     type="text"
                     value={assessmentData.title}
@@ -2932,6 +3425,7 @@ const TeacherDashboard = () => {
                   </select>
                 </div>
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea
@@ -2942,6 +3436,7 @@ const TeacherDashboard = () => {
                   placeholder="Enter assessment description"
                 />
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Course *</label>
@@ -2950,7 +3445,7 @@ const TeacherDashboard = () => {
                     onChange={(e) => setAssessmentData({ ...assessmentData, course: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
-                    <option value="">Select course</option>
+                    <option value="">Select a course</option>
                     {courses.map((course) => (
                       <option key={course._id} value={course._id}>
                         {course.title || course.name}
@@ -2965,7 +3460,7 @@ const TeacherDashboard = () => {
                     onChange={(e) => setAssessmentData({ ...assessmentData, batch: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
-                    <option value="">Select batch</option>
+                    <option value="">Select a batch</option>
                     {batches.map((batch) => (
                       <option key={batch._id} value={batch._id}>
                         {batch.name}
@@ -2974,6 +3469,7 @@ const TeacherDashboard = () => {
                   </select>
                 </div>
               </div>
+
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
@@ -3011,112 +3507,119 @@ const TeacherDashboard = () => {
               </div>
 
               {/* Questions Section */}
-              <div className="border-t pt-6">
+              <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Questions</h3>
-                {/* Add Question Form */}
                 <div className="bg-gray-50 rounded-xl p-4 mb-4">
-                  <div className="grid grid-cols-2 gap-4 mb-4">
+                  <h4 className="font-medium text-gray-700 mb-3">Add New Question</h4>
+                  <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Question Type</label>
-                      <select
-                        value={currentQuestion.type}
-                        onChange={(e) => setCurrentQuestion({ ...currentQuestion, type: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      >
-                        <option value="multiple-choice">Multiple Choice</option>
-                        <option value="true-false">True/False</option>
-                        <option value="short-answer">Short Answer</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Points</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Question *</label>
                       <input
-                        type="number"
-                        value={currentQuestion.points}
-                        onChange={(e) =>
-                          setCurrentQuestion({ ...currentQuestion, points: Number.parseInt(e.target.value) })
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="1"
+                        type="text"
+                        value={currentQuestion.question}
+                        onChange={(e) => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="Enter your question"
                       />
                     </div>
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Question *</label>
-                    <textarea
-                      value={currentQuestion.question}
-                      onChange={(e) => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
-                      rows={2}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Enter your question"
-                    />
-                  </div>
-                  {currentQuestion.type === "multiple-choice" && (
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Options</label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {currentQuestion.options.map((option, index) => (
-                          <input
-                            key={index}
-                            type="text"
-                            value={option}
-                            onChange={(e) => {
-                              const newOptions = [...currentQuestion.options]
-                              newOptions[index] = e.target.value
-                              setCurrentQuestion({ ...currentQuestion, options: newOptions })
-                            }}
-                            className="px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            placeholder={`Option ${index + 1}`}
-                          />
-                        ))}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                        <select
+                          value={currentQuestion.type}
+                          onChange={(e) => setCurrentQuestion({ ...currentQuestion, type: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        >
+                          <option value="multiple-choice">Multiple Choice</option>
+                          <option value="true-false">True/False</option>
+                          <option value="short-answer">Short Answer</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Points</label>
+                        <input
+                          type="number"
+                          value={currentQuestion.points}
+                          onChange={(e) =>
+                            setCurrentQuestion({ ...currentQuestion, points: Number.parseInt(e.target.value) })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          placeholder="1"
+                        />
                       </div>
                     </div>
-                  )}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Correct Answer *</label>
-                    <input
-                      type="text"
-                      value={currentQuestion.correctAnswer}
-                      onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Enter correct answer"
-                    />
+                    {currentQuestion.type === "multiple-choice" && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Options</label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {currentQuestion.options.map((option, index) => (
+                            <input
+                              key={index}
+                              type="text"
+                              value={option}
+                              onChange={(e) => {
+                                const newOptions = [...currentQuestion.options]
+                                newOptions[index] = e.target.value
+                                setCurrentQuestion({ ...currentQuestion, options: newOptions })
+                              }}
+                              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                              placeholder={`Option ${index + 1}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Correct Answer *</label>
+                      <input
+                        type="text"
+                        value={currentQuestion.correctAnswer}
+                        onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="Enter the correct answer"
+                      />
+                    </div>
+                    <button
+                      onClick={addQuestionToAssessment}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+                    >
+                      Add Question
+                    </button>
                   </div>
-                  <button
-                    onClick={addQuestionToAssessment}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl transition-colors font-medium"
-                  >
-                    Add Question
-                  </button>
                 </div>
 
                 {/* Questions List */}
                 {assessmentData.questions.length > 0 && (
-                  <div className="space-y-3 max-h-60 overflow-y-auto">
-                    {assessmentData.questions.map((question, index) => (
-                      <div key={index} className="bg-white border border-gray-200 rounded-xl p-4">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <div className="font-medium text-gray-900">
-                              {index + 1}. {question.question}
+                  <div>
+                    <h4 className="font-medium text-gray-700 mb-3">
+                      Questions Added ({assessmentData.questions.length})
+                    </h4>
+                    <div className="space-y-3 max-h-60 overflow-y-auto">
+                      {assessmentData.questions.map((question, index) => (
+                        <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="font-medium text-gray-900 mb-2">
+                                {index + 1}. {question.question}
+                              </div>
+                              <div className="text-sm text-gray-600 mb-1">
+                                Type: {question.type} | Points: {question.points}
+                              </div>
+                              {question.type === "multiple-choice" && (
+                                <div className="text-sm text-gray-600">Options: {question.options.join(", ")}</div>
+                              )}
+                              <div className="text-sm text-green-600">Correct Answer: {question.correctAnswer}</div>
                             </div>
-                            <div className="text-sm text-gray-500 mt-1">
-                              Type: {question.type} | Points: {question.points}
-                            </div>
-                            {question.type === "multiple-choice" && (
-                              <div className="text-sm text-gray-600 mt-2">Options: {question.options.join(", ")}</div>
-                            )}
-                            <div className="text-sm text-green-600 mt-1">Correct Answer: {question.correctAnswer}</div>
+                            <button
+                              onClick={() => removeQuestionFromAssessment(index)}
+                              className="text-red-600 hover:text-red-800 transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
-                          <button
-                            onClick={() => removeQuestionFromAssessment(index)}
-                            className="text-red-600 hover:text-red-800 transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -3131,7 +3634,7 @@ const TeacherDashboard = () => {
                 <button
                   onClick={() => {
                     setShowAssessmentModal(false)
-                    if (isEditMode) cancelEdit()
+                    cancelEdit()
                   }}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl transition-colors font-medium"
                 >
@@ -3143,23 +3646,16 @@ const TeacherDashboard = () => {
         </div>
       )}
 
-      {/* Enhanced Project Modal */}
+      {/* Project Modal */}
       {showProjectModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
+          <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[80vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b bg-gradient-to-r from-blue-600 to-cyan-600">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-white">{isEditMode ? "Edit Project" : "Create Project"}</h2>
-                {isEditMode && (
-                  <button onClick={cancelEdit} className="text-white hover:text-gray-200 transition-colors">
-                    <X className="w-6 h-6" />
-                  </button>
-                )}
-              </div>
+              <h2 className="text-2xl font-bold text-white">{isEditMode ? "Edit Project" : "Create Project"}</h2>
             </div>
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Project Title *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
                 <input
                   type="text"
                   value={projectData.title}
@@ -3168,6 +3664,7 @@ const TeacherDashboard = () => {
                   placeholder="Enter project title"
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
                 <textarea
@@ -3178,6 +3675,7 @@ const TeacherDashboard = () => {
                   placeholder="Enter project description"
                 />
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Course *</label>
@@ -3186,7 +3684,7 @@ const TeacherDashboard = () => {
                     onChange={(e) => setProjectData({ ...projectData, course: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Select course</option>
+                    <option value="">Select a course</option>
                     {courses.map((course) => (
                       <option key={course._id} value={course._id}>
                         {course.title || course.name}
@@ -3201,7 +3699,7 @@ const TeacherDashboard = () => {
                     onChange={(e) => setProjectData({ ...projectData, batch: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Select batch</option>
+                    <option value="">Select a batch</option>
                     {batches.map((batch) => (
                       <option key={batch._id} value={batch._id}>
                         {batch.name}
@@ -3210,6 +3708,7 @@ const TeacherDashboard = () => {
                   </select>
                 </div>
               </div>
+
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Due Date *</label>
@@ -3241,6 +3740,33 @@ const TeacherDashboard = () => {
                   />
                 </div>
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Requirements</label>
+                <textarea
+                  value={projectData.requirements.join("\n")}
+                  onChange={(e) =>
+                    setProjectData({ ...projectData, requirements: e.target.value.split("\n").filter(Boolean) })
+                  }
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter each requirement on a new line"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Deliverables</label>
+                <textarea
+                  value={projectData.deliverables.join("\n")}
+                  onChange={(e) =>
+                    setProjectData({ ...projectData, deliverables: e.target.value.split("\n").filter(Boolean) })
+                  }
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter each deliverable on a new line"
+                />
+              </div>
+
               <div className="flex gap-4">
                 <button
                   onClick={isEditMode ? updateProject : createProject}
@@ -3251,7 +3777,7 @@ const TeacherDashboard = () => {
                 <button
                   onClick={() => {
                     setShowProjectModal(false)
-                    if (isEditMode) cancelEdit()
+                    cancelEdit()
                   }}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl transition-colors font-medium"
                 >
@@ -3267,21 +3793,15 @@ const TeacherDashboard = () => {
       {showSubmissionsModal && selectedAssignment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
-            <div className="p-6 border-b bg-gradient-to-r from-teal-600 to-cyan-600">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-2xl font-bold text-white">
-                    {selectedAssignment.title} - Submissions ({submissions.length})
-                  </h2>
-                  <p className="text-teal-100 mt-1">Type: {selectedAssignment.type}</p>
-                </div>
-                <button
-                  onClick={() => setShowSubmissionsModal(false)}
-                  className="text-white hover:text-gray-200 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
+            <div className="p-6 border-b bg-gradient-to-r from-emerald-600 to-green-600">
+              <h2 className="text-2xl font-bold text-white">
+                {selectedAssignment.type === "assignment"
+                  ? "Assignment Submissions"
+                  : selectedAssignment.type === "assessment"
+                    ? "Assessment Results"
+                    : "Project Submissions"}
+              </h2>
+              <p className="text-emerald-100 mt-1">{selectedAssignment.title}</p>
             </div>
             <div className="p-6">
               {submissions.length > 0 ? (
@@ -3295,17 +3815,17 @@ const TeacherDashboard = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Submitted At
                         </th>
-                        {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Score
-                        </th> */}
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          {selectedAssignment.type === "assessment" ? "Score" : "Grade"}
+                        </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Status
                         </th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {submissions.map((submission, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
+                      {submissions.map((submission) => (
+                        <tr key={submission._id} className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm font-medium text-gray-900">
                               {submission.student?.name || "Unknown Student"}
@@ -3315,15 +3835,19 @@ const TeacherDashboard = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {new Date(submission.submittedAt).toLocaleString()}
                           </td>
-                          {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {submission.score || "Not graded"} / {selectedAssignment.maxMarks}
-                          </td> */}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {selectedAssignment.type === "assessment"
+                              ? `${submission.score || 0}/${selectedAssignment.maxMarks || 0}`
+                              : submission.grade || "Not graded"}
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
                               className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                submission.status === "graded"
+                                submission.status === "submitted"
                                   ? "bg-green-100 text-green-800"
-                                  : "bg-yellow-100 text-yellow-800"
+                                  : submission.status === "graded"
+                                    ? "bg-blue-100 text-blue-800"
+                                    : "bg-yellow-100 text-yellow-800"
                               }`}
                             >
                               {submission.status || "Submitted"}
@@ -3336,108 +3860,94 @@ const TeacherDashboard = () => {
                 </div>
               ) : (
                 <div className="text-center py-12 text-gray-500">
+                  <FileText className="h-16 w-16 mx-auto mb-4 text-gray-300" />
                   <p className="text-lg">No submissions yet.</p>
                 </div>
               )}
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowSubmissionsModal(false)}
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-xl transition-colors font-medium"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Course Management Modal */}
-      {showCourseManagementModal && selectedCourse && courseStats && (
+      {/* FIXED: Student Modal with correct points display */}
+      {showStudentModal && selectedStudent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
-            <div className="p-6 border-b bg-gradient-to-r from-blue-600 to-indigo-600">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-2xl font-bold text-white">{selectedCourse.title || selectedCourse.name}</h2>
-                  <p className="text-blue-100 mt-1">Course Management</p>
-                </div>
-                <button
-                  onClick={() => setShowCourseManagementModal(false)}
-                  className="text-white hover:text-gray-200 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
+            <div className="p-6 border-b bg-gradient-to-r from-teal-600 to-cyan-600">
+              <h2 className="text-2xl font-bold text-white">Student Details</h2>
             </div>
             <div className="p-6">
-              {/* Course Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                  <div className="text-blue-600 text-sm font-medium">Total Batches</div>
-                  <div className="text-2xl font-bold text-blue-700">{courseStats.totalBatches}</div>
+              <div className="flex items-center mb-6">
+                <div className="h-20 w-20 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-lg mr-4">
+                  <span className="text-2xl font-bold text-white">
+                    {selectedStudent.name?.charAt(0)?.toUpperCase()}
+                  </span>
                 </div>
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
-                  <div className="text-emerald-600 text-sm font-medium">Total Students</div>
-                  <div className="text-2xl font-bold text-emerald-700">{courseStats.totalStudents}</div>
-                </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                  <div className="text-purple-600 text-sm font-medium">Assignments</div>
-                  <div className="text-2xl font-bold text-purple-700">{courseStats.totalAssignments}</div>
-                </div>
-                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 border border-indigo-200">
-                  <div className="text-indigo-600 text-sm font-medium">Assessments</div>
-                  <div className="text-2xl font-bold text-indigo-700">{courseStats.totalAssessments}</div>
-                </div>
-                <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl p-4 border border-cyan-200">
-                  <div className="text-cyan-600 text-sm font-medium">Projects</div>
-                  <div className="text-2xl font-bold text-cyan-700">{courseStats.totalProjects}</div>
-                </div>
-                <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 border border-amber-200">
-                  <div className="text-amber-600 text-sm font-medium">Upcoming Classes</div>
-                  <div className="text-2xl font-bold text-amber-700">{courseStats.upcomingClasses}</div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">{selectedStudent.name}</h3>
+                  <p className="text-gray-600">{selectedStudent.email}</p>
                 </div>
               </div>
-
-              {/* Course Batches */}
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Course Batches</h3>
-                {courseBatches.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {courseBatches.map((batch) => (
-                      <div key={batch._id} className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                        <div className="font-medium text-gray-900">{batch.name}</div>
-                        <div className="text-sm text-gray-600 mt-1">
-                          Students: {batch.students?.length || 0}/{batch.maxStudents || "N/A"}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          Duration: {new Date(batch.startDate).toLocaleDateString()} -{" "}
-                          {new Date(batch.endDate).toLocaleDateString()}
-                        </div>
-                      </div>
-                    ))}
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-3">Basic Information</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Phone:</span>
+                      <span className="font-medium">{selectedStudent.phone || "Not provided"}</span>
+                    </div>
+                   
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Joined:</span>
+                      <span className="font-medium">
+                        {selectedStudent.createdAt
+                          ? new Date(selectedStudent.createdAt).toLocaleDateString()
+                          : "Unknown"}
+                      </span>
+                    </div>
                   </div>
-                ) : (
-                  <p className="text-gray-500">No batches found for this course.</p>
-                )}
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-3">Batch Enrollments</h4>
+                  <div className="space-y-2">
+                    {selectedStudent.batches?.length > 0 ? (
+                      selectedStudent.batches.map((enrollment, index) => {
+                        const batch = batches.find((b) => b._id === enrollment.batch)
+                        return (
+                          <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                            <div className="font-medium">{batch?.name || "Unknown Batch"}</div>
+                            <div className="text-sm text-gray-600">{batch?.course?.title || "Unknown Course"}</div>
+                          </div>
+                        )
+                      })
+                    ) : (
+                      <p className="text-gray-500 text-sm">No batch enrollments</p>
+                    )}
+                  </div>
+                </div>
               </div>
-
-              {/* Course Students */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Enrolled Students</h3>
-                {courseStudents.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {courseStudents.map((student) => (
-                      <div key={student._id} className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-lg mr-3">
-                            <span className="text-sm font-bold text-white">
-                              {student.name?.charAt(0)?.toUpperCase()}
-                            </span>
-                          </div>
-                          <div>
-                            <div className="font-medium text-gray-900">{student.name}</div>
-                            <div className="text-sm text-gray-500">{student.email}</div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No students enrolled in this course.</p>
-                )}
+              <div className="mt-6 flex gap-4">
+                <button
+                  onClick={() => generateStudentReport(selectedStudent._id)}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
+                >
+                  <Eye className="w-5 h-5" />
+                  Generate Report
+                </button>
+                <button
+                  onClick={() => setShowStudentModal(false)}
+                  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl transition-colors font-medium"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
@@ -3449,41 +3959,50 @@ const TeacherDashboard = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
             <div className="p-6 border-b bg-gradient-to-r from-purple-600 to-indigo-600">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-2xl font-bold text-white">{selectedBatchDetails.name}</h2>
-                  <p className="text-purple-100 mt-1">Batch Details & Attendance</p>
-                </div>
-                <button
-                  onClick={() => setShowBatchDetailsModal(false)}
-                  className="text-white hover:text-gray-200 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
+              <h2 className="text-2xl font-bold text-white">Batch Details</h2>
+              <p className="text-purple-100 mt-1">{selectedBatchDetails.name}</p>
             </div>
             <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                  <div className="text-blue-600 text-sm font-medium">Total Students</div>
-                  <div className="text-2xl font-bold text-blue-700">{selectedBatchDetails.students?.length || 0}</div>
-                </div>
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
-                  <div className="text-emerald-600 text-sm font-medium">Start Date</div>
-                  <div className="text-lg font-bold text-emerald-700">
-                    {new Date(selectedBatchDetails.startDate).toLocaleDateString()}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-3">Batch Information</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Course:</span>
+                      <span className="font-medium">{selectedBatchDetails.course?.title || "Unknown Course"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Students:</span>
+                      <span className="font-medium">
+                        {selectedBatchDetails.students?.length || 0}/{selectedBatchDetails.maxStudents || "N/A"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Start Date:</span>
+                      <span className="font-medium">
+                        {new Date(selectedBatchDetails.startDate).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">End Date:</span>
+                      <span className="font-medium">{new Date(selectedBatchDetails.endDate).toLocaleDateString()}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                  <div className="text-purple-600 text-sm font-medium">End Date</div>
-                  <div className="text-lg font-bold text-purple-700">
-                    {new Date(selectedBatchDetails.endDate).toLocaleDateString()}
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-3">Attendance Summary</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Total Records:</span>
+                      <span className="font-medium">{selectedBatchDetails.attendanceRecords?.length || 0}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Attendance Records</h3>
-                {selectedBatchDetails.attendanceRecords?.length > 0 ? (
+
+              {selectedBatchDetails.attendanceRecords?.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-4">Recent Attendance Records</h4>
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
@@ -3492,43 +4011,136 @@ const TeacherDashboard = () => {
                             Date
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Student
+                            Present
                           </th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
+                            Absent
                           </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {selectedBatchDetails.attendanceRecords.map((record, index) => (
-                          <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {new Date(record.date).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {record.student?.name || "Unknown Student"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span
-                                className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                  record.status === "present"
-                                    ? "bg-green-100 text-green-800"
-                                    : "bg-red-100 text-red-800"
-                                }`}
-                              >
-                                {record.status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
+                        {selectedBatchDetails.attendanceRecords.slice(0, 10).map((record) => {
+                          const presentCount = record.records.filter((r) => r.status === "present").length
+                          const absentCount = record.records.filter((r) => r.status === "absent").length
+                          return (
+                            <tr key={record._id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {new Date(record.date).toLocaleDateString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
+                                {presentCount}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">
+                                {absentCount}
+                              </td>
+                            </tr>
+                          )
+                        })}
                       </tbody>
                     </table>
                   </div>
-                ) : (
-                  <div className="text-center py-12 text-gray-500">
-                    <p className="text-lg">No attendance records found.</p>
+                </div>
+              )}
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowBatchDetailsModal(false)}
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-xl transition-colors font-medium"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Course Management Modal */}
+      {showCourseManagementModal && selectedCourse && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[70vh] overflow-y-auto shadow-2xl">
+            <div className="p-6 border-b bg-gradient-to-r from-blue-600 to-cyan-600">
+              <h2 className="text-2xl font-bold text-white">Course Management</h2>
+              <p className="text-blue-100 mt-1">{selectedCourse.title || selectedCourse.name}</p>
+            </div>
+            <div className="p-6">
+              {courseStats && (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-700">{courseStats.totalBatches}</div>
+                    <div className="text-sm text-blue-600">Batches</div>
                   </div>
-                )}
+                  <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-emerald-700">{courseStats.totalStudents}</div>
+                    <div className="text-sm text-emerald-600">Students</div>
+                  </div>
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-purple-700">{courseStats.totalAssignments}</div>
+                    <div className="text-sm text-purple-600">Assignments</div>
+                  </div>
+                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-indigo-700">{courseStats.totalAssessments}</div>
+                    <div className="text-sm text-indigo-600">Assessments</div>
+                  </div>
+                  <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-cyan-700">{courseStats.totalProjects}</div>
+                    <div className="text-sm text-cyan-600">Projects</div>
+                  </div>
+                  <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-amber-700">{courseStats.upcomingClasses}</div>
+                    <div className="text-sm text-amber-600">Upcoming</div>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-4">Course Batches ({courseBatches.length})</h4>
+                  <div className="space-y-3 max-h-60 overflow-y-auto">
+                    {courseBatches.length > 0 ? (
+                      courseBatches.map((batch) => (
+                        <div key={batch._id} className="p-4 bg-gray-50 rounded-xl">
+                          <div className="font-medium text-gray-900">{batch.name}</div>
+                          <div className="text-sm text-gray-600">
+                            Students: {batch.students?.length || 0}/{batch.maxStudents || "N/A"}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {new Date(batch.startDate).toLocaleDateString()} -{" "}
+                            {new Date(batch.endDate).toLocaleDateString()}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-sm">No batches for this course</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-gray-700 mb-4">Course Students ({courseStudents.length})</h4>
+                  <div className="space-y-3 max-h-60 overflow-y-auto">
+                    {courseStudents.length > 0 ? (
+                      courseStudents.map((student) => (
+                        <div key={student._id} className="p-4 bg-gray-50 rounded-xl">
+                          <div className="font-medium text-gray-900">{student.name}</div>
+                          <div className="text-sm text-gray-600">{student.email}</div>
+                          <div className="text-sm text-gray-600">Points: {student.totalPoints || 0}</div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-sm">No students enrolled in this course</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowCourseManagementModal(false)}
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-xl transition-colors font-medium"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>
