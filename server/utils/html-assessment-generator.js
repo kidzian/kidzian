@@ -1,133 +1,8 @@
-// utils/email-service.js
-
-const nodemailer = require("nodemailer")
 const fs = require("fs")
 const path = require("path")
 
-// Email Templates (you can store these in separate files if needed)
-const emailTemplates = {
-  welcome: {
-    subject: "Welcome to Kidzian Learning Platform!",
-    html: `
-      <p>Dear User,</p>
-      <p>Welcome to Kidzian! We're excited to have you on board.</p>
-      <p>Best regards,<br>The Kidzian Team</p>
-    `,
-  },
-  passwordReset: {
-    subject: "Password Reset Request",
-    html: (resetLink) => `
-      <p>Dear User,</p>
-      <p>You have requested to reset your password. Please click the following link to reset it:</p>
-      <p><a href="${resetLink}">Reset Password</a></p>
-      <p>If you did not request a password reset, please ignore this email.</p>
-      <p>Best regards,<br>The Kidzian Team</p>
-    `,
-  },
-  // Add more templates as needed
-}
-
-// Configure Nodemailer transporter (replace with your email service details)
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || "sandbox.smtp.mailtrap.io",
-  port: process.env.EMAIL_PORT || 2525,
-  secure: false, // upgrade later with STARTTLS
-  auth: {
-    user: process.env.EMAIL_USER || "your_mailtrap_username",
-    pass: process.env.EMAIL_PASS || "your_mailtrap_password",
-  },
-})
-
-// Function to send a simple email
-const sendEmail = async (to, subject, html) => {
-  try {
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || '"Kidzian Learning Platform" <notifications@kidzian.com>',
-      to: to,
-      subject: subject,
-      html: html,
-    }
-
-    const info = await transporter.sendMail(mailOptions)
-    console.log("Email sent successfully:", info.messageId)
-    return { success: true, messageId: info.messageId }
-  } catch (error) {
-    console.error("Error sending email:", error)
-    return { success: false, error: error.message }
-  }
-}
-
-// Function to send an email with a single attachment
-const sendEmailWithAttachment = async (to, subject, html, attachment) => {
-  try {
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || '"Kidzian Learning Platform" <notifications@kidzian.com>',
-      to: to,
-      subject: subject,
-      html: html,
-      attachments: [attachment], // Example: { filename: 'report.pdf', content: Buffer.from(reportData), contentType: 'application/pdf' }
-    }
-
-    const info = await transporter.sendMail(mailOptions)
-    console.log("Email sent successfully with attachment:", info.messageId)
-    return { success: true, messageId: info.messageId }
-  } catch (error) {
-    console.error("Error sending email with attachment:", error)
-    return { success: false, error: error.message }
-  }
-}
-
-// Function to send an email with multiple attachments
-const sendEmailWithMultipleAttachments = async (to, subject, html, attachments) => {
-  try {
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || '"Kidzian Learning Platform" <notifications@kidzian.com>',
-      to: to,
-      subject: subject,
-      html: html,
-      attachments: attachments, // Example: [{ filename: 'report.pdf', content: Buffer.from(reportData), contentType: 'application/pdf' }, { filename: 'image.png', path: '/path/to/image.png' }]
-    }
-
-    const info = await transporter.sendMail(mailOptions)
-    console.log("Email sent successfully with multiple attachments:", info.messageId)
-    return { success: true, messageId: info.messageId }
-  } catch (error) {
-    console.error("Error sending email with multiple attachments:", error)
-    return { success: false, error: error.message }
-  }
-}
-
-// Utility function to format file size
-const formatFileSize = (bytes, decimals = 2) => {
-  if (bytes === 0) return "0 Bytes"
-
-  const k = 1024
-  const dm = decimals < 0 ? 0 : decimals
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-
-  return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
-}
-
-// Utility function to get file stats
-const getFileStats = (filePath) => {
-  try {
-    const stats = fs.statSync(filePath)
-    return {
-      exists: true,
-      size: stats.size,
-      formattedSize: formatFileSize(stats.size),
-      isFile: stats.isFile(),
-      isDirectory: stats.isDirectory(),
-    }
-  } catch (error) {
-    return { exists: false, error: error.message }
-  }
-}
-
-// Enhanced HTML Assessment Report Generator (No external dependencies)
-const generateEnhancedAssessmentHTML = (submission, assessment, student) => {
+// Generate comprehensive HTML assessment report that works perfectly in emails
+const generateHTMLAssessmentReportContent = (submission, assessment, student) => {
   const { answers, score, percentage, timeSpent, submittedAt } = submission
   const { questions, maxMarks, title } = assessment
 
@@ -347,13 +222,6 @@ const generateEnhancedAssessmentHTML = (submission, assessment, student) => {
               : ""
           }
 
-          <!-- CTA Button -->
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="#" style="background: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; transition: transform 0.2s ease;">
-              📊 View in Dashboard
-            </a>
-          </div>
-
         </div>
 
         <!-- Footer -->
@@ -369,188 +237,64 @@ const generateEnhancedAssessmentHTML = (submission, assessment, student) => {
   `
 }
 
-// Enhanced function to send assessment report to teacher with detailed HTML (No PDF dependencies)
-const sendAssessmentReportToTeacher = async (to, submission, assessment, student) => {
+// Save HTML report to file (optional)
+const saveHTMLReport = async (htmlContent, outputPath) => {
   try {
-    // Block emails to specific address
-    if (to === "raghudbose@gmail.com") {
-      console.log("🚫 Blocked assessment report email to raghudbose@gmail.com")
-      return { success: true, messageId: "blocked", blocked: true }
+    const outputDir = path.dirname(outputPath)
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true })
     }
 
-    console.log("📊 Generating enhanced HTML assessment report for teacher...")
-    console.log(`Teacher: ${to}`)
-    console.log(`Student: ${student.name}`)
-    console.log(`Assessment: ${assessment.title}`)
-
-    // Calculate statistics
-    const totalQuestions = assessment.questions.length
-    const correctAnswers = submission.answers.filter((a) => a.isCorrect).length
-    const correctPercentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0
-
-    // Try to generate PDF first (if generateAssessmentReport is available)
-    let pdfGenerated = false
-    let pdfPath = null
-    const attachments = []
-
-    try {
-      if (typeof generateAssessmentReport === "function") {
-        console.log("🔄 Attempting PDF generation as fallback...")
-        const reportResult = await generateAssessmentReport(submission, assessment, student, {
-          generatePDF: true,
-          outputDir: "uploads/reports",
-        })
-
-        if (reportResult.success && reportResult.pdfPath && fs.existsSync(reportResult.pdfPath)) {
-          const fileStats = getFileStats(reportResult.pdfPath)
-          if (fileStats.exists && fileStats.size > 0) {
-            attachments.push({
-              filename: `Assessment_Report_${student.name.replace(/\s+/g, "_")}_${assessment.title.replace(/\s+/g, "_")}.pdf`,
-              path: reportResult.pdfPath,
-              contentType: "application/pdf",
-              contentDisposition: "attachment",
-            })
-            pdfGenerated = true
-            pdfPath = reportResult.pdfPath
-            console.log(`📎 PDF attachment prepared: ${fileStats.formattedSize}`)
-          }
-        }
-      }
-    } catch (pdfError) {
-      console.log("⚠️ PDF generation failed, using HTML-only method:", pdfError.message)
-    }
-
-    // Generate enhanced HTML email template
-    const htmlContent = generateEnhancedAssessmentHTML(submission, assessment, student)
-
-    // Create email template with enhanced HTML
-    const template = {
-      subject: `📊 Assessment Results: ${assessment.title} - ${student.name} (${correctPercentage}%)`,
-      html: htmlContent,
-    }
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || '"Kidzian Learning Platform" <notifications@kidzian.com>',
-      to: to,
-      subject: template.subject,
-      html: template.html,
-      attachments: attachments,
-    }
-
-    console.log("📧 Sending enhanced assessment email to teacher...")
-    console.log(`📎 Attachments: ${attachments.length} (PDF: ${pdfGenerated ? "Yes" : "No"})`)
-
-    const info = await transporter.sendMail(mailOptions)
-    console.log("✅ Enhanced assessment report email sent to teacher successfully:", info.messageId)
-
-    return {
-      success: true,
-      messageId: info.messageId,
-      reportGenerated: true,
-      method: "enhanced-html",
-      pdfPath: pdfPath,
-      attachmentCount: attachments.length,
-      pdfGenerated: pdfGenerated,
-    }
+    fs.writeFileSync(outputPath, htmlContent, "utf8")
+    console.log(`✅ HTML report saved: ${outputPath}`)
+    return true
   } catch (error) {
-    console.error("❌ Error sending enhanced assessment report email to teacher:", error)
-    return { success: false, error: error.message }
+    console.error("❌ Error saving HTML report:", error)
+    return false
   }
 }
 
-// Enhanced function to send assessment report to student with detailed HTML
-const sendAssessmentReportToStudent = async (to, submission, assessment, student) => {
+// Generate assessment report with HTML method
+const generateHTMLAssessmentReport = async (submission, assessment, student, options = {}) => {
   try {
-    // Block emails to specific address
-    if (to === "raghudbose@gmail.com") {
-      console.log("🚫 Blocked assessment report email to raghudbose@gmail.com")
-      return { success: true, messageId: "blocked", blocked: true }
-    }
+    const { saveToFile = false, outputDir = "uploads/reports" } = options
 
-    console.log("📊 Generating enhanced HTML assessment report for student...")
-    console.log(`Student: ${to}`)
+    console.log("📊 Starting HTML assessment report generation...")
+    console.log(`Student: ${student.name}`)
     console.log(`Assessment: ${assessment.title}`)
+    console.log(`Questions: ${assessment.questions.length}`)
+    console.log(`Answers: ${submission.answers.length}`)
 
-    // Calculate statistics
-    const totalQuestions = assessment.questions.length
-    const correctAnswers = submission.answers.filter((a) => a.isCorrect).length
-    const correctPercentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0
+    // Generate HTML content
+    const htmlContent = generateHTMLAssessmentReportContent(submission, assessment, student)
 
-    // Try to generate PDF first (if generateAssessmentReport is available)
-    let pdfGenerated = false
-    const attachments = []
-
-    try {
-      if (typeof generateAssessmentReport === "function") {
-        console.log("🔄 Attempting PDF generation for student...")
-        const reportResult = await generateAssessmentReport(submission, assessment, student, {
-          generatePDF: true,
-          outputDir: "uploads/reports",
-        })
-
-        if (reportResult.success && reportResult.pdfPath && fs.existsSync(reportResult.pdfPath)) {
-          const fileStats = getFileStats(reportResult.pdfPath)
-          if (fileStats.exists && fileStats.size > 0) {
-            attachments.push({
-              filename: `Your_Assessment_Report_${assessment.title.replace(/\s+/g, "_")}.pdf`,
-              path: reportResult.pdfPath,
-              contentType: "application/pdf",
-              contentDisposition: "attachment",
-            })
-            pdfGenerated = true
-            console.log(`📎 PDF attachment prepared for student: ${fileStats.formattedSize}`)
-          }
-        }
-      }
-    } catch (pdfError) {
-      console.log("⚠️ PDF generation failed for student, using HTML-only method:", pdfError.message)
-    }
-
-    // Generate enhanced HTML email template
-    const htmlContent = generateEnhancedAssessmentHTML(submission, assessment, student)
-
-    // Create email template with enhanced HTML (customize subject for student)
-    const template = {
-      subject: `🎯 Your Assessment Results: ${assessment.title} - ${correctPercentage}% Score`,
-      html: htmlContent,
-    }
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || '"Kidzian Learning Platform" <notifications@kidzian.com>',
-      to: to,
-      subject: template.subject,
-      html: template.html,
-      attachments: attachments,
-    }
-
-    console.log("📧 Sending enhanced assessment email to student...")
-    console.log(`📎 Attachments: ${attachments.length} (PDF: ${pdfGenerated ? "Yes" : "No"})`)
-
-    const info = await transporter.sendMail(mailOptions)
-    console.log("✅ Enhanced assessment report email sent to student successfully:", info.messageId)
-
-    return {
+    const result = {
+      htmlContent,
+      filePath: null,
       success: true,
-      messageId: info.messageId,
-      reportGenerated: true,
-      method: "enhanced-html",
-      attachmentCount: attachments.length,
-      pdfGenerated: pdfGenerated,
     }
+
+    if (saveToFile) {
+      const fileName = `assessment-report-${student.name.replace(/\s+/g, "-")}-${submission._id}-${Date.now()}.html`
+      const filePath = path.join(outputDir, fileName)
+
+      const saved = await saveHTMLReport(htmlContent, filePath)
+      if (saved) {
+        result.filePath = filePath
+      }
+    }
+
+    return result
   } catch (error) {
-    console.error("❌ Error sending enhanced assessment report email to student:", error)
-    return { success: false, error: error.message }
+    console.error("❌ Error generating HTML assessment report:", error)
+    return {
+      success: false,
+      error: error.message,
+    }
   }
 }
 
 module.exports = {
-  sendEmail,
-  sendEmailWithAttachment,
-  sendEmailWithMultipleAttachments,
-  sendAssessmentReportToTeacher,
-  sendAssessmentReportToStudent,
-  emailTemplates,
-  formatFileSize,
-  getFileStats,
-  generateEnhancedAssessmentHTML, // Add this new function
+  generateHTMLAssessmentReport,
+  saveHTMLReport,
 }

@@ -28,7 +28,7 @@ const teacherNoteSchema = new mongoose.Schema({
   rating: {
     type: Number,
     min: 1,
-    max: 5,
+    max: 10,
     default: 5,
   },
   suggestions: {
@@ -43,6 +43,44 @@ const teacherNoteSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  // ENHANCED: Multiple classes taken with details
+  classesTaken: [
+    {
+      date: {
+        type: Date,
+        required: true,
+      },
+      topic: {
+        type: String,
+        default: "",
+      },
+      notes: {
+        type: String,
+        default: "",
+      },
+    },
+  ],
+  // ENHANCED: Certificates earned by the student
+  certificates: [
+    {
+      title: {
+        type: String,
+        required: true,
+      },
+      description: {
+        type: String,
+        default: "",
+      },
+      dateEarned: {
+        type: Date,
+        required: true,
+      },
+      certificateUrl: {
+        type: String,
+        default: "",
+      },
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,
@@ -63,4 +101,3 @@ teacherNoteSchema.pre("save", function (next) {
 })
 
 module.exports = mongoose.model("TeacherNote", teacherNoteSchema)
-
